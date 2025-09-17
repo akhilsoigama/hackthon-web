@@ -1,21 +1,8 @@
-import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Outlet } from 'react-router-dom';
 import Header from './Header';
 
 const Navbaar = () => {
-  const [isOffline, setIsOffline] = useState(false);
-
-  useEffect(() => {
-    const handleOnlineStatus = () => setIsOffline(!navigator.onLine);
-    window.addEventListener('online', handleOnlineStatus);
-    window.addEventListener('offline', handleOnlineStatus);
-    return () => {
-      window.removeEventListener('online', handleOnlineStatus);
-      window.removeEventListener('offline', handleOnlineStatus);
-    };
-  }, []);
-
   return (
     <div className="flex flex-1 flex-col min-h-screen bg-white">
       <Header />

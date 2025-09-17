@@ -1,28 +1,10 @@
 import { AnimatePresence } from "framer-motion";
 import { NavLink } from "react-router-dom";
 import { motion } from 'framer-motion';
-import { ReactElement, useState } from "react";
+import { useState } from "react";
 import { modules } from "../routers/ModulePath";
 import { FaChevronDown, FaChevronRight } from 'react-icons/fa';
 
-interface SubLink {
-  to: string;
-  label: string;
-  icon: ReactElement;
-  subLinks?: SubLink[];
-}
-
-interface SidebarLink {
-  to: string;
-  label: string;
-  icon: ReactElement;
-  subLinks?: SubLink[];
-}
-
-interface Module {
-  moduleName: string;
-  links: SidebarLink[];
-}
 
 const Sidebar = () => {
   const [expandedLink, setExpandedLink] = useState<string | null>(null);

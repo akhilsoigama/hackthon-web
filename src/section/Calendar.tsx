@@ -80,7 +80,6 @@ const Calendar = () => {
 
     // Add cells for each day of the month
     for (let day = 1; day <= daysInMonth; day++) {
-      const dateStr = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${day}`;
       const dayEvents = events.filter(event => 
         event.date.getDate() === day && 
         event.date.getMonth() === currentDate.getMonth() &&
