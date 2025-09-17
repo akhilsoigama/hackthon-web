@@ -1,14 +1,25 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 
+// Define the Assignment type
+interface Assignment {
+  id: number;
+  title: string;
+  subject: string;
+  dueDate: string;
+  status: 'submitted' | 'in-progress' | 'not-started' | 'late';
+  points: number;
+  description: string;
+}
+
 const Assignments = () => {
-  const [assignments, setAssignments] = useState([]);
-  const [filter, setFilter] = useState('all');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [assignments, setAssignments] = useState<Assignment[]>([]);
+  const [filter, setFilter] = useState<string>('all');
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
   useEffect(() => {
     // Simulating data fetch
-    const mockAssignments = [
+    const mockAssignments: Assignment[] = [
       {
         id: 1,
         title: 'React Component Design',
@@ -66,7 +77,7 @@ const Assignments = () => {
     return matchesFilter && matchesSearch;
   });
 
-  const getStatusColor = (status:any) => {
+  const getStatusColor = (status: string) => {
     switch(status) {
       case 'submitted': return 'bg-green-100 text-green-800';
       case 'in-progress': return 'bg-blue-100 text-blue-800';
@@ -76,7 +87,7 @@ const Assignments = () => {
     }
   };
 
-  const getStatusText = (status:any) => {
+  const getStatusText = (status: string) => {
     switch(status) {
       case 'submitted': return 'Submitted';
       case 'in-progress': return 'In Progress';
@@ -86,15 +97,15 @@ const Assignments = () => {
     }
   };
 
-  const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+  const formatDate = (dateString: string) => {
+    const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  const calculateDaysLeft = (dueDate) => {
+  const calculateDaysLeft = (dueDate: string) => {
     const today = new Date();
     const due = new Date(dueDate);
-    const diffTime = due - today;
+    const diffTime = due.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays;
   };

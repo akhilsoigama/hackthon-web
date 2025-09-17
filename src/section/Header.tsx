@@ -1,8 +1,7 @@
-import { useState, useEffect, useRef, ReactElement } from 'react';
+import { useState, useEffect, useRef} from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink} from 'react-router-dom';
 
-// Interface for Notification
 interface Notification {
   id: number;
   text: string;
@@ -10,7 +9,6 @@ interface Notification {
   read: boolean;
 }
 
-// Header Component
 const Header = () => {
   const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);

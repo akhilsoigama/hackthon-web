@@ -3,26 +3,21 @@ import { useEffect, useState } from 'react';
 import { 
   FiTrendingUp, 
   FiAward, 
-  FiCalendar, 
   FiBarChart2, 
   FiBook,
   FiCheckCircle,
-  FiClock,
   FiTarget,
-  FiPieChart
 } from 'react-icons/fi';
 
 const Progress = () => {
   const [activeTimeframe, setActiveTimeframe] = useState('week');
   
-  // Sample progress data
   const overallProgress = {
     completed: 75,
     inProgress: 20,
     notStarted: 5
   };
 
-  // Course progress data
   const courses = [
     { name: 'Mathematics', progress: 85, hours: 42, assignments: 12, color: 'bg-blue-500' },
     { name: 'Physics', progress: 70, hours: 36, assignments: 8, color: 'bg-green-500' },
@@ -30,7 +25,6 @@ const Progress = () => {
     { name: 'Chemistry', progress: 90, hours: 48, assignments: 15, color: 'bg-orange-500' },
   ];
 
-  // Weekly activity data
   const weeklyActivity = [
     { day: 'Mon', hours: 3.5 },
     { day: 'Tue', hours: 2.8 },
@@ -41,14 +35,12 @@ const Progress = () => {
     { day: 'Sun', hours: 2.0 },
   ];
 
-  // Recent achievements
   const achievements = [
     { id: 1, title: 'Consistent Learner', description: 'Studied for 5 days in a row', icon: <FiAward className="text-yellow-500" /> },
     { id: 2, title: 'Quick Completer', description: 'Submitted assignment early', icon: <FiCheckCircle className="text-green-500" /> },
     { id: 3, title: 'Quiz Master', description: 'Scored 100% on latest quiz', icon: <FiTarget className="text-blue-500" /> },
   ];
 
-  // Upcoming goals
   const goals = [
     { id: 1, title: 'Complete Calculus Module', deadline: 'Sep 25', progress: 70 },
     { id: 2, title: 'Finish Literature Essay', deadline: 'Sep 28', progress: 30 },
@@ -59,7 +51,6 @@ const Progress = () => {
     console.log('Progress page loaded');
   }, []);
 
-  // Find the maximum hours for scaling the chart
   const maxHours = Math.max(...weeklyActivity.map(day => day.hours));
 
   return (
