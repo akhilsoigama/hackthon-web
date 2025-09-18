@@ -39,10 +39,5 @@ export default defineConfig({
     tailwindcss(),
   ],
 
-  server: {
-    port: 5173,
-    host: 'localhost',
-  },
-
   base: '/dashboard/',
 })
