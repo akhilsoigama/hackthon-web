@@ -283,11 +283,6 @@ export const modules: any = [
         label: 'Events',
         icon: <FaCalendarAlt className="w-5 h-5" />,
       },
-      {
-        to: '/dashboard/quize',
-        label: 'Quiz',
-        icon: <FaQuestionCircle className="w-5 h-5" />,
-      },
     ],
   },
   {
