@@ -23,17 +23,17 @@ export const modules: any = [
     moduleName: "Nabha Management",
     links: [
       {
-        to: '/dashboard/nabha-master',
+        to: '/dashboard/nabha-master/institute',
         label: 'Institute',
         icon: <FaHome className="w-5 h-5" />,
         subLinks: [
           {
-            to: '/dashboard/nabha-master/create',
+            to: '/dashboard/nabha-master/institute/create',
             label: 'Create',
             icon: <FaPlus className="w-5 h-5" />,
           },
           {
-            to: '/dashboard/nabha-master/list',
+            to: '/dashboard/nabha-master/institute/list',
             label: 'List',
             icon: <FaList className="w-5 h-5" />,
           },
