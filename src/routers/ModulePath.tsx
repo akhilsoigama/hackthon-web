@@ -14,8 +14,6 @@ import {
   FaQuestionCircle,
   FaSignOutAlt,
   FaUpload,
-  FaCheckCircle,
-  FaTimesCircle
 } from 'react-icons/fa';
 
 export const modules: any = [
@@ -23,17 +21,17 @@ export const modules: any = [
     moduleName: "Nabha Management",
     links: [
       {
-        to: '/dashboard/nabha-master',
+        to: '/dashboard/nabha-master/institute',
         label: 'Institute',
         icon: <FaHome className="w-5 h-5" />,
         subLinks: [
           {
-            to: '/dashboard/nabha-master/create',
+            to: '/dashboard/nabha-master/institute/create',
             label: 'Create',
             icon: <FaPlus className="w-5 h-5" />,
           },
           {
-            to: '/dashboard/nabha-master/list',
+            to: '/dashboard/nabha-master/institute/list',
             label: 'List',
             icon: <FaList className="w-5 h-5" />,
           },
@@ -211,18 +209,18 @@ export const modules: any = [
         to: '/dashboard/leave-management/leave-approval',
         label: 'Leave Approval',
         icon: <FaClipboardCheck className="w-5 h-5" />,
-        subLinks: [
-          {
-            to: '/dashboard/leave-management/leave-approval/done',
-            label: 'Done',
-            icon: <FaCheckCircle className="w-5 h-5" />,
-          },
-          {
-            to: '/dashboard/leave-management/leave-approval/reject',
-            label: 'Reject',
-            icon: <FaTimesCircle className="w-5 h-5" />,
-          },
-        ],
+        // subLinks: [
+        //   {
+        //     to: '/dashboard/leave-management/leave-approval/done',
+        //     label: 'Done',
+        //     icon: <FaCheckCircle className="w-5 h-5" />,
+        //   },
+        //   {
+        //     to: '/dashboard/leave-management/leave-approval/reject',
+        //     label: 'Reject',
+        //     icon: <FaTimesCircle className="w-5 h-5" />,
+        //   },
+        // ],
       },
     ],
   },
@@ -282,11 +280,6 @@ export const modules: any = [
         to: '/dashboard/Events',
         label: 'Events',
         icon: <FaCalendarAlt className="w-5 h-5" />,
-      },
-      {
-        to: '/dashboard/quize',
-        label: 'Quiz',
-        icon: <FaQuestionCircle className="w-5 h-5" />,
       },
     ],
   },
