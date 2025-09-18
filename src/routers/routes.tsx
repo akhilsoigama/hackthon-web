@@ -4,7 +4,7 @@ import Dashboard from '../section/Navbaar';
 import Progress from '../section/Progress';
 // import Assignments from '../section/Assignment';
 import Calendar from '../section/Calendar';
-import Messages from '../section/Message';
+import ChatBot from '../section/ChatBot';
 import Settings from '../section/Settings';
 import Overview from '../section/overview';
 
@@ -30,6 +30,14 @@ import LessionUploadCreate from '../section/Student-upload/Lession-upload/lessio
 import LessonUploadList from '../section/Student-upload/Lession-upload/lession-upload-list';
 import Quiz from '../section/quiz';
 
+// Institute management
+import FacultyCreate from '../section/Institute-management/faculty/faculty-create';
+import FacultyList from '../section/Institute-management/faculty/faculty-list';
+import StudentCreate from '../section/Institute-management/students/student-create';
+import StudentList from '../section/Institute-management/students/student-list';
+import InstituteSurveyCreate from '../section/Institute-management/institure-serveys/servey-create';
+import InstituteSurveyList from '../section/Institute-management/institure-serveys/servey-list';
+
 
 export default function Routers() {
   return (
@@ -49,7 +57,7 @@ export default function Routers() {
           <Route path="progress" element={<Progress />} />
           <Route path="events" element={<Calendar />} />
           <Route path="quize" element={<Quiz />} />
-          <Route path="messages" element={<Messages />} />
+          {/* <Route path="messages" element={<Messages />} /> */}
           <Route path="settings" element={<Settings />} />
 
           {/* Nabha Management Routes */}
@@ -61,12 +69,12 @@ export default function Routers() {
           <Route path="rolePermission/list" element={<RolePermissionList />} />
 
           {/* Institute Management Routes */}
-          {/* <Route path="institute-management/faculty/create" element={<FacultyCreate />} />
+           <Route path="institute-management/faculty/create" element={<FacultyCreate />} />
           <Route path="institute-management/faculty/list" element={<FacultyList />} />
           <Route path="institute-management/student/create" element={<StudentCreate />} />
           <Route path="institute-management/student/list" element={<StudentList />} />
           <Route path="institute-management/institute-servey/create" element={<InstituteSurveyCreate />} />
-          <Route path="institute-management/institute-servey/list" element={<InstituteSurveyList />} /> */}
+          <Route path="institute-management/institute-servey/list" element={<InstituteSurveyList />} />
 
           {/* Student Management Routes */}
           <Route path="student-management/assignment/create" element={<AssignmentCreate />} />
@@ -88,7 +96,7 @@ export default function Routers() {
           <Route path="student-upload/lession-upload/list" element={<LessonUploadList />} />
 
           {/* Communication Routes */}
-          {/* <Route path="chatbot" element={<Chatbot />} /> */}
+          <Route path="chatbot" element={<ChatBot />} />
 
           {/* Default route */}
           <Route index element={<Overview />} />
