@@ -14,8 +14,6 @@ import {
   FaQuestionCircle,
   FaSignOutAlt,
   FaUpload,
-  FaCheckCircle,
-  FaTimesCircle
 } from 'react-icons/fa';
 
 export const modules: any = [
