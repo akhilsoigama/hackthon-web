@@ -22,6 +22,13 @@ import LessonList from '../section/Student-management/Lession-master/lession-lis
 import QuizCreate from '../section/Student-management/Quiz-master/quiz-create';
 import QuizList from '../section/Student-management/Quiz-master/quiz-list';
 import LeaveCreate from '../section/Leave-management/Leave-master/leave-create';
+import LeaveList from '../section/Leave-management/Leave-master/leave-list';
+import LeaveApprovalDone from '../section/Leave-management/Leave-Approval-master/leave-approval-done';
+import AssignmentUploadCreate from '../section/Student-upload/Assignment-upload/assignment-upload-create';
+import AssignmentUploadList from '../section/Student-upload/Assignment-upload/assignment-upload-list';
+import LessionUploadCreate from '../section/Student-upload/Lession-upload/lession-upload-create';
+import LessonUploadList from '../section/Student-upload/Lession-upload/lession-upload-list';
+import Quiz from '../section/quiz';
 
 // Institute management
 import FacultyCreate from '../section/Institute-management/faculty/faculty-create';
@@ -49,7 +56,8 @@ export default function Routers() {
           <Route path="overview" element={<Overview />} />
           <Route path="progress" element={<Progress />} />
           <Route path="events" element={<Calendar />} />
-          {/* <Route path="quize" element={<QuizList />} /> */}
+          <Route path="quize" element={<Quiz />} />
+          {/* <Route path="messages" element={<Messages />} /> */}
           <Route path="settings" element={<Settings />} />
 
           {/* Nabha Management Routes */}
@@ -78,15 +86,14 @@ export default function Routers() {
 
           {/* Leave Management Routes */}
           <Route path="leave-management/leave/create" element={<LeaveCreate />} />
-          {/* <Route path="leave-management/leave/list" element={<LeaveList />} />
-          <Route path="leave-management/leave-approval/done" element={<LeaveApprovalDone />} />
-          <Route path="leave-management/leave-approval/reject" element={<LeaveApprovalReject />} /> */}
+          <Route path="leave-management/leave/list" element={<LeaveList />} />
+          <Route path="leave-management/leave-approval" element={<LeaveApprovalDone />} />
 
           {/* Student Upload Routes */}
-          {/* <Route path="student-upload/assignment-upload/upload" element={<AssignmentUpload />} />
+          <Route path="student-upload/assignment-upload/upload" element={<AssignmentUploadCreate />} />
           <Route path="student-upload/assignment-upload/list" element={<AssignmentUploadList />} />
-          <Route path="student-upload/lession-upload/upload" element={<LessonUpload />} />
-          <Route path="student-upload/lession-upload/list" element={<LessonUploadList />} /> */}
+          <Route path="student-upload/lession-upload/upload" element={<LessionUploadCreate />} />
+          <Route path="student-upload/lession-upload/list" element={<LessonUploadList />} />
 
           {/* Communication Routes */}
           <Route path="chatbot" element={<ChatBot />} />

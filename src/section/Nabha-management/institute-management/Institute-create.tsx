@@ -74,7 +74,6 @@ const InstituteCreate = () => {
       [name]: value
     });
     
-    // Clear error when user types
     if (errors[name as keyof FormErrors]) {
       setErrors({
         ...errors,
@@ -283,6 +282,23 @@ const InstituteCreate = () => {
                   className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Area in square feet"
                 />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Permission <span className="text-red-500">*</span>
+                </label>
+                <select
+                  name="type"
+                  value={formData.type}
+                  onChange={handleChange}
+                  className={`w-full rounded-md border ${errors.type ? 'border-red-500' : 'border-gray-300'} px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                >
+                  <option value="">Select Type</option>
+                  <option value="school">Admin</option>
+                  <option value="college">staff</option>
+                  <option value="university">student</option>
+                </select>
+                {errors.type && <p className="mt-1 text-sm text-red-500">{errors.type}</p>}
               </div>
 
               {/* Contact Information */}

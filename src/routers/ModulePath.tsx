@@ -14,8 +14,6 @@ import {
   FaQuestionCircle,
   FaSignOutAlt,
   FaUpload,
-  FaCheckCircle,
-  FaTimesCircle
 } from 'react-icons/fa';
 
 export const modules: any = [
@@ -211,18 +209,18 @@ export const modules: any = [
         to: '/dashboard/leave-management/leave-approval',
         label: 'Leave Approval',
         icon: <FaClipboardCheck className="w-5 h-5" />,
-        subLinks: [
-          {
-            to: '/dashboard/leave-management/leave-approval/done',
-            label: 'Done',
-            icon: <FaCheckCircle className="w-5 h-5" />,
-          },
-          {
-            to: '/dashboard/leave-management/leave-approval/reject',
-            label: 'Reject',
-            icon: <FaTimesCircle className="w-5 h-5" />,
-          },
-        ],
+        // subLinks: [
+        //   {
+        //     to: '/dashboard/leave-management/leave-approval/done',
+        //     label: 'Done',
+        //     icon: <FaCheckCircle className="w-5 h-5" />,
+        //   },
+        //   {
+        //     to: '/dashboard/leave-management/leave-approval/reject',
+        //     label: 'Reject',
+        //     icon: <FaTimesCircle className="w-5 h-5" />,
+        //   },
+        // ],
       },
     ],
   },
