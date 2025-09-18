@@ -39,5 +39,4 @@ export default defineConfig({
     tailwindcss(),
   ],
 
-  base: '/dashboard/',
 })

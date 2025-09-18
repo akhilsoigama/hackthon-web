@@ -41,7 +41,7 @@ import InstituteSurveyList from '../section/Institute-management/institure-serve
 
 export default function Routers() {
   return (
-    <BrowserRouter>
+    <BrowserRouter >
       <Routes>
         <Route
           path="/dashboard"
