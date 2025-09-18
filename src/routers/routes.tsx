@@ -4,7 +4,7 @@ import Dashboard from '../section/Navbaar';
 import Progress from '../section/Progress';
 // import Assignments from '../section/Assignment';
 import Calendar from '../section/Calendar';
-import Messages from '../section/Message';
+import ChatBot from '../section/ChatBot';
 import Settings from '../section/Settings';
 import Overview from '../section/overview';
 
@@ -50,7 +50,6 @@ export default function Routers() {
           <Route path="progress" element={<Progress />} />
           <Route path="events" element={<Calendar />} />
           {/* <Route path="quize" element={<QuizList />} /> */}
-          <Route path="messages" element={<Messages />} />
           <Route path="settings" element={<Settings />} />
 
           {/* Nabha Management Routes */}
@@ -90,7 +89,7 @@ export default function Routers() {
           <Route path="student-upload/lession-upload/list" element={<LessonUploadList />} /> */}
 
           {/* Communication Routes */}
-          {/* <Route path="chatbot" element={<Chatbot />} /> */}
+          <Route path="chatbot" element={<ChatBot />} />
 
           {/* Default route */}
           <Route index element={<Overview />} />
