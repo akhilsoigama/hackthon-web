@@ -23,6 +23,14 @@ import QuizCreate from '../section/Student-management/Quiz-master/quiz-create';
 import QuizList from '../section/Student-management/Quiz-master/quiz-list';
 import LeaveCreate from '../section/Leave-management/Leave-master/leave-create';
 
+// Institute management
+import FacultyCreate from '../section/Institute-management/faculty/faculty-create';
+import FacultyList from '../section/Institute-management/faculty/faculty-list';
+import StudentCreate from '../section/Institute-management/students/student-create';
+import StudentList from '../section/Institute-management/students/student-list';
+import InstituteSurveyCreate from '../section/Institute-management/institure-serveys/servey-create';
+import InstituteSurveyList from '../section/Institute-management/institure-serveys/servey-list';
+
 
 export default function Routers() {
   return (
@@ -54,12 +62,12 @@ export default function Routers() {
           <Route path="rolePermission/list" element={<RolePermissionList />} />
 
           {/* Institute Management Routes */}
-          {/* <Route path="institute-management/faculty/create" element={<FacultyCreate />} />
+           <Route path="institute-management/faculty/create" element={<FacultyCreate />} />
           <Route path="institute-management/faculty/list" element={<FacultyList />} />
           <Route path="institute-management/student/create" element={<StudentCreate />} />
           <Route path="institute-management/student/list" element={<StudentList />} />
           <Route path="institute-management/institute-servey/create" element={<InstituteSurveyCreate />} />
-          <Route path="institute-management/institute-servey/list" element={<InstituteSurveyList />} /> */}
+          <Route path="institute-management/institute-servey/list" element={<InstituteSurveyList />} />
 
           {/* Student Management Routes */}
           <Route path="student-management/assignment/create" element={<AssignmentCreate />} />
