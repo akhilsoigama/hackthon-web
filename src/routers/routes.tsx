@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Sidebar from '../section/Sidebar';
-import Dashboard from '../section/Navbaar';
+
 import Progress from '../section/Progress';
 // import Assignments from '../section/Assignment';
 import Calendar from '../section/Calendar';
@@ -37,18 +36,29 @@ import StudentCreate from '../section/Institute-management/students/student-crea
 import StudentList from '../section/Institute-management/students/student-list';
 import InstituteSurveyCreate from '../section/Institute-management/institure-serveys/servey-create';
 import InstituteSurveyList from '../section/Institute-management/institure-serveys/servey-list';
+import { useState } from 'react';
+import Navbaar from '../section/Navbaar';
+import Sidebar from '../section/Sidebar';
 
 
 export default function Routers() {
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+
+const toggleMobileSidebar = () => {
+  setIsMobileSidebarOpen(prev => !prev);
+};
   return (
     <BrowserRouter >
       <Routes>
         <Route
           path="/dashboard"
           element={
-            <div className="flex min-h-screen w-full">
-              <Sidebar />
-              <Dashboard />
+             <div className="flex min-h-screen w-full">
+              <Sidebar
+                isMobileOpen={isMobileSidebarOpen}
+                toggleMobileSidebar={toggleMobileSidebar}
+              />
+              <Navbaar toggleMobileSidebar={toggleMobileSidebar} />
             </div>
           }
         >
@@ -69,7 +79,7 @@ export default function Routers() {
           <Route path="rolePermission/list" element={<RolePermissionList />} />
 
           {/* Institute Management Routes */}
-           <Route path="institute-management/faculty/create" element={<FacultyCreate />} />
+          <Route path="institute-management/faculty/create" element={<FacultyCreate />} />
           <Route path="institute-management/faculty/list" element={<FacultyList />} />
           <Route path="institute-management/student/create" element={<StudentCreate />} />
           <Route path="institute-management/student/list" element={<StudentList />} />

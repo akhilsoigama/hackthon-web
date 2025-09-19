@@ -1,6 +1,19 @@
-import { useState, useEffect, useRef} from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { NavLink} from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
+import {
+  FiBookOpen,
+  FiSearch,
+  FiX,
+  FiBell,
+  FiChevronDown,
+  FiUser,
+  FiSettings,
+  FiLogOut,
+  FiMenu,
+  FiWifiOff,
+  FiGlobe
+} from 'react-icons/fi';
 
 interface Notification {
   id: number;
@@ -9,13 +22,96 @@ interface Notification {
   read: boolean;
 }
 
-const Header = () => {
+interface HeaderProps {
+  toggleMobileSidebar: () => void;
+}
+
+interface UserProfile {
+  name: string;
+  email: string;
+  avatar: string;
+}
+
+interface Language {
+  code: string;
+  name: string;
+  nativeName: string;
+}
+
+const Header = ({ toggleMobileSidebar }: HeaderProps) => {
   const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [showNotificationPanel, setShowNotificationPanel] = useState<boolean>(false);
+  const [showLanguagePanel, setShowLanguagePanel] = useState<boolean>(false);
+  const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [currentLanguage, setCurrentLanguage] = useState<string>('en');
   const profileRef = useRef<HTMLDivElement>(null);
   const notificationRef = useRef<HTMLDivElement>(null);
+  const languageRef = useRef<HTMLDivElement>(null);
+
+  const languages: Language[] = [
+    { code: 'en', name: 'English', nativeName: 'English' },
+    { code: 'hi', name: 'Hindi', nativeName: 'हिंदी' },
+    { code: 'pa', name: 'Punjabi', nativeName: 'ਪੰਜਾਬੀ' }
+  ];
+
+  useEffect(() => {
+    const loadData = async () => {
+      if (isOnline) {
+        try {
+          // Simulated API fetch (replace with your API endpoint)
+          const fetchedProfile: UserProfile = {
+            name: 'Alex Johnson',
+            email: 'alex.j@example.com',
+            avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80',
+          };
+          const fetchedNotifications: Notification[] = [
+            { id: 1, text: 'New mathematics lesson available', time: '10 mins ago', read: false },
+            { id: 2, text: 'Your assignment was graded', time: '2 hours ago', read: false },
+            { id: 3, text: 'Live session starting soon', time: '5 hours ago', read: true },
+          ];
+          setUserProfile(fetchedProfile);
+          setNotifications(fetchedNotifications);
+          localStorage.setItem('userProfile', JSON.stringify(fetchedProfile));
+          localStorage.setItem('notifications', JSON.stringify(fetchedNotifications));
+        } catch (error) {
+          console.error('Failed to fetch data:', error);
+          const cachedProfile = localStorage.getItem('userProfile');
+          const cachedNotifications = localStorage.getItem('notifications');
+          if (cachedProfile) {
+            setUserProfile(JSON.parse(cachedProfile));
+          }
+          if (cachedNotifications) {
+            setNotifications(JSON.parse(cachedNotifications));
+          }
+        }
+      } else {
+        const cachedProfile = localStorage.getItem('userProfile');
+        const cachedNotifications = localStorage.getItem('notifications');
+        if (cachedProfile) {
+          setUserProfile(JSON.parse(cachedProfile));
+        }
+        if (cachedNotifications) {
+          setNotifications(JSON.parse(cachedNotifications));
+        }
+      }
+    };
+    loadData();
+  }, [isOnline]);
+
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -25,6 +121,9 @@ const Header = () => {
       if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
         setShowNotificationPanel(false);
       }
+      if (languageRef.current && !languageRef.current.contains(event.target as Node)) {
+        setShowLanguagePanel(false);
+      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
@@ -33,17 +132,19 @@ const Header = () => {
   const toggleProfile = (): void => setIsProfileOpen(!isProfileOpen);
   const toggleSearch = (): void => setIsSearchOpen(!isSearchOpen);
   const toggleNotificationPanel = (): void => setShowNotificationPanel(!showNotificationPanel);
+  const toggleLanguagePanel = (): void => setShowLanguagePanel(!showLanguagePanel);
 
-  const notifications: Notification[] = [
-    { id: 1, text: 'New mathematics lesson available', time: '10 mins ago', read: false },
-    { id: 2, text: 'Your assignment was graded', time: '2 hours ago', read: false },
-    { id: 3, text: 'Live session starting soon', time: '5 hours ago', read: true },
-  ];
+  const handleLanguageChange = (code: string): void => {
+    setCurrentLanguage(code);
+    setShowLanguagePanel(false);
+    // Here you would typically update the application language
+  };
 
   const unreadCount: number = notifications.filter(n => !n.read).length;
+  const currentLanguageObj = languages.find(lang => lang.code === currentLanguage) || languages[0];
 
   return (
-    <header className="bg-gradient-to-r from-blue-700 to-indigo-800 text-white p-4 sticky top-0 z-50 shadow-xl">
+    <header className="bg-white text-gray-800 p-2 sm:p-4 sticky top-0 z-30 shadow-md border-b border-gray-200">
       <div className="container mx-auto flex justify-between items-center">
         <motion.div
           className="flex items-center"
@@ -51,21 +152,27 @@ const Header = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="bg-white p-2 rounded-lg mr-2 sm:mr-3 shadow-md">
-            <svg className="w-6 h-6 sm:w-8 sm:h-8 text-blue-700" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 14L21 9L12 4L3 9L12 14Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M12 14L18.159 10.578C18.7016 11.946 19 13.441 19 15C19 18.866 15.866 22 12 22C8.134 22 5 18.866 5 15C5 13.441 5.298 11.946 5.841 10.578" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+          <motion.button
+            onClick={toggleMobileSidebar}
+            className="p-1 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors shadow-sm border border-gray-300 lg:hidden"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <FiMenu className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-gray-600" />
+          </motion.button>
+          <div className="p-1 rounded-lg mr-1 sm:mr-3 shadow-sm border border-gray-200">
+            <FiBookOpen className="w-4 h-4 sm:w-6 sm:h-6 md:w-7 md:h-7 text-blue-600" />
           </div>
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-300">
-              Digital Nabha Shiksha
+            <h1 className="text-base sm:text-xl md:text-2xl font-bold text-blue-700">
+              EduHub
             </h1>
-            <p className="text-xs text-blue-200 hidden sm:block">Empowering Education</p>
+            <p className="text-[10px] text-gray-500 hidden xs:block">Empowering Education</p>
           </div>
         </motion.div>
 
-        <div className="flex items-center space-x-4 sm:space-x-6">
+        <div className="flex items-center space-x-1 sm:space-x-3 md:space-x-4">
+          {/* Search Button */}
           <motion.div
             className="relative"
             initial={{ opacity: 0, scale: 0.8 }}
@@ -74,63 +181,103 @@ const Header = () => {
           >
             {isSearchOpen ? (
               <motion.div
-                className="flex items-center bg-white rounded-full shadow-lg pl-3 pr-2 py-1 w-40 sm:w-64 md:w-80"
-                initial={{ width: 40 }}
+                className="flex items-center bg-gray-100 rounded-full shadow-sm pl-2 pr-1.5 py-1 w-28 xs:w-40 sm:w-48 md:w-64 lg:w-80 border border-gray-300"
+                initial={{ width: 32 }}
                 animate={{ width: '100%' }}
                 transition={{ duration: 0.3 }}
               >
                 <input
                   type="text"
-                  placeholder="Search lessons..."
-                  className="w-full bg-transparent border-none text-gray-800 focus:outline-none focus:ring-0 text-sm"
+                  placeholder={isOnline ? 'Search lessons...' : 'Search cached lessons...'}
+                  className="w-full bg-transparent border-none text-gray-800 focus:outline-none focus:ring-0 text-xs sm:text-sm"
                   value={searchQuery}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
                   autoFocus
                 />
                 <button
                   onClick={toggleSearch}
-                  className="ml-2 p-1 bg-blue-600 rounded-full hover:bg-blue-700 transition-colors"
+                  className="ml-1 p-1 bg-blue-500 rounded-full hover:bg-blue-600 transition-colors"
                 >
-                  <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
+                  <FiX className="w-2.5 h-2.5 sm:w-4 sm:h-4 text-white" />
                 </button>
               </motion.div>
             ) : (
               <motion.button
                 onClick={toggleSearch}
-                className="p-2 rounded-full bg-blue-800 hover:bg-blue-900 transition-colors shadow-md"
-                whileHover={{ scale: 1.1 }}
+                className="p-1 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors shadow-sm border border-gray-300"
+                whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
+                <FiSearch className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-gray-600" />
               </motion.button>
             )}
           </motion.div>
 
+          {/* Language Selector */}
+          <motion.div
+            className="relative"
+            ref={languageRef}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3, delay: 0.1 }}
+          >
+            <motion.button
+              onClick={toggleLanguagePanel}
+              className="p-1 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors shadow-sm border border-gray-300 flex items-center"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <FiGlobe className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-gray-600" />
+            </motion.button>
+            <AnimatePresence>
+              {showLanguagePanel && (
+                <motion.div
+                  className="absolute right-0 mt-2 w-36 sm:w-40 bg-white text-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-200 z-40"
+                  initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <div className="p-2 sm:p-3 border-b border-gray-200 bg-gray-50">
+                    <h3 className="font-semibold text-xs sm:text-sm">Select Language</h3>
+                  </div>
+                  <div className="py-1">
+                    {languages.map((language) => (
+                      <button
+                        key={language.code}
+                        className={`w-full text-left px-3 py-2 text-xs sm:text-sm hover:bg-gray-50 transition-colors flex items-center ${currentLanguage === language.code ? 'bg-blue-50 text-blue-600' : ''}`}
+                        onClick={() => handleLanguageChange(language.code)}
+                      >
+                        <span className="mr-2">{language.nativeName}</span>
+                        <span className="text-[10px] sm:text-xs text-gray-500">({language.name})</span>
+                      </button>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+
+          {/* Notifications */}
           <motion.div
             className="relative"
             ref={notificationRef}
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.3, delay: 0.2 }}
           >
             <motion.button
               onClick={toggleNotificationPanel}
-              className="p-2 rounded-full relative bg-blue-800 hover:bg-blue-900 transition-colors shadow-md"
-              whileHover={{ scale: 1.1 }}
+              className="p-1 rounded-full relative bg-gray-100 hover:bg-gray-200 transition-colors shadow-sm border border-gray-300"
+              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 00-5-5.917V5a2 2 0 10-4 0v.083A6 6 0 004 11v3.159c0 .538-.214 1.053-.595 1.436L2 17h5m4 0v1a3 3 0 11-6 0v-1m6 0H9" />
-              </svg>
+              <FiBell className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-gray-600" />
               {unreadCount > 0 && (
                 <motion.span
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  className="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 sm:w-5 sm:h-5 bg-red-500 text-xs rounded-full"
+                  className="absolute -top-1 -right-1 flex items-center justify-center w-3 h-3 sm:w-4 sm:h-4 bg-red-500 text-white text-[9px] xs:text-xs rounded-full"
                 >
                   {unreadCount}
                 </motion.span>
@@ -139,29 +286,45 @@ const Header = () => {
             <AnimatePresence>
               {showNotificationPanel && (
                 <motion.div
-                  className="absolute right-0 mt-3 w-64 sm:w-80 bg-white text-gray-800 rounded-xl shadow-2xl overflow-hidden"
+                  className="absolute right-0 mt-2 w-56 xs:w-64 sm:w-72 md:w-80 bg-white text-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-200 z-40"
                   initial={{ opacity: 0, y: -10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -10, scale: 0.95 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
-                    <h3 className="font-semibold">Notifications</h3>
-                    <p className="text-xs text-blue-200">{unreadCount} unread</p>
+                  <div className="p-2 sm:p-4 border-b border-gray-200 bg-gray-50">
+                    <h3 className="font-semibold text-xs sm:text-base">Notifications</h3>
+                    <p className="text-[10px] sm:text-xs text-gray-500">{unreadCount} unread</p>
                   </div>
-                  <div className="max-h-64 sm:max-h-96 overflow-y-auto">
-                    {notifications.map((notification) => (
-                      <div
-                        key={notification.id}
-                        className={`p-3 sm:p-4 border-b border-gray-100 hover:bg-blue-50 transition-colors ${!notification.read ? 'bg-blue-50' : ''}`}
-                      >
-                        <p className="text-xs sm:text-sm">{notification.text}</p>
-                        <p className="text-xs text-gray-500 mt-1">{notification.time}</p>
+                  <div className="max-h-40 sm:max-h-64 md:max-h-80 overflow-y-auto">
+                    {notifications.length > 0 ? (
+                      notifications.map((notification) => (
+                        <div
+                          key={notification.id}
+                          className={`p-2 sm:p-3 md:p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors ${!notification.read ? 'bg-blue-50' : ''}`}
+                        >
+                          <p className="text-xs sm:text-sm">{notification.text}</p>
+                          <p className="text-[10px] sm:text-xs text-gray-500 mt-1">{notification.time}</p>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="p-2 sm:p-3 md:p-4 text-center text-xs sm:text-sm text-gray-500">
+                        No notifications available
                       </div>
-                    ))}
+                    )}
                   </div>
-                  <div className="p-3 bg-gray-50 text-center">
-                    <button className="text-xs sm:text-sm text-blue-600 hover:text-blue-800 font-medium">
+                  <div className="p-2 sm:p-3 bg-gray-50 text-center">
+                    <button
+                      className="text-xs sm:text-sm text-blue-600 hover:text-blue-800 font-medium"
+                      disabled={!isOnline}
+                      onClick={() => {
+                        if (isOnline) {
+                          const updatedNotifications = notifications.map(n => ({ ...n, read: true }));
+                          setNotifications(updatedNotifications);
+                          localStorage.setItem('notifications', JSON.stringify(updatedNotifications));
+                        }
+                      }}
+                    >
                       Mark all as read
                     </button>
                   </div>
@@ -170,82 +333,90 @@ const Header = () => {
             </AnimatePresence>
           </motion.div>
 
+          {/* User Profile */}
           <motion.div
             className="relative"
             ref={profileRef}
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.3, delay: 0.3 }}
           >
             <motion.button
               onClick={toggleProfile}
-              className="flex items-center space-x-2 sm:space-x-3 focus:outline-none p-2 rounded-xl hover:bg-blue-800 transition-colors"
-              whileHover={{ scale: 1.05 }}
+              className="flex items-center space-x-1 sm:space-x-2 md:space-x-3 focus:outline-none p-1 rounded-lg md:rounded-xl hover:bg-gray-100 transition-colors border border-gray-300"
+              whileHover={{ scale: 1.03 }}
             >
               <div className="relative">
                 <img
-                  src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80"
+                  src={userProfile?.avatar || 'https://via.placeholder.com/100'}
                   alt="User"
-                  className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-white shadow-md"
+                  className="w-6 h-6 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full border-2 border-white shadow-sm"
                 />
-                <span className="absolute bottom-0 right-0 w-2 h-2 sm:w-3 sm:h-3 bg-green-500 rounded-full border-2 border-white"></span>
+                <span
+                  className={`absolute bottom-0 right-0 w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full border border-white ${
+                    isOnline ? 'bg-green-500' : 'bg-gray-400'
+                  }`}
+                ></span>
               </div>
               <div className="text-left hidden sm:block">
-                <p className="font-medium text-sm sm:text-base">Alex Johnson</p>
-                <p className="text-xs text-blue-200">Student</p>
+                <p className="font-medium text-xs sm:text-sm md:text-base">
+                  {userProfile?.name || 'Guest'}
+                </p>
+                <p className="text-[10px] sm:text-xs text-gray-500">{isOnline ? 'Super Admin' : 'Offline'}</p>
               </div>
               <motion.div
                 animate={{ rotate: isProfileOpen ? 180 : 0 }}
                 transition={{ duration: 0.2 }}
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                </svg>
+                <FiChevronDown className="w-2.5 h-2.5 sm:w-4 sm:h-4 text-gray-600" />
               </motion.div>
             </motion.button>
             <AnimatePresence>
               {isProfileOpen && (
                 <motion.div
-                  className="absolute right-0 mt-3 w-48 sm:w-56 bg-white text-gray-800 rounded-xl shadow-2xl overflow-hidden py-2"
+                  className="absolute right-0 mt-2 w-40 xs:w-48 sm:w-52 md:w-56 bg-white text-gray-800 rounded-xl shadow-lg overflow-hidden py-1.5 sm:py-2 border border-gray-200 z-40"
                   initial={{ opacity: 0, y: -10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -10, scale: 0.95 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <div className="px-4 py-3 border-b border-gray-100">
-                    <p className="font-semibold text-sm sm:text-base">Alex Johnson</p>
-                    <p className="text-xs text-gray-500">alex.j@example.com</p>
+                  <div className="px-3 py-2 sm:px-4 sm:py-3 border-b border-gray-100">
+                    <p className="font-semibold text-xs sm:text-sm md:text-base">
+                      {userProfile?.name || 'Guest'}
+                    </p>
+                    <p className="text-[10px] sm:text-xs text-gray-500">
+                      {userProfile?.email || 'No email available'}
+                    </p>
+                    {!isOnline && (
+                      <p className="text-[10px] sm:text-xs text-red-500 flex items-center">
+                        <FiWifiOff className="w-3 h-3 mr-1" />
+                        Offline
+                      </p>
+                    )}
                   </div>
                   <NavLink
                     to="/profile"
-                    className="flex items-center px-4 py-2 sm:py-3 hover:bg-blue-50 transition-colors text-sm sm:text-base"
+                    className="flex items-center px-3 py-1.5 sm:px-4 sm:py-2 hover:bg-gray-50 transition-colors text-xs sm:text-sm md:text-base"
                     onClick={toggleProfile}
                   >
-                    <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
+                    <FiUser className="w-3 h-3 sm:w-4 sm:h-4 mr-2 text-gray-500" />
                     Profile
                   </NavLink>
                   <NavLink
                     to="/settings"
-                    className="flex items-center px-4 py-2 sm:py-3 hover:bg-blue-50 transition-colors text-sm sm:text-base"
+                    className="flex items-center px-3 py-1.5 sm:px-4 sm:py-2 hover:bg-gray-50 transition-colors text-xs sm:text-sm md:text-base"
                     onClick={toggleProfile}
                   >
-                    <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
+                    <FiSettings className="w-3 h-3 sm:w-4 sm:h-4 mr-2 text-gray-500" />
                     Settings
                   </NavLink>
-                  <div className="border-t border-gray-100 my-2"></div>
+                  <div className="border-t border-gray-100 my-1 sm:my-2"></div>
                   <NavLink
                     to="/logout"
-                    className="flex items-center px-4 py-2 sm:py-3 hover:bg-red-50 text-red-600 transition-colors text-sm sm:text-base"
+                    className="flex items-center px-3 py-1.5 sm:px-4 sm:py-2 hover:bg-red-50 text-red-600 transition-colors text-xs sm:text-sm md:text-base"
                     onClick={toggleProfile}
                   >
-                    <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                    </svg>
+                    <FiLogOut className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
                     Logout
                   </NavLink>
                 </motion.div>
@@ -257,4 +428,5 @@ const Header = () => {
     </header>
   );
 };
+
 export default Header;
