@@ -141,7 +141,6 @@ const Header = ({ toggleMobileSidebar }: HeaderProps) => {
   };
 
   const unreadCount: number = notifications.filter(n => !n.read).length;
-  const currentLanguageObj = languages.find(lang => lang.code === currentLanguage) || languages[0];
 
   return (
     <header className="bg-white text-gray-800 p-2 sm:p-4 sticky top-0 z-30 shadow-md border-b border-gray-200">
