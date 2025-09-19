@@ -18,6 +18,7 @@ export default defineConfig({
         short_name: 'Nabha Learn',
         description: 'Learning Management System',
         theme_color: '#ffffff',
+        start_url: '/dashboard', // Added to align PWA with redirect
         icons: [
           {
             src: '/android-chrome-192x192.png',
@@ -41,14 +42,14 @@ export default defineConfig({
         cleanupOutdatedCaches: true,
         clientsClaim: true,
         navigateFallback: '/index.html',
-        navigateFallbackAllowlist: [/^\/(?!dashboard).*$/], // Exclude /dashboard
+        navigateFallbackAllowlist: [/^\/(?!api).*$/], // Allow all routes except /api
         runtimeCaching: [
           {
             urlPattern: /^\/$/,
             handler: 'NetworkFirst',
             options: {
               cacheName: 'nabha-learn-root',
-              cacheableResponse: { statuses: [0, 200, 301] }, // Cache redirects
+              cacheableResponse: { statuses: [0, 200, 301] }, // Allow redirects
             },
           },
           {
@@ -75,7 +76,7 @@ export default defineConfig({
       devOptions: {
         enabled: true,
         navigateFallback: '/index.html',
-        navigateFallbackAllowlist: [/^\/(?!dashboard).*$/],
+        navigateFallbackAllowlist: [/^\/(?!api).*$/], // Adjusted for testing
         suppressWarnings: true,
         type: 'module',
       },
