@@ -17,9 +17,9 @@ export default defineConfig({
       },
 
       manifest: {
-        name: 'EduHub',
-        short_name: 'Edu',
-        description: 'Education management system',
+        name: 'lms-web',
+        short_name: 'lms',
+        description: 'learning management system',
         theme_color: '#ffffff',
       },
 
@@ -27,7 +27,6 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,svg,png,ico}'],
         cleanupOutdatedCaches: true,
         clientsClaim: true,
-        navigateFallback: '/index.html',
       },
 
       devOptions: {
