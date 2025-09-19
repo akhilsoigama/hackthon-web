@@ -146,7 +146,7 @@ const Header = ({ toggleMobileSidebar }: HeaderProps) => {
     <header className="bg-white text-gray-800 p-2 sm:p-4 sticky top-0 z-30 shadow-md border-b border-gray-200">
       <div className="container mx-auto flex justify-between items-center">
         <motion.div
-          className="flex items-center"
+          className="flex items-center gap-2"
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5 }}

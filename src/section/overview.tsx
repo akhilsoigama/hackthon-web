@@ -73,6 +73,7 @@ const Overview = () => {
           <motion.button 
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
+            disabled
             className="mt-4 sm:mt-0 px-4 py-2 bg-blue-600 text-white rounded-lg flex items-center shadow-md hover:bg-blue-700 transition-colors"
           >
             <FiTrendingUp className="mr-2" />
