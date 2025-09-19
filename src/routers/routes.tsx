@@ -112,8 +112,6 @@ export default function Routers() {
           <Route path="student-upload/assignment-upload/list" element={<AssignmentUploadList />} />
           <Route path="student-upload/lession-upload/upload" element={<LessionUploadCreate />} />
           <Route path="student-upload/lession-upload/list" element={<LessonUploadList />} />
-
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
         </Route>
       </Routes>
     </BrowserRouter>
