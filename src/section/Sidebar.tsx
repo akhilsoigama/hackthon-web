@@ -63,13 +63,13 @@ const Sidebar = ({ isMobileOpen, toggleMobileSidebar }: SidebarProps) => {
     <>
       {isMobile && isMobileOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-50 lg:hidden"
+          className="fixed inset-0 backdrop-blur-md bg-gray-100/30 bg-opacity-40 z-50 lg:hidden"
           onClick={toggleMobileSidebar}
         />
       )}
 
       <motion.aside
-        className={`h-screen fixed lg:sticky top-0 flex flex-col transition-all duration-300 ease-in-out overflow-y-auto shadow-lg bg-white z-50
+        className={`h-screen fixed lg:sticky backdrop-blur-md top-0 flex flex-col transition-all duration-300 ease-in-out overflow-y-auto scrollbar-hide ${!isMobile?'overflow-hidden':'overflow-x-auto'} shadow-lg z-50
           ${isMobile ? (isMobileOpen ? 'translate-x-0' : '-translate-x-full') : 'translate-x-0'}`}
         style={{ 
           width: isSidebarExpanded ? (window.innerWidth >= 1024 ? '18rem' : '16rem') : 
@@ -156,7 +156,7 @@ const Sidebar = ({ isMobileOpen, toggleMobileSidebar }: SidebarProps) => {
                         expandedLink === link.to ? 'bg-blue-100 text-blue-900' : 'hover:bg-gray-100 text-gray-700'
                       }`}
                     >
-                      <div className="flex-shrink-0">{link.icon}</div>
+                      <div className="flex-shrink-0 ">{link.icon}</div>
                       <AnimatePresence>
                         {isSidebarExpanded && (
                           <motion.span
