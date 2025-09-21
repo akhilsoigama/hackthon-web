@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { motion, } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   FaSearch,
   FaFilter,
@@ -17,10 +17,10 @@ import {
   FaCheckCircle,
   FaExclamationCircle,
   FaTimesCircle,
-  FaPlus
+  FaPlus,
+  FaUserGraduate
 } from 'react-icons/fa';
 
-// Define the Assignment interface
 interface Assignment {
   id: string;
   title: string;
@@ -34,10 +34,11 @@ interface Assignment {
   totalStudents: number;
   createdAt: string;
   description: string;
+  image: string;
 }
 
 const AssignmentList = () => {
-  // Sample assignment data
+  // Sample assignment data with images
   const [assignments, setAssignments] = useState<Assignment[]>([
     {
       id: '1',
@@ -51,7 +52,8 @@ const AssignmentList = () => {
       submissions: 24,
       totalStudents: 30,
       createdAt: '2023-11-20',
-      description: 'Solve the quadratic equations using the appropriate method.'
+      description: 'Solve the quadratic equations using the appropriate method.',
+      image: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80'
     },
     {
       id: '2',
@@ -65,7 +67,8 @@ const AssignmentList = () => {
       submissions: 18,
       totalStudents: 30,
       createdAt: '2023-11-25',
-      description: 'Create a model of the solar system with accurate planet sizes and distances.'
+      description: 'Create a model of the solar system with accurate planet sizes and distances.',
+      image: 'https://images.unsplash.com/photo-1446776877081-d282a0f896e2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80'
     },
     {
       id: '3',
@@ -79,7 +82,8 @@ const AssignmentList = () => {
       submissions: 0,
       totalStudents: 30,
       createdAt: '2023-11-28',
-      description: 'Analyze the themes in Shakespeare\'s Macbeth.'
+      description: 'Analyze the themes in Shakespeare\'s Macbeth.',
+      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80'
     },
     {
       id: '4',
@@ -93,7 +97,8 @@ const AssignmentList = () => {
       submissions: 28,
       totalStudents: 30,
       createdAt: '2023-11-15',
-      description: 'Multiple choice questions about key events in World War II.'
+      description: 'Multiple choice questions about key events in World War II.',
+      image: 'https://www.grunge.com/img/gallery/why-world-war-ii-is-discussed-more-than-world-war-i/intro-1690545789.jpg'
     },
     {
       id: '5',
@@ -107,7 +112,8 @@ const AssignmentList = () => {
       submissions: 15,
       totalStudents: 25,
       createdAt: '2023-11-22',
-      description: 'Create a perspective drawing of a cityscape.'
+      description: 'Create a perspective drawing of a cityscape.',
+      image: 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80'
     }
   ]);
 
@@ -116,11 +122,12 @@ const AssignmentList = () => {
   const [subjectFilter, setSubjectFilter] = useState<string>('all');
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const [sortConfig, setSortConfig] = useState<{ key: keyof Assignment; direction: 'ascending' | 'descending' } | null>(null);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [viewAssignment, setViewAssignment] = useState<Assignment | null>(null);
 
   // Available filters
   const subjects = ['Mathematics', 'Science', 'English', 'History', 'Art'];
   const assignmentTypes = ['Homework', 'Project', 'Quiz', 'Exam', 'Essay', 'Presentation'];
-//   const statusOptions = ['draft', 'published', 'completed'];
 
   // Handle sorting
   const handleSort = (key: keyof Assignment) => {
@@ -208,18 +215,49 @@ const AssignmentList = () => {
     return <FaSortDown className="ml-1" />;
   };
 
+  // View assignment details
+  const handleViewAssignment = (assignment: Assignment) => {
+    setViewAssignment(assignment);
+  };
+
+  // Close view modal
+  const handleCloseView = () => {
+    setViewAssignment(null);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-6 md:mb-8">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 flex items-center">
-            <FaChalkboardTeacher className="mr-3 text-indigo-600" />
-            Assignments
-          </h1>
-          <p className="text-gray-600 mt-1 md:mt-2 text-sm md:text-base">
-            Manage and track all assignments in one place
-          </p>
+        <div className="mb-6 md:mb-8 flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-800 flex items-center">
+              <FaChalkboardTeacher className="mr-3 text-indigo-600" />
+              Assignments
+            </h1>
+            <p className="text-gray-600 mt-1 md:mt-2 text-sm md:text-base">
+              Manage and track all assignments in one place
+            </p>
+          </div>
+          
+          <div className="flex items-center space-x-2">
+            <button 
+              className={`p-2 rounded-md ${viewMode === 'grid' ? 'bg-indigo-100 text-indigo-600' : 'text-gray-500'}`}
+              onClick={() => setViewMode('grid')}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+              </svg>
+            </button>
+            <button 
+              className={`p-2 rounded-md ${viewMode === 'list' ? 'bg-indigo-100 text-indigo-600' : 'text-gray-500'}`}
+              onClick={() => setViewMode('list')}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+              </svg>
+            </button>
+          </div>
         </div>
 
         {/* Filters and Search */}
@@ -227,7 +265,7 @@ const AssignmentList = () => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
-          className="bg-white rounded-lg shadow-md p-4 md:p-6 mb-6"
+          className="bg-white rounded-xl shadow-sm p-4 md:p-6 mb-6 border border-gray-100"
         >
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="relative flex-grow">
@@ -239,7 +277,7 @@ const AssignmentList = () => {
                 placeholder="Search assignments..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 border border-gray-300 rounded-md w-full focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                className="pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg w-full focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition-colors"
               />
             </div>
 
@@ -249,7 +287,7 @@ const AssignmentList = () => {
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                  className="border border-gray-200 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition-colors"
                 >
                   <option value="all">All Statuses</option>
                   <option value="draft">Draft</option>
@@ -261,7 +299,7 @@ const AssignmentList = () => {
               <select
                 value={subjectFilter}
                 onChange={(e) => setSubjectFilter(e.target.value)}
-                className="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                className="border border-gray-200 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition-colors"
               >
                 <option value="all">All Subjects</option>
                 {subjects.map(subject => (
@@ -272,7 +310,7 @@ const AssignmentList = () => {
               <select
                 value={typeFilter}
                 onChange={(e) => setTypeFilter(e.target.value)}
-                className="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                className="border border-gray-200 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition-colors"
               >
                 <option value="all">All Types</option>
                 {assignmentTypes.map(type => (
@@ -280,7 +318,7 @@ const AssignmentList = () => {
                 ))}
               </select>
 
-              <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md flex items-center">
+              <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg flex items-center transition-colors shadow-sm hover:shadow-md">
                 <FaPlus className="mr-2" />
                 New Assignment
               </button>
@@ -295,7 +333,7 @@ const AssignmentList = () => {
           transition={{ duration: 0.3, delay: 0.1 }}
           className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6"
         >
-          <div className="bg-white rounded-lg shadow-md p-4 flex items-center">
+          <div className="bg-white rounded-xl shadow-sm p-4 flex items-center border border-gray-100">
             <div className="rounded-full bg-indigo-100 p-3 mr-4">
               <FaChalkboardTeacher className="text-indigo-600 text-xl" />
             </div>
@@ -305,7 +343,7 @@ const AssignmentList = () => {
             </div>
           </div>
           
-          <div className="bg-white rounded-lg shadow-md p-4 flex items-center">
+          <div className="bg-white rounded-xl shadow-sm p-4 flex items-center border border-gray-100">
             <div className="rounded-full bg-green-100 p-3 mr-4">
               <FaCheckCircle className="text-green-600 text-xl" />
             </div>
@@ -315,7 +353,7 @@ const AssignmentList = () => {
             </div>
           </div>
           
-          <div className="bg-white rounded-lg shadow-md p-4 flex items-center">
+          <div className="bg-white rounded-xl shadow-sm p-4 flex items-center border border-gray-100">
             <div className="rounded-full bg-yellow-100 p-3 mr-4">
               <FaExclamationCircle className="text-yellow-600 text-xl" />
             </div>
@@ -325,7 +363,7 @@ const AssignmentList = () => {
             </div>
           </div>
           
-          <div className="bg-white rounded-lg shadow-md p-4 flex items-center">
+          <div className="bg-white rounded-xl shadow-sm p-4 flex items-center border border-gray-100">
             <div className="rounded-full bg-blue-100 p-3 mr-4">
               <FaClock className="text-blue-600 text-xl" />
             </div>
@@ -336,146 +374,382 @@ const AssignmentList = () => {
           </div>
         </motion.div>
 
-        {/* Assignments List */}
-        <motion.div 
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.2 }}
-          className="bg-white rounded-lg shadow-md overflow-hidden"
-        >
-          {/* Table Header */}
-          <div className="hidden md:grid md:grid-cols-12 gap-4 p-4 border-b border-gray-200 font-semibold text-gray-700 bg-gray-50">
-            <div 
-              className="col-span-4 flex items-center cursor-pointer"
-              onClick={() => handleSort('title')}
-            >
-              Assignment {renderSortIcon('title')}
-            </div>
-            <div 
-              className="col-span-2 flex items-center cursor-pointer"
-              onClick={() => handleSort('subject')}
-            >
-              Subject {renderSortIcon('subject')}
-            </div>
-            <div 
-              className="col-span-2 flex items-center cursor-pointer"
-              onClick={() => handleSort('dueDate')}
-            >
-              Due Date {renderSortIcon('dueDate')}
-            </div>
-            <div 
-              className="col-span-2 flex items-center cursor-pointer"
-              onClick={() => handleSort('status')}
-            >
-              Status {renderSortIcon('status')}
-            </div>
-            <div className="col-span-2 text-center">
-              Actions
-            </div>
-          </div>
-
-          {/* Assignment Items */}
-          {filteredAssignments.length === 0 ? (
-            <div className="p-8 text-center text-gray-500">
-              No assignments found. Try adjusting your search or filters.
-            </div>
-          ) : (
-            filteredAssignments.map((assignment) => {
-              const statusInfo = getStatusInfo(assignment.status);
-              const isAssignmentOverdue = isOverdue(assignment.dueDate) && assignment.status !== 'completed';
-              
-              return (
-                <div key={assignment.id} className="border-b border-gray-100 last:border-b-0 hover:bg-gray-50 transition-colors duration-200">
-                  <div className="grid grid-cols-1 md:grid-cols-12 gap-4 p-4">
-                    <div className="md:col-span-4">
-                      <div className="font-medium text-gray-900">{assignment.title}</div>
-                      <div className="text-sm text-gray-500 mt-1 line-clamp-2">{assignment.description}</div>
-                      <div className="flex items-center text-sm text-gray-500 mt-1">
-                        <FaGraduationCap className="mr-1" />
-                        <span>{assignment.assignmentType}</span>
-                        <span className="mx-2">•</span>
-                        <span>{assignment.points} points</span>
-                      </div>
-                    </div>
-                    
-                    <div className="md:col-span-2 flex items-center">
-                      <span className="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded">
-                        {assignment.subject}
-                      </span>
-                    </div>
-                    
-                    <div className="md:col-span-2 flex items-center">
-                      <div>
-                        <div className="flex items-center text-sm text-gray-500">
-                          <FaCalendarAlt className="mr-1" />
-                          <span>{formatDate(assignment.dueDate)}</span>
-                        </div>
-                        <div className="flex items-center text-sm text-gray-500 mt-1">
-                          <FaClock className="mr-1" />
-                          <span className={isAssignmentOverdue ? 'text-red-500 font-medium' : ''}>
-                            {assignment.dueTime}
-                            {isAssignmentOverdue && ' (Overdue)'}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="md:col-span-2">
-                      <div className="flex items-center">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusInfo.style}`}>
+        {/* Assignments Grid View */}
+        {viewMode === 'grid' && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3, delay: 0.2 }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-6"
+          >
+            {filteredAssignments.length === 0 ? (
+              <div className="col-span-full p-8 text-center text-gray-500 bg-white rounded-xl shadow-sm border border-gray-100">
+                No assignments found. Try adjusting your search or filters.
+              </div>
+            ) : (
+              filteredAssignments.map((assignment) => {
+                const statusInfo = getStatusInfo(assignment.status);
+                const isAssignmentOverdue = isOverdue(assignment.dueDate) && assignment.status !== 'completed';
+                const isCompleted = assignment.status === 'completed';
+                
+                return (
+                  <motion.div 
+                    key={assignment.id}
+                    whileHover={{ y: -3 }}
+                    className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 transition-all duration-200 hover:shadow-md flex flex-col"
+                    style={{ height: '320px' }} // Reduced card height
+                  >
+                    <div className="relative h-24"> {/* Reduced image height */}
+                      <img 
+                        src={assignment.image} 
+                        alt={assignment.title}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute top-2 right-2">
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${statusInfo.style}`}>
                           {statusInfo.icon}
                           <span className="ml-1">{assignment.status.charAt(0).toUpperCase() + assignment.status.slice(1)}</span>
                         </span>
                       </div>
-                      <div className="text-sm text-gray-500 mt-1">
-                        {assignment.submissions}/{assignment.totalStudents} submitted
+                    </div>
+                    
+                    <div className="p-4 flex-grow flex flex-col"> {/* Reduced padding */}
+                      <div className="flex justify-between items-start mb-2">
+                        <span className="bg-indigo-100 text-indigo-800 text-xs font-medium px-2 py-0.5 rounded">
+                          {assignment.subject}
+                        </span>
+                        <span className="text-xs font-medium text-gray-500">{assignment.points} pts</span>
+                      </div>
+                      
+                      <h3 className="font-bold text-base mb-1 text-gray-800 line-clamp-1">{assignment.title}</h3>
+                      <p className="text-gray-600 text-xs mb-3 line-clamp-2">{assignment.description}</p>
+                      
+                      <div className="flex items-center text-xs text-gray-500 mb-2">
+                        <FaGraduationCap className="mr-1" />
+                        <span>{assignment.assignmentType}</span>
+                      </div>
+                      
+                      <div className="flex items-center text-xs text-gray-500 mb-1">
+                        <FaCalendarAlt className="mr-1" />
+                        <span>{formatDate(assignment.dueDate)}</span>
+                      </div>
+                      
+                      <div className="flex items-center text-xs text-gray-500 mb-3">
+                        <FaClock className="mr-1" />
+                        <span className={isAssignmentOverdue ? 'text-red-500 font-medium' : ''}>
+                          {assignment.dueTime}
+                          {isAssignmentOverdue && ' (Overdue)'}
+                        </span>
+                      </div>
+                      
+                      <div className="mt-auto flex items-center justify-between">
+                        <div className="flex items-center">
+                          <div className="relative flex -space-x-2">
+                            {[1, 2, 3].map((i) => (
+                              <div key={i} className="w-5 h-5 rounded-full bg-indigo-100 border border-white flex items-center justify-center">
+                                <FaUserGraduate className="text-indigo-600 text-xs" />
+                              </div>
+                            ))}
+                          </div>
+                          <span className="text-xs text-gray-500 ml-2">
+                            {assignment.submissions}/{assignment.totalStudents}
+                          </span>
+                        </div>
+                        
+                        <div className="flex items-center space-x-1">
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            onClick={() => handleViewAssignment(assignment)}
+                            className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg"
+                            title="View Assignment"
+                          >
+                            <FaEye className="text-sm" />
+                          </motion.button>
+                          
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            className="p-1.5 text-green-600 hover:bg-green-50 rounded-lg"
+                            title="Edit Assignment"
+                            disabled={isCompleted}
+                          >
+                            <FaEdit className={`text-sm ${isCompleted ? 'opacity-50' : ''}`} />
+                          </motion.button>
+                          
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            onClick={() => deleteAssignment(assignment.id)}
+                            className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg"
+                            title="Delete Assignment"
+                            disabled={isCompleted}
+                          >
+                            <FaTrash className={`text-sm ${isCompleted ? 'opacity-50' : ''}`} />
+                          </motion.button>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })
+            )}
+          </motion.div>
+        )}
+
+        {/* Assignments List View */}
+        {viewMode === 'list' && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3, delay: 0.2 }}
+            className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100"
+          >
+            {/* Table Header */}
+            <div className="hidden md:grid md:grid-cols-12 gap-4 p-4 border-b border-gray-200 font-semibold text-gray-700 bg-gray-50">
+              <div 
+                className="col-span-4 flex items-center cursor-pointer"
+                onClick={() => handleSort('title')}
+              >
+                Assignment {renderSortIcon('title')}
+              </div>
+              <div 
+                className="col-span-2 flex items-center cursor-pointer"
+                onClick={() => handleSort('subject')}
+              >
+                Subject {renderSortIcon('subject')}
+              </div>
+              <div 
+                className="col-span-2 flex items-center cursor-pointer"
+                onClick={() => handleSort('dueDate')}
+              >
+                Due Date {renderSortIcon('dueDate')}
+              </div>
+              <div 
+                className="col-span-2 flex items-center cursor-pointer"
+                onClick={() => handleSort('status')}
+              >
+                Status {renderSortIcon('status')}
+              </div>
+              <div className="col-span-2 text-center">
+                Actions
+              </div>
+            </div>
+
+            {/* Assignment Items */}
+            {filteredAssignments.length === 0 ? (
+              <div className="p-8 text-center text-gray-500">
+                No assignments found. Try adjusting your search or filters.
+              </div>
+            ) : (
+              filteredAssignments.map((assignment) => {
+                const statusInfo = getStatusInfo(assignment.status);
+                const isAssignmentOverdue = isOverdue(assignment.dueDate) && assignment.status !== 'completed';
+                const isDraft = assignment.status === 'draft';
+                const isCompleted = assignment.status === 'completed';
+                
+                return (
+                  <div key={assignment.id} className="border-b border-gray-100 last:border-b-0 hover:bg-gray-50 transition-colors duration-200">
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-4 p-4">
+                      <div className="md:col-span-4 flex items-start">
+                        <img 
+                          src={assignment.image} 
+                          alt={assignment.title}
+                          className="w-14 h-10 object-cover rounded-md mr-3" // Reduced image size
+                        />
+                        <div>
+                          <div className="font-medium text-gray-900 text-sm">{assignment.title}</div>
+                          <div className="text-xs text-gray-500 mt-1 line-clamp-1">{assignment.description}</div>
+                          <div className="flex items-center text-xs text-gray-500 mt-1">
+                            <FaGraduationCap className="mr-1" />
+                            <span>{assignment.assignmentType}</span>
+                            <span className="mx-1">•</span>
+                            <span>{assignment.points} pts</span>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="md:col-span-2 flex items-center">
+                        <span className="bg-indigo-100 text-indigo-800 text-xs font-medium px-2 py-0.5 rounded">
+                          {assignment.subject}
+                        </span>
+                      </div>
+                      
+                      <div className="md:col-span-2 flex items-center">
+                        <div>
+                          <div className="flex items-center text-xs text-gray-500">
+                            <FaCalendarAlt className="mr-1" />
+                            <span>{formatDate(assignment.dueDate)}</span>
+                          </div>
+                          <div className="flex items-center text-xs text-gray-500 mt-1">
+                            <FaClock className="mr-1" />
+                            <span className={isAssignmentOverdue ? 'text-red-500 font-medium' : ''}>
+                              {assignment.dueTime}
+                              {isAssignmentOverdue && ' (Overdue)'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="md:col-span-2">
+                        <div className="flex items-center">
+                          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${statusInfo.style}`}>
+                            {statusInfo.icon}
+                            <span className="ml-1">{assignment.status.charAt(0).toUpperCase() + assignment.status.slice(1)}</span>
+                          </span>
+                        </div>
+                        <div className="text-xs text-gray-500 mt-1">
+                          {assignment.submissions}/{assignment.totalStudents} submitted
+                        </div>
+                      </div>
+                      
+                      <div className="md:col-span-2 flex items-center justify-center space-x-1">
+                        <motion.button
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          onClick={() => handleViewAssignment(assignment)}
+                          className="p-1.5 text-blue-600 hover:bg-blue-100 rounded-full"
+                          title="View Assignment"
+                        >
+                          <FaEye className="text-sm" />
+                        </motion.button>
+                        
+                        <motion.button
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          className="p-1.5 text-green-600 hover:bg-green-100 rounded-full"
+                          title="Edit Assignment"
+                          disabled={isCompleted}
+                        >
+                          <FaEdit className={`text-sm ${isCompleted ? 'opacity-50' : ''}`} />
+                        </motion.button>
+                        
+                        <motion.button
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          className="p-1.5 text-purple-600 hover:bg-purple-100 rounded-full"
+                          title="Download Submissions"
+                          disabled={isDraft || assignment.submissions === 0}
+                        >
+                          <FaDownload className={`text-sm ${isDraft || assignment.submissions === 0 ? 'opacity-50' : ''}`} />
+                        </motion.button>
+                        
+                        <motion.button
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          onClick={() => deleteAssignment(assignment.id)}
+                          className="p-1.5 text-red-600 hover:bg-red-100 rounded-full"
+                          title="Delete Assignment"
+                          disabled={isCompleted}
+                        >
+                          <FaTrash className={`text-sm ${isCompleted ? 'opacity-50' : ''}`} />
+                        </motion.button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </motion.div>
+        )}
+
+        {/* View Assignment Modal */}
+        <AnimatePresence>
+          {viewAssignment && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/10 backdrop-blur-sm bg-opacity-50 flex items-center justify-center p-4 z-50"
+              onClick={handleCloseView}
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                className="bg-white rounded-xl shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="relative h-48">
+                  <img 
+                    src={viewAssignment.image} 
+                    alt={viewAssignment.title}
+                    className="w-full h-full object-cover"
+                  />
+                  <button
+                    onClick={handleCloseView}
+                    className="absolute top-4 right-4 bg-white p-2 rounded-full shadow-md hover:bg-gray-100"
+                  >
+                    <FaTimesCircle className="text-gray-600 text-xl" />
+                  </button>
+                </div>
+                
+                <div className="p-6">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <span className="bg-indigo-100 text-indigo-800 text-xs font-medium px-2 py-1 rounded">
+                        {viewAssignment.subject}
+                      </span>
+                      <span className="ml-2 bg-purple-100 text-purple-800 text-xs font-medium px-2 py-1 rounded">
+                        {viewAssignment.assignmentType}
+                      </span>
+                    </div>
+                    <span className="text-lg font-bold text-gray-700">{viewAssignment.points} pts</span>
+                  </div>
+                  
+                  <h2 className="text-2xl font-bold text-gray-800 mb-2">{viewAssignment.title}</h2>
+                  <p className="text-gray-600 mb-6">{viewAssignment.description}</p>
+                  
+                  <div className="grid grid-cols-2 gap-4 mb-6">
+                    <div className="flex items-center">
+                      <FaCalendarAlt className="text-indigo-500 mr-2" />
+                      <div>
+                        <p className="text-sm text-gray-500">Due Date</p>
+                        <p className="font-medium">{formatDate(viewAssignment.dueDate)}</p>
                       </div>
                     </div>
                     
-                    <div className="md:col-span-2 flex items-center justify-center space-x-2">
-                      <motion.button
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        className="p-2 text-blue-600 hover:bg-blue-100 rounded-full"
-                        title="View Assignment"
-                      >
-                        <FaEye />
-                      </motion.button>
-                      
-                      <motion.button
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        className="p-2 text-green-600 hover:bg-green-100 rounded-full"
-                        title="Edit Assignment"
-                      >
-                        <FaEdit />
-                      </motion.button>
-                      
-                      <motion.button
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        className="p-2 text-purple-600 hover:bg-purple-100 rounded-full"
-                        title="Download Submissions"
-                      >
-                        <FaDownload />
-                      </motion.button>
-                      
-                      <motion.button
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        onClick={() => deleteAssignment(assignment.id)}
-                        className="p-2 text-red-600 hover:bg-red-100 rounded-full"
-                        title="Delete Assignment"
-                      >
-                        <FaTrash />
-                      </motion.button>
+                    <div className="flex items-center">
+                      <FaClock className="text-indigo-500 mr-2" />
+                      <div>
+                        <p className="text-sm text-gray-500">Due Time</p>
+                        <p className="font-medium">{viewAssignment.dueTime}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center">
+                      <FaUserGraduate className="text-indigo-500 mr-2" />
+                      <div>
+                        <p className="text-sm text-gray-500">Submissions</p>
+                        <p className="font-medium">{viewAssignment.submissions}/{viewAssignment.totalStudents}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center">
+                      <FaCheckCircle className="text-indigo-500 mr-2" />
+                      <div>
+                        <p className="text-sm text-gray-500">Status</p>
+                        <p className="font-medium capitalize">{viewAssignment.status}</p>
+                      </div>
                     </div>
                   </div>
+                  
+                  <div className="flex justify-end space-x-3">
+                    <button
+                      onClick={handleCloseView}
+                      className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                    >
+                      Close
+                    </button>
+                    <button className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                      View Submissions
+                    </button>
+                  </div>
                 </div>
-              );
-            })
+              </motion.div>
+            </motion.div>
           )}
-        </motion.div>
+        </AnimatePresence>
       </div>
     </div>
   );

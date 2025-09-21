@@ -1,4 +1,4 @@
-import { FaPlus, FaEdit, FaTrash, FaEye } from 'react-icons/fa';
+import { FaPlus, FaEdit, FaTrash, FaEye, FaImage, FaCalendarAlt, FaUniversity, FaPoll } from 'react-icons/fa';
 
 interface SurveyData {
   id: number;
@@ -8,6 +8,9 @@ interface SurveyData {
   startDate: string;
   endDate: string;
   status: 'active' | 'inactive';
+  imageUrl?: string;
+  responses?: number;
+  questions?: number;
 }
 
 const InstituteSurveyList = () => {
@@ -20,6 +23,9 @@ const InstituteSurveyList = () => {
       startDate: '2025-01-15',
       endDate: '2025-01-30',
       status: 'active',
+      responses: 245,
+      questions: 15,
+      imageUrl: 'https://www.ilga-europe.org/files/uploads/2025/02/ilga-europe-annual-review-2025_h.jpg'
     },
     {
       id: 2,
@@ -29,166 +35,191 @@ const InstituteSurveyList = () => {
       startDate: '2025-02-01',
       endDate: '2025-02-10',
       status: 'inactive',
+      responses: 120,
+      questions: 10,
+      imageUrl: 'https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80'
+    },
+    {
+      id: 3,
+      title: 'Student Satisfaction Survey',
+      institute: 'DEF Institute',
+      type: 'Feedback',
+      startDate: '2025-03-01',
+      endDate: '2025-03-15',
+      status: 'active',
+      responses: 178,
+      questions: 12,
+      imageUrl: 'https://josephscollege.ac.in/wp-content/uploads/2020/07/f3.jpg'
     },
   ];
 
+  const formatDate = (dateString: string) => {
+    const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
-      <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-4 sm:p-6 lg:p-8">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Institute Surveys</h1>
-            <p className="text-gray-600 mt-2 text-sm sm:text-base">Manage all institute surveys here.</p>
+        <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="text-center sm:text-left">
+            <h1 className="text-3xl sm:text-4xl font-bold  bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              Institute Surveys
+            </h1>
+            <p className="text-gray-600 mt-2 text-sm sm:text-base max-w-2xl">
+              Manage and track all institutional surveys in one place. Monitor response rates and survey status at a glance.
+            </p>
           </div>
-          <button className="flex items-center px-3 py-2 sm:px-4 sm:py-2 rounded-md shadow-sm text-sm sm:text-base font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors w-fit">
-            <FaPlus className="mr-1 sm:mr-2 text-sm sm:text-base" /> Add Survey
+          <button 
+            className="flex items-center justify-center px-5 py-3 rounded-xl shadow-sm text-sm sm:text-base font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:-translate-y-1 disabled:opacity-50 disabled:hover:transform-none disabled:cursor-not-allowed mx-auto sm:mx-0 w-full sm:w-auto"
+            disabled
+            title="Feature temporarily disabled"
+          >
+            <FaPlus className="mr-2 text-sm" /> Create New Survey
           </button>
         </div>
 
-        {/* Mobile: Card Layout */}
-        <div className="block lg:hidden">
+        {/* Stats Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
+          <div className="bg-white rounded-2xl p-5 shadow-md border border-gray-100">
+            <div className="flex items-center">
+              <div className="rounded-lg bg-blue-100 p-3 mr-4">
+                <FaPoll className="text-blue-600 text-xl" />
+              </div>
+              <div>
+                <h3 className="text-2xl font-bold text-gray-800">{surveys.length}</h3>
+                <p className="text-gray-600 text-sm">Total Surveys</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white rounded-2xl p-5 shadow-md border border-gray-100">
+            <div className="flex items-center">
+              <div className="rounded-lg bg-green-100 p-3 mr-4">
+                <FaCalendarAlt className="text-green-600 text-xl" />
+              </div>
+              <div>
+                <h3 className="text-2xl font-bold text-gray-800">{surveys.filter(s => s.status === 'active').length}</h3>
+                <p className="text-gray-600 text-sm">Active Surveys</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white rounded-2xl p-5 shadow-md border border-gray-100">
+            <div className="flex items-center">
+              <div className="rounded-lg bg-purple-100 p-3 mr-4">
+                <FaUniversity className="text-purple-600 text-xl" />
+              </div>
+              <div>
+                <h3 className="text-2xl font-bold text-gray-800">3</h3>
+                <p className="text-gray-600 text-sm">Institutes</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Survey Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {surveys.length === 0 ? (
-            <div className="text-center text-gray-500 p-6 bg-white rounded-lg shadow-md">
-              No surveys found.
+            <div className="col-span-full text-center text-gray-500 p-10 bg-white rounded-2xl shadow-md">
+              <FaImage className="text-4xl mx-auto text-gray-300 mb-3" />
+              <p className="text-lg">No surveys found.</p>
+              <p className="text-sm mt-1">Create your first survey to get started.</p>
             </div>
           ) : (
             surveys.map((survey) => (
               <div
                 key={survey.id}
-                className="mb-4 p-4 bg-white rounded-lg shadow-md border border-gray-200"
+                className="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100 transition-all duration-300 hover:shadow-lg"
               >
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-800">{survey.title}</h3>
-                    <p className="text-sm text-gray-600">Institute: {survey.institute}</p>
+                {/* Survey Image */}
+                <div className="relative h-48 w-full overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+                  {survey.imageUrl ? (
+                    <img 
+                      src={survey.imageUrl} 
+                      alt={survey.title}
+                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center text-indigo-300">
+                      <FaImage className="text-5xl mb-2" />
+                      <span className="text-sm">No image available</span>
+                    </div>
+                  )}
+                  <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-semibold ${survey.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                    {survey.status.charAt(0).toUpperCase() + survey.status.slice(1)}
                   </div>
-                  <div className="flex space-x-2">
+                </div>
+                
+                {/* Card Content */}
+                <div className="p-5">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-800 mb-1">{survey.title}</h3>
+                      <div className="flex items-center text-gray-600 text-sm mb-2">
+                        <FaUniversity className="mr-2 text-indigo-500" />
+                        <span>{survey.institute}</span>
+                      </div>
+                    </div>
+                    <span className="px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-xs font-medium">
+                      {survey.type}
+                    </span>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-3 mb-5">
+                    <div className="bg-gray-50 rounded-lg p-3">
+                      <p className="text-xs text-gray-500">Responses</p>
+                      <p className="text-lg font-bold text-gray-800">{survey.responses}</p>
+                    </div>
+                    <div className="bg-gray-50 rounded-lg p-3">
+                      <p className="text-xs text-gray-500">Questions</p>
+                      <p className="text-lg font-bold text-gray-800">{survey.questions}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-between text-sm text-gray-600 mb-5">
+                    <div className="flex items-center">
+                      <FaCalendarAlt className="mr-2 text-blue-500" />
+                      <span>{formatDate(survey.startDate)}</span>
+                    </div>
+                    <span className="text-gray-400">→</span>
+                    <div className="flex items-center">
+                      <FaCalendarAlt className="mr-2 text-blue-500" />
+                      <span>{formatDate(survey.endDate)}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-between pt-4 border-t border-gray-100">
                     <button
-                      className="text-blue-600 hover:text-blue-900 p-1"
-                      title="View"
-                      aria-label={`View ${survey.title}`}
+                      className="flex items-center justify-center text-gray-400 p-2 rounded-lg bg-gray-100 cursor-not-allowed"
+                      title="View (disabled)"
+                      aria-label={`View ${survey.title} (disabled)`}
+                      disabled
                     >
                       <FaEye className="text-lg" />
                     </button>
                     <button
-                      className="text-yellow-600 hover:text-yellow-900 p-1"
-                      title="Edit"
-                      aria-label={`Edit ${survey.title}`}
+                      className="flex items-center justify-center text-gray-400 p-2 rounded-lg bg-gray-100 cursor-not-allowed"
+                      title="Edit (disabled)"
+                      aria-label={`Edit ${survey.title} (disabled)`}
+                      disabled
                     >
                       <FaEdit className="text-lg" />
                     </button>
                     <button
-                      className="text-red-600 hover:text-red-900 p-1"
-                      title="Delete"
-                      aria-label={`Delete ${survey.title}`}
+                      className="flex items-center justify-center text-gray-400 p-2 rounded-lg bg-gray-100 cursor-not-allowed"
+                      title="Delete (disabled)"
+                      aria-label={`Delete ${survey.title} (disabled)`}
+                      disabled
                     >
                       <FaTrash className="text-lg" />
                     </button>
                   </div>
-                </div>
-                <div className="mt-3 text-sm text-gray-600 space-y-2">
-                  <p><span className="font-medium">Type:</span> {survey.type}</p>
-                  <p><span className="font-medium">Start Date:</span> {survey.startDate}</p>
-                  <p><span className="font-medium">End Date:</span> {survey.endDate}</p>
-                  <p>
-                    <span className="font-medium">Status:</span>{' '}
-                    <span
-                      className={`inline-flex px-2 py-1 text-xs sm:text-sm font-semibold rounded-full ${
-                        survey.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                      }`}
-                    >
-                      {survey.status.charAt(0).toUpperCase() + survey.status.slice(1)}
-                    </span>
-                  </p>
                 </div>
               </div>
             ))
           )}
-        </div>
-
-        {/* Desktop: Table Layout */}
-        <div className="hidden lg:block bg-white rounded-lg shadow-md overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wider">
-                  Title
-                </th>
-                <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wider">
-                  Institute
-                </th>
-                <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wider">
-                  Type
-                </th>
-                <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wider">
-                  Start Date
-                </th>
-                <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wider">
-                  End Date
-                </th>
-                <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-4 py-3 sm:px-6 sm:py-4 text-right text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {surveys.map((survey) => (
-                <tr key={survey.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm text-gray-800">{survey.title}</td>
-                  <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm text-gray-600">{survey.institute}</td>
-                  <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm text-gray-600">{survey.type}</td>
-                  <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm text-gray-600">{survey.startDate}</td>
-                  <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm text-gray-600">{survey.endDate}</td>
-                  <td className="px-4 py-3 sm:px-6 sm:py-4">
-                    <span
-                      className={`px-2 inline-flex text-xs sm:text-sm font-semibold rounded-full ${
-                        survey.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                      }`}
-                    >
-                      {survey.status.charAt(0).toUpperCase() + survey.status.slice(1)}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 sm:px-6 sm:py-4 text-right text-sm font-medium space-x-3">
-                    <button
-                      className="text-blue-600 hover:text-blue-900 p-1"
-                      title="View"
-                      aria-label={`View ${survey.title}`}
-                    >
-                      <FaEye className="text-lg" />
-                    </button>
-                    <button
-                      className="text-yellow-600 hover:text-yellow-900 p-1"
-                      title="Edit"
-                      aria-label={`Edit ${survey.title}`}
-                    >
-                      <FaEdit className="text-lg" />
-                    </button>
-                    <button
-                      className="text-red-600 hover:text-red-900 p-1"
-                      title="Delete"
-                      aria-label={`Delete ${survey.title}`}
-                    >
-                      <FaTrash className="text-lg" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-              {surveys.length === 0 && (
-                <tr>
-                  <td
-                    colSpan={7}
-                    className="px-4 py-3 sm:px-6 sm:py-4 text-center text-sm sm:text-base text-gray-500"
-                  >
-                    No surveys found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
         </div>
       </div>
     </div>

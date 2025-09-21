@@ -1,4 +1,6 @@
-import { useState, ChangeEvent, FormEvent } from 'react';
+import { useForm, FormProvider, SubmitHandler } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { 
   FaUniversity, 
   FaMapMarkerAlt, 
@@ -8,133 +10,47 @@ import {
   FaUser, 
   FaIdCard, 
   FaSave, 
-  FaTimes 
+  FaTimes,
+  FaCalendar,
+  FaGraduationCap,
 } from 'react-icons/fa';
+import RHFFormField from '../../../components/hook-form/RHFFormFiled';
+import RHFDropDown from '../../../components/hook-form/RHFDropDown';
 
-interface FormData {
-  name: string;
-  code: string;
-  type: string;
-  address: string;
-  city: string;
-  state: string;
-  pincode: string;
-  country: string;
-  phone: string;
-  email: string;
-  website: string;
-  principalName: string;
-  principalContact: string;
-  establishedYear: string;
-  affiliation: string;
-  campusArea: string;
-  status: string;
-}
+// Define Zod schema for form validation - all fields are required
+const instituteSchema = z.object({
+  name: z.string().min(1, 'Institute name is required'),
+  code: z.string().min(1, 'Institute code is required'),
+  type: z.string().min(1, 'Please select institute type'),
+  address: z.string().min(1, 'Address is required'),
+  city: z.string().min(1, 'City is required'),
+  state: z.string().min(1, 'State is required'),
+  pincode: z.string().min(1, 'Pincode is required'),
+  country: z.string().min(1, 'Country is required'),
+  phone: z.string().min(1, 'Phone number is required'),
+  email: z.string().email('Please enter a valid email address'),
+  website: z.string().min(1, 'Website is required').url('Please enter a valid URL'),
+  principalName: z.string().min(1, 'Principal name is required'),
+  principalContact: z.string().min(1, 'Principal contact is required'),
+  principalEmail: z.string().email('Please enter a valid email address for principal'),
+  principalQualification: z.string().min(1, 'Principal qualification is required'),
+  principalExperience: z.string().min(1, 'Principal experience is required'),
+  establishedYear: z.string().min(1, 'Established year is required'),
+  affiliation: z.string().optional().nullable(),
+  campusArea: z.string().min(1, 'Campus area is required'),
+  rolepermission: z.string().min(1, 'Please select a role permission'),
+  status: z.enum(['active', 'inactive']),
+});
 
-interface FormErrors {
-  name?: string;
-  code?: string;
-  type?: string;
-  address?: string;
-  city?: string;
-  state?: string;
-  pincode?: string;
-  phone?: string;
-  email?: string;
-}
+// Infer the TypeScript type from the Zod schema
+type FormData = z.infer<typeof instituteSchema>;
 
 const InstituteCreate = () => {
-  const [formData, setFormData] = useState<FormData>({
-    name: '',
-    code: '',
-    type: '',
-    address: '',
-    city: '',
-    state: '',
-    pincode: '',
-    country: '',
-    phone: '',
-    email: '',
-    website: '',
-    principalName: '',
-    principalContact: '',
-    establishedYear: '',
-    affiliation: '',
-    campusArea: '',
-    status: 'active'
-  });
-
-  const [errors, setErrors] = useState<FormErrors>({});
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
-    
-    if (errors[name as keyof FormErrors]) {
-      setErrors({
-        ...errors,
-        [name]: ''
-      });
-    }
-  };
-
-  const validateForm = (): boolean => {
-    const newErrors: FormErrors = {};
-    
-    if (!formData.name.trim()) newErrors.name = 'Institute name is required';
-    if (!formData.code.trim()) newErrors.code = 'Institute code is required';
-    if (!formData.type) newErrors.type = 'Please select institute type';
-    if (!formData.address.trim()) newErrors.address = 'Address is required';
-    if (!formData.city.trim()) newErrors.city = 'City is required';
-    if (!formData.state.trim()) newErrors.state = 'State is required';
-    if (!formData.pincode.trim()) newErrors.pincode = 'Pincode is required';
-    if (!formData.phone.trim()) newErrors.phone = 'Phone number is required';
-    if (!formData.email.trim()) newErrors.email = 'Email is required';
-    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Email is invalid';
-    
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    
-    if (validateForm()) {
-      setIsSubmitting(true);
-      // Simulate API call
-      setTimeout(() => {
-        alert('Institute created successfully!');
-        setIsSubmitting(false);
-        // Reset form
-        setFormData({
-          name: '',
-          code: '',
-          type: '',
-          address: '',
-          city: '',
-          state: '',
-          pincode: '',
-          country: '',
-          phone: '',
-          email: '',
-          website: '',
-          principalName: '',
-          principalContact: '',
-          establishedYear: '',
-          affiliation: '',
-          campusArea: '',
-          status: 'active'
-        });
-      }, 1500);
-    }
-  };
-
-  const handleReset = () => {
-    setFormData({
+  const methods = useForm<FormData>({
+    resolver: zodResolver(instituteSchema),
+    defaultValues: {
+      status: 'active',
+      // Set default empty values for all fields
       name: '',
       code: '',
       type: '',
@@ -148,13 +64,115 @@ const InstituteCreate = () => {
       website: '',
       principalName: '',
       principalContact: '',
+      principalEmail: '',
+      principalQualification: '',
+      principalExperience: '',
       establishedYear: '',
       affiliation: '',
       campusArea: '',
-      status: 'active'
+      rolepermission: '',
+    },
+  });
+
+  const {
+    handleSubmit,
+    reset,
+    formState: { isSubmitting },
+  } = methods;
+
+  const onSubmit: SubmitHandler<FormData> = async (data) => {
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    alert('Institute created successfully!');
+    console.log(data);
+    // Reset the form with default values
+    reset({
+      status: 'active',
+      name: '',
+      code: '',
+      type: '',
+      address: '',
+      city: '',
+      state: '',
+      pincode: '',
+      country: '',
+      phone: '',
+      email: '',
+      website: '',
+      principalName: '',
+      principalContact: '',
+      principalEmail: '',
+      principalQualification: '',
+      principalExperience: '',
+      establishedYear: '',
+      affiliation: '',
+      campusArea: '',
+      rolepermission: '',
     });
-    setErrors({});
   };
+
+  const handleReset = () => {
+    // Reset the form with default values
+    reset({
+      status: 'active',
+      name: '',
+      code: '',
+      type: '',
+      address: '',
+      city: '',
+      state: '',
+      pincode: '',
+      country: '',
+      phone: '',
+      email: '',
+      website: '',
+      principalName: '',
+      principalContact: '',
+      principalEmail: '',
+      principalQualification: '',
+      principalExperience: '',
+      establishedYear: '',
+      affiliation: '',
+      campusArea: '',
+      rolepermission: '',
+    });
+  };
+
+  const instituteTypeOptions = [
+    { value: '', label: 'Select Type', disabled: true },
+    { value: 'school', label: 'School' },
+    { value: 'college', label: 'College' },
+    { value: 'university', label: 'University' },
+    { value: 'training', label: 'Training Institute' },
+  ];
+
+  const rolePermissionOptions = [
+    { value: '', label: 'Select Permission', disabled: true },
+    { value: 'admin', label: 'Admin' },
+    { value: 'staff', label: 'Staff' },
+    { value: 'student', label: 'Student' },
+  ];
+
+  const statusOptions = [
+    { value: 'active', label: 'Active' },
+    { value: 'inactive', label: 'Inactive' },
+  ];
+
+  const qualificationOptions = [
+    { value: '', label: 'Select Qualification', disabled: true },
+    { value: 'phd', label: 'Ph.D' },
+    { value: 'masters', label: 'Masters' },
+    { value: 'bachelors', label: 'Bachelors' },
+    { value: 'diploma', label: 'Diploma' },
+  ];
+
+  const experienceOptions = [
+    { value: '', label: 'Select Experience', disabled: true },
+    { value: '0-5', label: '0-5 years' },
+    { value: '5-10', label: '5-10 years' },
+    { value: '10-15', label: '10-15 years' },
+    { value: '15+', label: '15+ years' },
+  ];
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -170,385 +188,240 @@ const InstituteCreate = () => {
           </p>
         </div>
 
-        {/* Form Section */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <form onSubmit={handleSubmit}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Institute Basic Information */}
-              <div className="md:col-span-2">
-                <h2 className="text-xl font-semibold text-gray-700 mb-4 pb-2 border-b">
-                  Basic Information
-                </h2>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Institute Name <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
-                    <FaUniversity />
-                  </span>
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    className={`pl-10 w-full rounded-md border ${errors.name ? 'border-red-500' : 'border-gray-300'} px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                    placeholder="Enter institute name"
-                  />
+        <FormProvider {...methods}>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            {/* Form Section */}
+            <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Institute Basic Information */}
+                <div className="md:col-span-2">
+                  <h2 className="text-xl font-semibold text-gray-700 mb-4 pb-2 border-b">
+                    Basic Information
+                  </h2>
                 </div>
-                {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name}</p>}
-              </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Institute Code <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
-                    <FaIdCard />
-                  </span>
-                  <input
-                    type="text"
-                    name="code"
-                    value={formData.code}
-                    onChange={handleChange}
-                    className={`pl-10 w-full rounded-md border ${errors.code ? 'border-red-500' : 'border-gray-300'} px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                    placeholder="Enter unique code"
-                  />
-                </div>
-                {errors.code && <p className="mt-1 text-sm text-red-500">{errors.code}</p>}
-              </div>
+                <RHFFormField
+                  name="name"
+                  label="Institute Name"
+                  type="text"
+                  placeholder="Enter institute name"
+                  required
+                  icon={<FaUniversity />}
+                />
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Institute Type <span className="text-red-500">*</span>
-                </label>
-                <select
+                <RHFFormField
+                  name="code"
+                  label="Institute Code"
+                  type="text"
+                  placeholder="Enter unique code"
+                  required
+                  icon={<FaIdCard />}
+                />
+
+                <RHFDropDown
                   name="type"
-                  value={formData.type}
-                  onChange={handleChange}
-                  className={`w-full rounded-md border ${errors.type ? 'border-red-500' : 'border-gray-300'} px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                >
-                  <option value="">Select Type</option>
-                  <option value="school">School</option>
-                  <option value="college">College</option>
-                  <option value="university">University</option>
-                  <option value="training">Training Institute</option>
-                </select>
-                {errors.type && <p className="mt-1 text-sm text-red-500">{errors.type}</p>}
-              </div>
+                  label="Institute Type"
+                  options={instituteTypeOptions}
+                  required
+                />
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Established Year
-                </label>
-                <input
-                  type="number"
+                <RHFFormField
                   name="establishedYear"
-                  value={formData.establishedYear}
-                  onChange={handleChange}
+                  label="Established Year"
+                  type="number"
+                  placeholder="Year"
                   min="1900"
                   max={new Date().getFullYear()}
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Year"
+                  required
+                  icon={<FaCalendar />}
                 />
-              </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Affiliation
-                </label>
-                <input
-                  type="text"
+                <RHFFormField
                   name="affiliation"
-                  value={formData.affiliation}
-                  onChange={handleChange}
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  label="Affiliation"
+                  type="text"
                   placeholder="Affiliation body"
+                  required
+                  icon={<FaGraduationCap />}
                 />
-              </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Campus Area (sq. ft.)
-                </label>
-                <input
-                  type="number"
+                <RHFFormField
                   name="campusArea"
-                  value={formData.campusArea}
-                  onChange={handleChange}
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  label="Campus Area (sq. ft.)"
+                  type="number"
                   placeholder="Area in square feet"
+                  required
                 />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Permission <span className="text-red-500">*</span>
-                </label>
-                <select
-                  name="type"
-                  value={formData.type}
-                  onChange={handleChange}
-                  className={`w-full rounded-md border ${errors.type ? 'border-red-500' : 'border-gray-300'} px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                >
-                  <option value="">Select Type</option>
-                  <option value="school">Admin</option>
-                  <option value="college">staff</option>
-                  <option value="university">student</option>
-                </select>
-                {errors.type && <p className="mt-1 text-sm text-red-500">{errors.type}</p>}
-              </div>
 
-              {/* Contact Information */}
-              <div className="md:col-span-2 mt-6">
-                <h2 className="text-xl font-semibold text-gray-700 mb-4 pb-2 border-b">
-                  Contact Information
-                </h2>
-              </div>
+                <RHFDropDown
+                  name="rolepermission"
+                  label="Permission"
+                  options={rolePermissionOptions}
+                  required
+                />
 
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Address <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
-                    <FaMapMarkerAlt />
-                  </span>
-                  <input
-                    type="text"
+                {/* Contact Information */}
+                <div className="md:col-span-2 mt-6">
+                  <h2 className="text-xl font-semibold text-gray-700 mb-4 pb-2 border-b">
+                    Contact Information
+                  </h2>
+                </div>
+
+                <div className="md:col-span-2">
+                  <RHFFormField
                     name="address"
-                    value={formData.address}
-                    onChange={handleChange}
-                    className={`pl-10 w-full rounded-md border ${errors.address ? 'border-red-500' : 'border-gray-300'} px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                    label="Address"
+                    type="text"
                     placeholder="Street address"
+                    required
+                    icon={<FaMapMarkerAlt />}
                   />
                 </div>
-                {errors.address && <p className="mt-1 text-sm text-red-500">{errors.address}</p>}
-              </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  City <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
+                <RHFFormField
                   name="city"
-                  value={formData.city}
-                  onChange={handleChange}
-                  className={`w-full rounded-md border ${errors.city ? 'border-red-500' : 'border-gray-300'} px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                  label="City"
+                  type="text"
                   placeholder="City"
+                  required
                 />
-                {errors.city && <p className="mt-1 text-sm text-red-500">{errors.city}</p>}
-              </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  State <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
+                <RHFFormField
                   name="state"
-                  value={formData.state}
-                  onChange={handleChange}
-                  className={`w-full rounded-md border ${errors.state ? 'border-red-500' : 'border-gray-300'} px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                  label="State"
+                  type="text"
                   placeholder="State"
+                  required
                 />
-                {errors.state && <p className="mt-1 text-sm text-red-500">{errors.state}</p>}
-              </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Pincode <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
+                <RHFFormField
                   name="pincode"
-                  value={formData.pincode}
-                  onChange={handleChange}
-                  className={`w-full rounded-md border ${errors.pincode ? 'border-red-500' : 'border-gray-300'} px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                  placeholder="Pincode"
-                />
-                {errors.pincode && <p className="mt-1 text-sm text-red-500">{errors.pincode}</p>}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Country
-                </label>
-                <input
+                  label="Pincode"
                   type="text"
-                  name="country"
-                  value={formData.country}
-                  onChange={handleChange}
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Country"
+                  placeholder="Pincode"
+                  required
                 />
-              </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Phone <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
-                    <FaPhone />
-                  </span>
-                  <input
-                    type="text"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    className={`pl-10 w-full rounded-md border ${errors.phone ? 'border-red-500' : 'border-gray-300'} px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                    placeholder="Phone number"
-                  />
+                <RHFFormField
+                  name="country"
+                  label="Country"
+                  type="text"
+                  placeholder="Country"
+                  required
+                />
+
+                <RHFFormField
+                  name="phone"
+                  label="Phone"
+                  type="text"
+                  placeholder="Phone number"
+                  required
+                  icon={<FaPhone />}
+                />
+
+                <RHFFormField
+                  name="email"
+                  label="Email"
+                  type="email"
+                  placeholder="Email address"
+                  required
+                  icon={<FaEnvelope />}
+                />
+
+                <RHFFormField
+                  name="website"
+                  label="Website"
+                  type="text"
+                  placeholder="Website URL (e.g., https://example.com)"
+                  required
+                  icon={<FaGlobe />}
+                />
+
+                {/* Principal Information */}
+                <div className="md:col-span-2 mt-6">
+                  <h2 className="text-xl font-semibold text-gray-700 mb-4 pb-2 border-b">
+                    Principal Information
+                  </h2>
                 </div>
-                {errors.phone && <p className="mt-1 text-sm text-red-500">{errors.phone}</p>}
-              </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Email <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
-                    <FaEnvelope />
-                  </span>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className={`pl-10 w-full rounded-md border ${errors.email ? 'border-red-500' : 'border-gray-300'} px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                    placeholder="Email address"
-                  />
-                </div>
-                {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
-              </div>
+                <RHFFormField
+                  name="principalName"
+                  label="Principal Name"
+                  type="text"
+                  placeholder="Full name"
+                  required
+                  icon={<FaUser />}
+                />
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Website
-                </label>
-                <div className="relative">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
-                    <FaGlobe />
-                  </span>
-                  <input
-                    type="text"
-                    name="website"
-                    value={formData.website}
-                    onChange={handleChange}
-                    className="pl-10 w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Website URL"
-                  />
-                </div>
-              </div>
+                <RHFFormField
+                  name="principalContact"
+                  label="Principal Contact"
+                  type="text"
+                  placeholder="Contact number"
+                  required
+                  icon={<FaPhone />}
+                />
 
-              {/* Principal Information */}
-              <div className="md:col-span-2 mt-6">
-                <h2 className="text-xl font-semibold text-gray-700 mb-4 pb-2 border-b">
-                  Principal Information
-                </h2>
-              </div>
+                <RHFFormField
+                  name="principalEmail"
+                  label="Principal Email"
+                  type="email"
+                  placeholder="Email address"
+                  required
+                  icon={<FaEnvelope />}
+                />
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Principal Name
-                </label>
-                <div className="relative">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
-                    <FaUser />
-                  </span>
-                  <input
-                    type="text"
-                    name="principalName"
-                    value={formData.principalName}
-                    onChange={handleChange}
-                    className="pl-10 w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Full name"
-                  />
-                </div>
-              </div>
+                <RHFDropDown
+                  name="principalQualification"
+                  label="Principal Qualification"
+                  options={qualificationOptions}
+                  required
+                />
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Principal Contact
-                </label>
-                <div className="relative">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
-                    <FaPhone />
-                  </span>
-                  <input
-                    type="text"
-                    name="principalContact"
-                    value={formData.principalContact}
-                    onChange={handleChange}
-                    className="pl-10 w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Contact number"
+                <RHFDropDown
+                  name="principalExperience"
+                  label="Principal Experience"
+                  options={experienceOptions}
+                  required
+                />
+
+                <div className="md:col-span-2">
+                  <RHFDropDown
+                    name="status"
+                    label="Status"
+                    options={statusOptions}
                   />
                 </div>
               </div>
 
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Status
-                </label>
-                <div className="flex items-center space-x-4">
-                  <label className="inline-flex items-center">
-                    <input
-                      type="radio"
-                      name="status"
-                      value="active"
-                      checked={formData.status === 'active'}
-                      onChange={handleChange}
-                      className="text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="ml-2">Active</span>
-                  </label>
-                  <label className="inline-flex items-center">
-                    <input
-                      type="radio"
-                      name="status"
-                      value="inactive"
-                      checked={formData.status === 'inactive'}
-                      onChange={handleChange}
-                      className="text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="ml-2">Inactive</span>
-                  </label>
-                </div>
+              {/* Form Actions */}
+              <div className="mt-8 flex justify-end space-x-3">
+                <button
+                  type="button"
+                  onClick={handleReset}
+                  className="flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                >
+                  <FaTimes className="mr-2" />
+                  Reset
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-75"
+                >
+                  <FaSave className="mr-2" />
+                  {isSubmitting ? 'Creating...' : 'Create Institute'}
+                </button>
               </div>
-            </div>
-
-            {/* Form Actions */}
-            <div className="mt-8 flex justify-end space-x-3">
-              <button
-                type="button"
-                onClick={handleReset}
-                className="flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                <FaTimes className="mr-2" />
-                Reset
-              </button>
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-75"
-              >
-                <FaSave className="mr-2" />
-                {isSubmitting ? 'Creating...' : 'Create Institute'}
-              </button>
             </div>
           </form>
-        </div>
+        </FormProvider>
 
         {/* Additional Info */}
         <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
           <h3 className="font-medium text-blue-800">Information</h3>
           <p className="text-blue-700 text-sm mt-1">
-            After creating the institute, you can add departments, courses, and faculty members from the institute management section.
+            All fields are mandatory. After creating the institute, you can add departments, courses, and faculty members from the institute management section.
           </p>
         </div>
       </div>
