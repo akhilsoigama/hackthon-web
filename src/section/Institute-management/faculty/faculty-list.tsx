@@ -175,7 +175,7 @@ const FacultyList = () => {
                         {f.status.charAt(0).toUpperCase() + f.status.slice(1)}
                       </span>
                     </td>
-                    <td className="px-4 py-3 sm:px-6 sm:py-4 text-center text-sm font-medium space-x-3">
+                    <td className="flex justify-center items-center px-4 py-3 sm:px-6 sm:py-4 space-x-2">
                       <button
                         className="text-blue-600 hover:text-blue-800 p-1"
                         aria-label={`Edit ${f.name}`}

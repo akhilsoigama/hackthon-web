@@ -3,17 +3,29 @@ import ReactDOM from 'react-dom/client'
 import App from './App'
 import './index.css'
 
-// service worker register karne ke liye import
-import { registerSW } from 'virtual:pwa-register'
+import { Toaster } from 'sonner'
 
-// Auto-update setup (type hinting ke saath)
+import { registerSW } from 'virtual:pwa-register'
 const updateSW = registerSW({
   onNeedRefresh() {
-    if (confirm("New version available. Reload?")) {
-      updateSW(true)
-    }
+    import('sonner').then(({ toast }) => {
+      toast.info('New version available!', {
+        description: 'Click to update the application',
+        action: {
+          label: 'Update',
+          onClick: () => updateSW(true)
+        },
+        duration: 5000,
+        dismissible: true
+      })
+    })
   },
   onOfflineReady() {
+    import('sonner').then(({ toast }) => {
+      toast.success('App ready to work offline 🚀', {
+        duration: 3000
+      })
+    })
     console.log("App ready to work offline 🚀")
   },
 })
@@ -21,5 +33,12 @@ const updateSW = registerSW({
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <App />
+    <Toaster 
+      position="top-right"
+      expand={true}
+      richColors
+      closeButton
+      theme="light"
+    />
   </React.StrictMode>,
 )
