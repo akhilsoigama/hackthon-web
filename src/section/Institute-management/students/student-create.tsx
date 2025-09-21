@@ -1,4 +1,7 @@
-import { useState, ChangeEvent, FormEvent } from 'react';
+import { useState } from 'react';
+import { useForm, FormProvider } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import {
   FaUser,
   FaIdCard,
@@ -7,99 +10,36 @@ import {
   FaMapMarkerAlt,
   FaCalendarAlt,
   FaSave,
-  FaTimes
+  FaTimes,
 } from 'react-icons/fa';
+import RHFDropDown from '../../../components/hook-form/RHFDropDown';
+import RHFFormField from '../../../components/hook-form/RHFFormFiled';
+import { toast } from 'sonner';
 
-interface StudentFormData {
-  name: string;
-  studentId: string;
-  department: string;
-  course: string;
-  year: string;
-  email: string;
-  phone: string;
-  address: string;
-  dob: string;
-  admissionDate: string;
-  status: string;
-}
+// Define Zod schema for validation
+const studentFormSchema = z.object({
+  name: z.string().min(1, 'Student name is required'),
+  studentId: z.string().min(1, 'Student ID is required'),
+  department: z.string().min(1, 'Department is required'),
+  course: z.string().min(1, 'Course is required'),
+  year: z.string().optional(),
+  email: z.string().email('Invalid email address').min(1, 'Email is required'),
+  phone: z.string().min(1, 'Phone number is required'),
+  address: z.string().optional(),
+  dob: z.string().optional(),
+  admissionDate: z.string().optional(),
+  status: z.enum(['active', 'inactive']), // Remove .default('active') to align with defaultValues
+});
 
-interface FormErrors {
-  name?: string;
-  studentId?: string;
-  department?: string;
-  course?: string;
-  email?: string;
-  phone?: string;
-}
+// Infer TypeScript type from Zod schema
+type StudentFormData = z.infer<typeof studentFormSchema>;
 
 const StudentCreate = () => {
-  const [formData, setFormData] = useState<StudentFormData>({
-    name: '',
-    studentId: '',
-    department: '',
-    course: '',
-    year: '',
-    email: '',
-    phone: '',
-    address: '',
-    dob: '',
-    admissionDate: '',
-    status: 'active'
-  });
-
-  const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-
-    if (errors[name as keyof FormErrors]) {
-      setErrors({ ...errors, [name]: '' });
-    }
-  };
-
-  const validateForm = (): boolean => {
-    const newErrors: FormErrors = {};
-    if (!formData.name.trim()) newErrors.name = 'Student name is required';
-    if (!formData.studentId.trim()) newErrors.studentId = 'Student ID is required';
-    if (!formData.department.trim()) newErrors.department = 'Department is required';
-    if (!formData.course.trim()) newErrors.course = 'Course is required';
-    if (!formData.email.trim()) newErrors.email = 'Email is required';
-    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Email is invalid';
-    if (!formData.phone.trim()) newErrors.phone = 'Phone number is required';
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (validateForm()) {
-      setIsSubmitting(true);
-      setTimeout(() => {
-        alert('Student created successfully!');
-        setIsSubmitting(false);
-        setFormData({
-          name: '',
-          studentId: '',
-          department: '',
-          course: '',
-          year: '',
-          email: '',
-          phone: '',
-          address: '',
-          dob: '',
-          admissionDate: '',
-          status: 'active'
-        });
-      }, 1500);
-    }
-  };
-
-  const handleReset = () => {
-    setFormData({
+  const formMethods = useForm<StudentFormData>({
+    resolver: zodResolver(studentFormSchema),
+    defaultValues: {
       name: '',
       studentId: '',
       department: '',
@@ -110,10 +50,36 @@ const StudentCreate = () => {
       address: '',
       dob: '',
       admissionDate: '',
-      status: 'active'
-    });
-    setErrors({});
+      status: 'active', // Default value is handled here
+    },
+  });
+
+  const { handleSubmit, reset } = formMethods;
+
+  const onSubmit = (data: StudentFormData) => {
+    setIsSubmitting(true);
+    toast.success('Student created successfully!');
+    console.log(data)
   };
+
+  const handleReset = () => {
+    reset();
+  };
+
+  // Year options for dropdown
+  const yearOptions = [
+    { value: '', label: 'Select year' },
+    { value: '1st', label: '1st Year' },
+    { value: '2nd', label: '2nd Year' },
+    { value: '3rd', label: '3rd Year' },
+    { value: 'final', label: 'Final Year' },
+  ];
+
+  // Status options for dropdown
+  const statusOptions = [
+    { value: 'active', label: 'Active' },
+    { value: 'inactive', label: 'Inactive' },
+  ];
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -131,254 +97,138 @@ const StudentCreate = () => {
 
         {/* Form Section */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <form onSubmit={handleSubmit}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Student Basic Information */}
-              <div className="md:col-span-2">
-                <h2 className="text-xl font-semibold text-gray-700 mb-4 pb-2 border-b">
-                  Basic Information
-                </h2>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Student Name <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
-                    <FaUser />
-                  </span>
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    className={`pl-10 w-full rounded-md border ${errors.name ? 'border-red-500' : 'border-gray-300'} px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                    placeholder="Enter full name"
-                  />
+          <FormProvider {...formMethods}>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Student Basic Information */}
+                <div className="md:col-span-2">
+                  <h2 className="text-xl font-semibold text-gray-700 mb-4 pb-2 border-b">
+                    Basic Information
+                  </h2>
                 </div>
-                {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name}</p>}
-              </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Student ID <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
-                    <FaIdCard />
-                  </span>
-                  <input
-                    type="text"
-                    name="studentId"
-                    value={formData.studentId}
-                    onChange={handleChange}
-                    className={`pl-10 w-full rounded-md border ${errors.studentId ? 'border-red-500' : 'border-gray-300'} px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                    placeholder="Enter unique ID"
-                  />
-                </div>
-                {errors.studentId && <p className="mt-1 text-sm text-red-500">{errors.studentId}</p>}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Department <span className="text-red-500">*</span>
-                </label>
-                <input
+                <RHFFormField
+                  name="name"
+                  label="Student Name"
                   type="text"
+                  placeholder="Enter full name"
+                  required
+                  icon={<FaUser />}
+                />
+
+                <RHFFormField
+                  name="studentId"
+                  label="Student ID"
+                  type="text"
+                  placeholder="Enter unique ID"
+                  required
+                  icon={<FaIdCard />}
+                />
+
+                <RHFFormField
                   name="department"
-                  value={formData.department}
-                  onChange={handleChange}
-                  className={`w-full rounded-md border ${errors.department ? 'border-red-500' : 'border-gray-300'} px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                  label="Department"
+                  type="text"
                   placeholder="Department name"
+                  required
                 />
-                {errors.department && <p className="mt-1 text-sm text-red-500">{errors.department}</p>}
-              </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Course <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
+                <RHFFormField
                   name="course"
-                  value={formData.course}
-                  onChange={handleChange}
-                  className={`w-full rounded-md border ${errors.course ? 'border-red-500' : 'border-gray-300'} px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                  placeholder="Course name"
-                />
-                {errors.course && <p className="mt-1 text-sm text-red-500">{errors.course}</p>}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Year
-                </label>
-                <input
+                  label="Course"
                   type="text"
-                  name="year"
-                  value={formData.year}
-                  onChange={handleChange}
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="1st / 2nd / 3rd / Final"
+                  placeholder="Course name"
+                  required
                 />
-              </div>
 
-              {/* Contact Information */}
-              <div className="md:col-span-2 mt-6">
-                <h2 className="text-xl font-semibold text-gray-700 mb-4 pb-2 border-b">
-                  Contact Information
-                </h2>
-              </div>
+                <RHFDropDown
+                  name="year"
+                  label="Year"
+                  options={yearOptions}
+                  placeholder="Select year"
+                />
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Email <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
-                    <FaEnvelope />
-                  </span>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className={`pl-10 w-full rounded-md border ${errors.email ? 'border-red-500' : 'border-gray-300'} px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                    placeholder="Email address"
-                  />
+                {/* Contact Information */}
+                <div className="md:col-span-2 mt-6">
+                  <h2 className="text-xl font-semibold text-gray-700 mb-4 pb-2 border-b">
+                    Contact Information
+                  </h2>
                 </div>
-                {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
-              </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Phone <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
-                    <FaPhone />
-                  </span>
-                  <input
-                    type="text"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    className={`pl-10 w-full rounded-md border ${errors.phone ? 'border-red-500' : 'border-gray-300'} px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                    placeholder="Phone number"
-                  />
-                </div>
-                {errors.phone && <p className="mt-1 text-sm text-red-500">{errors.phone}</p>}
-              </div>
+                <RHFFormField
+                  name="email"
+                  label="Email"
+                  type="email"
+                  placeholder="Email address"
+                  required
+                  icon={<FaEnvelope />}
+                />
 
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Address
-                </label>
-                <div className="relative">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
-                    <FaMapMarkerAlt />
-                  </span>
-                  <input
-                    type="text"
+                <RHFFormField
+                  name="phone"
+                  label="Phone"
+                  type="tel"
+                  placeholder="Phone number"
+                  required
+                  icon={<FaPhone />}
+                />
+
+                <div className="md:col-span-2">
+                  <RHFFormField
                     name="address"
-                    value={formData.address}
-                    onChange={handleChange}
-                    className="pl-10 w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    label="Address"
+                    type="text"
                     placeholder="Residential address"
+                    icon={<FaMapMarkerAlt />}
+                  />
+                </div>
+
+                {/* Dates */}
+                <RHFFormField
+                  name="dob"
+                  label="Date of Birth"
+                  type="date"
+                  icon={<FaCalendarAlt />}
+                />
+
+                <RHFFormField
+                  name="admissionDate"
+                  label="Admission Date"
+                  type="date"
+                  icon={<FaCalendarAlt />}
+                />
+
+                {/* Status */}
+                <div className="md:col-span-2">
+                  <RHFDropDown
+                    name="status"
+                    label="Status"
+                    options={statusOptions}
                   />
                 </div>
               </div>
 
-              {/* Dates */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Date of Birth
-                </label>
-                <div className="relative">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
-                    <FaCalendarAlt />
-                  </span>
-                  <input
-                    type="date"
-                    name="dob"
-                    value={formData.dob}
-                    onChange={handleChange}
-                    className="pl-10 w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
+              {/* Form Actions */}
+              <div className="mt-8 flex justify-end space-x-3">
+                <button
+                  type="button"
+                  onClick={handleReset}
+                  className="flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                >
+                  <FaTimes className="mr-2" />
+                  Reset
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-75"
+                >
+                  <FaSave className="mr-2" />
+                  {isSubmitting ? 'Creating...' : 'Create Student'}
+                </button>
               </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Admission Date
-                </label>
-                <div className="relative">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
-                    <FaCalendarAlt />
-                  </span>
-                  <input
-                    type="date"
-                    name="admissionDate"
-                    value={formData.admissionDate}
-                    onChange={handleChange}
-                    className="pl-10 w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
-
-              {/* Status */}
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Status
-                </label>
-                <div className="flex items-center space-x-4">
-                  <label className="inline-flex items-center">
-                    <input
-                      type="radio"
-                      name="status"
-                      value="active"
-                      checked={formData.status === 'active'}
-                      onChange={handleChange}
-                      className="text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="ml-2">Active</span>
-                  </label>
-                  <label className="inline-flex items-center">
-                    <input
-                      type="radio"
-                      name="status"
-                      value="inactive"
-                      checked={formData.status === 'inactive'}
-                      onChange={handleChange}
-                      className="text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="ml-2">Inactive</span>
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            {/* Form Actions */}
-            <div className="mt-8 flex justify-end space-x-3">
-              <button
-                type="button"
-                onClick={handleReset}
-                className="flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                <FaTimes className="mr-2" />
-                Reset
-              </button>
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-75"
-              >
-                <FaSave className="mr-2" />
-                {isSubmitting ? 'Creating...' : 'Create Student'}
-              </button>
-            </div>
-          </form>
+            </form>
+          </FormProvider>
         </div>
 
         {/* Info */}
