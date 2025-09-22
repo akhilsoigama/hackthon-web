@@ -50,7 +50,6 @@ const InstituteCreate = () => {
     resolver: zodResolver(instituteSchema),
     defaultValues: {
       status: 'active',
-      // Set default empty values for all fields
       name: '',
       code: '',
       type: '',
@@ -81,11 +80,9 @@ const InstituteCreate = () => {
   } = methods;
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
-    // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1500));
     alert('Institute created successfully!');
     console.log(data);
-    // Reset the form with default values
     reset({
       status: 'active',
       name: '',
