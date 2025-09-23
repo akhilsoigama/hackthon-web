@@ -49,7 +49,7 @@ export const instituteData: Institute[] = [
     code: 'PQR-BUS-003',
     type: 'Business',
     address: '789 Commerce Road',
-    city: 'Del极速加速器',
+    city: 'Delhi',
     state: 'Delhi',
     pincode: '110001',
     country: 'India',

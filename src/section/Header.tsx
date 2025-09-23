@@ -64,8 +64,8 @@ const Header = ({ toggleMobileSidebar }: HeaderProps) => {
         try {
           // Simulated API fetch (replace with your API endpoint)
           const fetchedProfile: UserProfile = {
-            name: 'Alex Johnson',
-            email: 'alex.j@example.com',
+            name: 'User',
+            email: 'user@example.com',
             avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80',
           };
           const fetchedNotifications: Notification[] = [

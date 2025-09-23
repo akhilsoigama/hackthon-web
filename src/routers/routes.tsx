@@ -10,10 +10,8 @@ const LoadingSpinner = () => (
   </div>
 );
 
-// Lazy loaded components
-// Dashboard Sections
 const Progress = lazy(() => import('../section/Progress'));
-const Calendar = lazy(() => import('../section/Calendar'));
+const Events = lazy(() => import('../section/Events'));
 const ChatBot = lazy(() => import('../section/ChatBot'));
 const Settings = lazy(() => import('../section/Settings'));
 const Overview = lazy(() => import('../section/overview'));
@@ -104,7 +102,7 @@ export default function Routers() {
             path="events" 
             element={
               <Suspense fallback={<LoadingSpinner />}>
-                <Calendar />
+                <Events />
               </Suspense>
             } 
           />
