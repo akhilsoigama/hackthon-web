@@ -1,9 +1,9 @@
-import { 
-  FaHome, 
-  FaPlus, 
-  FaList, 
-  FaChartBar, 
-  FaClipboardList, 
+import {
+  FaHome,
+  FaPlus,
+  FaList,
+  FaChartBar,
+  FaClipboardList,
   FaCalendarAlt,
   FaEnvelope,
   FaCog,
@@ -111,6 +111,23 @@ export const modules: any = [
         ],
       },
       {
+        to: '/dashboard/institute-management/department',
+        label: 'Department',
+        icon: <FaUsers className="size-6" />,
+        subLinks: [
+          {
+            to: '/dashboard/institute-management/department/create',
+            label: 'Create',
+            icon: <FaPlus className="size-6" />,
+          },
+          {
+            to: '/dashboard/institute-management/department/list',
+            label: 'List',
+            icon: <FaList className="size-6" />,
+          },
+        ],
+      },
+      {
         to: '/dashboard/institute-management/institute-servey',
         label: 'Institute Survey',
         icon: <FaClipboardList className="size-6" />,
@@ -183,6 +200,11 @@ export const modules: any = [
           },
         ],
       },
+      {
+        to: '/dashboard/student-management/progress',
+        label: 'Student Progress',
+        icon: <FaChartBar className="size-6" />,
+      }
     ],
   },
   {
@@ -281,6 +303,11 @@ export const modules: any = [
         label: 'Events',
         icon: <FaCalendarAlt className="size-6" />,
       },
+      {
+        to: '/dashboard/student-management/quize/list',
+        label: 'Quiz',
+        icon: <FaQuestionCircle className="size-6" />,
+      }
     ],
   },
   {
