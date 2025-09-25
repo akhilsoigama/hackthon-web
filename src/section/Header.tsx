@@ -394,7 +394,7 @@ const Header = ({ toggleMobileSidebar }: HeaderProps) => {
                     )}
                   </div>
                   <NavLink
-                    to="/profile"
+                    to="#"
                     className="flex items-center px-3 py-1.5 sm:px-4 sm:py-2 hover:bg-gray-50 transition-colors text-xs sm:text-sm md:text-base"
                     onClick={toggleProfile}
                   >
@@ -402,7 +402,7 @@ const Header = ({ toggleMobileSidebar }: HeaderProps) => {
                     Profile
                   </NavLink>
                   <NavLink
-                    to="/settings"
+                    to="#"
                     className="flex items-center px-3 py-1.5 sm:px-4 sm:py-2 hover:bg-gray-50 transition-colors text-xs sm:text-sm md:text-base"
                     onClick={toggleProfile}
                   >
@@ -411,7 +411,7 @@ const Header = ({ toggleMobileSidebar }: HeaderProps) => {
                   </NavLink>
                   <div className="border-t border-gray-100 my-1 sm:my-2"></div>
                   <NavLink
-                    to="/logout"
+                    to="#"
                     className="flex items-center px-3 py-1.5 sm:px-4 sm:py-2 hover:bg-red-50 text-red-600 transition-colors text-xs sm:text-sm md:text-base"
                     onClick={toggleProfile}
                   >

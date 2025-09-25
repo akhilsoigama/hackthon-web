@@ -1,10 +1,16 @@
 import React from 'react';
 import { useFormContext, Controller, RegisterOptions } from 'react-hook-form';
+import {
+  TextField,
+  InputAdornment,
+  SxProps,
+  Theme,
+} from '@mui/material';
 
 interface RHFFormFieldProps {
   name: string;
   label: string;
-  type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'date'|'time' | 'datetime-local';
+  type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'date' | 'time' | 'datetime-local';
   placeholder?: string;
   required?: boolean;
   disabled?: boolean;
@@ -14,6 +20,12 @@ interface RHFFormFieldProps {
   icon?: React.ReactNode;
   min?: string | number;
   max?: string | number;
+  // MUI specific props
+  useMUI?: boolean;
+  variant?: 'standard' | 'outlined' | 'filled';
+  size?: 'small' | 'medium';
+  sx?: SxProps<Theme>;
+  fullWidth?: boolean;
 }
 
 const RHFFormField: React.FC<RHFFormFieldProps> = ({
@@ -29,6 +41,12 @@ const RHFFormField: React.FC<RHFFormFieldProps> = ({
   icon,
   min,
   max,
+  // MUI props
+  useMUI = false,
+  variant = 'outlined',
+  size = 'medium',
+  sx = {},
+  fullWidth = true,
   ...props
 }) => {
   const {
@@ -38,6 +56,45 @@ const RHFFormField: React.FC<RHFFormFieldProps> = ({
 
   const error = errors[name];
 
+  if (useMUI) {
+    return (
+      <div className={className}>
+        <Controller
+          name={name}
+          control={control}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              fullWidth={fullWidth}
+              type={type}
+              label={label}
+              placeholder={placeholder}
+              disabled={disabled}
+              required={required}
+              variant={variant}
+              size={size}
+              error={!!error}
+              helperText={error?.message as string}
+              autoComplete={autoComplete}
+              sx={sx}
+              InputProps={{
+                startAdornment: icon ? (
+                  <InputAdornment position="start">{icon}</InputAdornment>
+                ) : undefined,
+                inputProps: {
+                  min,
+                  max,
+                  ...props,
+                },
+              }}
+            />
+          )}
+        />
+      </div>
+    );
+  }
+
+  // Original custom styling (unchanged)
   return (
     <div className={`mb-5 ${className}`}>
       <label 

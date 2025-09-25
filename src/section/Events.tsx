@@ -276,7 +276,7 @@ const EventsShowcase = () => {
                     {formatDate(event.date)}
                   </div>
                   <div className="absolute top-3 right-3 bg-white/90 text-gray-800 px-2 py-1 rounded text-xs font-medium">
-                    {event.price === 0 ? 'Free' : `$${event.price}`}
+                    {event.price === 0 ? 'Free' : `₹${event.price}`}
                   </div>
                   <button
                     onClick={(e) => {
