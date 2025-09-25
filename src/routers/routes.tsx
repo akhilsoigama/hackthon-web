@@ -32,8 +32,9 @@ const StudentCreate = lazy(() => import('../section/Institute-management/student
 const StudentList = lazy(() => import('../section/Institute-management/students/student-list'));
 const InstituteSurveyCreate = lazy(() => import('../section/Institute-management/institure-serveys/servey-create'));
 const InstituteSurveyList = lazy(() => import('../section/Institute-management/institure-serveys/servey-list'));
-
-// Student Management
+const DepartmentCreate = lazy(() => import('../section/Institute-management/department-master/department-create'));
+const DepartmentList = lazy(() => import('../section/Institute-management/department-master/department-list'))
+// In your Routers.tsx - check this path
 const AssignmentCreate = lazy(() => import('../section/Student-management/Assignment-master/assignment-create'));
 const AssignmentList = lazy(() => import('../section/Student-management/Assignment-master/assignment-list'));
 const LessonCreate = lazy(() => import('../section/Student-management/Lession-master/lession-create'));
@@ -74,271 +75,286 @@ export default function Routers() {
           }
         >
           {/* Dashboard Routes */}
-          <Route 
-            index 
+          <Route
+            index
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <Overview />
               </Suspense>
-            } 
+            }
           />
-          <Route 
-            path="overview" 
+          <Route
+            path="overview"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <Overview />
               </Suspense>
-            } 
+            }
           />
-          <Route 
-            path="progress" 
+          <Route
+            path="progress"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <Progress />
               </Suspense>
-            } 
+            }
           />
-          <Route 
-            path="events" 
+          <Route
+            path="events"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <Events />
               </Suspense>
-            } 
+            }
           />
-          <Route 
-            path="quize" 
+          <Route
+            path="quize"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <Quiz />
               </Suspense>
-            } 
+            }
           />
-          <Route 
-            path="settings" 
+          <Route
+            path="settings"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <Settings />
               </Suspense>
-            } 
+            }
           />
-          <Route 
-            path="chatbot" 
+          <Route
+            path="chatbot"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <ChatBot />
               </Suspense>
-            } 
+            }
           />
 
           {/* Nabha Management Routes */}
-          <Route 
-            path="nabha-master/institute/create" 
+          <Route
+            path="nabha-master/institute/create"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <InstituteCreate />
               </Suspense>
-            } 
+            }
           />
-          <Route 
-            path="nabha-master/institute/list" 
+          <Route
+            path="nabha-master/institute/list"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <InstituteList />
               </Suspense>
-            } 
+            }
           />
-          <Route 
-            path="servey-master/create" 
+          <Route
+            path="servey-master/create"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <GovtServeyCreate />
               </Suspense>
-            } 
+            }
           />
-          <Route 
-            path="servey-master/list" 
+          <Route
+            path="servey-master/list"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <GovtServeyList />
               </Suspense>
-            } 
+            }
           />
-          <Route 
-            path="rolePermission/create" 
+          <Route
+            path="rolePermission/create"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <RolePermissionCreate />
               </Suspense>
-            } 
+            }
           />
-          <Route 
-            path="rolePermission/list" 
+          <Route
+            path="rolePermission/list"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <RolePermissionList />
               </Suspense>
-            } 
+            }
           />
 
           {/* Institute Management Routes */}
-          <Route 
-            path="institute-management/faculty/create" 
+          <Route
+            path="institute-management/faculty/create"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <FacultyCreate />
               </Suspense>
-            } 
+            }
           />
-          <Route 
-            path="institute-management/faculty/list" 
+          <Route
+            path="institute-management/faculty/list"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <FacultyList />
               </Suspense>
-            } 
+            }
           />
-          <Route 
-            path="institute-management/student/create" 
+          <Route
+            path="institute-management/student/create"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <StudentCreate />
               </Suspense>
-            } 
+            }
           />
-          <Route 
-            path="institute-management/student/list" 
+          <Route
+            path="institute-management/student/list"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <StudentList />
               </Suspense>
-            } 
+            }
           />
-          <Route 
-            path="institute-management/institute-servey/create" 
+          <Route
+            path="institute-management/institute-servey/create"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <InstituteSurveyCreate />
               </Suspense>
-            } 
+            }
           />
-          <Route 
-            path="institute-management/institute-servey/list" 
+          <Route
+            path="institute-management/institute-servey/list"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <InstituteSurveyList />
               </Suspense>
-            } 
+            }
           />
-
+          <Route
+            path="institute-management/department/create"
+            element={
+              <Suspense fallback={<LoadingSpinner />}>
+                <DepartmentCreate />
+              </Suspense>
+            }
+          />
+          <Route
+            path="institute-management/department/list"
+            element={
+              <Suspense fallback={<LoadingSpinner />}>
+                <DepartmentList />
+              </Suspense>
+            }
+          />
           {/* Student Management Routes */}
-          <Route 
-            path="student-management/assignment/create" 
+          <Route
+            path="student-management/assignment/create"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <AssignmentCreate />
               </Suspense>
-            } 
+            }
           />
-          <Route 
-            path="student-management/assignment/list" 
+          <Route
+            path="student-management/assignment/list"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <AssignmentList />
               </Suspense>
-            } 
+            }
           />
-          <Route 
-            path="student-management/lession/create" 
+          <Route
+            path="student-management/lession/create"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <LessonCreate />
               </Suspense>
-            } 
+            }
           />
-          <Route 
-            path="student-management/lession/list" 
+          <Route
+            path="student-management/lession/list"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <LessonList />
               </Suspense>
-            } 
+            }
           />
-          <Route 
-            path="student-management/quize/create" 
+          <Route
+            path="student-management/quize/create"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <QuizCreate />
               </Suspense>
-            } 
+            }
           />
-          <Route 
-            path="student-management/quize/list" 
+          <Route
+            path="student-management/quize/list"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <QuizList />
               </Suspense>
-            } 
+            }
           />
 
           {/* Leave Management Routes */}
-          <Route 
-            path="leave-management/leave/create" 
+          <Route
+            path="leave-management/leave/create"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <LeaveCreate />
               </Suspense>
-            } 
+            }
           />
-          <Route 
-            path="leave-management/leave/list" 
+          <Route
+            path="leave-management/leave/list"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <LeaveList />
               </Suspense>
-            } 
+            }
           />
-          <Route 
-            path="leave-management/leave-approval" 
+          <Route
+            path="leave-management/leave-approval"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <LeaveApprovalDone />
               </Suspense>
-            } 
+            }
           />
 
           {/* Student Upload Routes */}
-          <Route 
-            path="student-upload/assignment-upload/upload" 
+          <Route
+            path="student-upload/assignment-upload/upload"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <AssignmentUploadCreate />
               </Suspense>
-            } 
+            }
           />
-          <Route 
-            path="student-upload/assignment-upload/list" 
+          <Route
+            path="student-upload/assignment-upload/list"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <AssignmentUploadList />
               </Suspense>
-            } 
+            }
           />
-          <Route 
-            path="student-upload/lession-upload/upload" 
+          <Route
+            path="student-upload/lession-upload/upload"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <LessionUploadCreate />
               </Suspense>
-            } 
+            }
           />
-          <Route 
-            path="student-upload/lession-upload/list" 
+          <Route
+            path="student-upload/lession-upload/list"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <LessonUploadList />
               </Suspense>
-            } 
+            }
           />
         </Route>
       </Routes>

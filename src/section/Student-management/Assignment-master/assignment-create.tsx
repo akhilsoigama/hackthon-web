@@ -279,7 +279,7 @@ const AssignmentCreate = () => {
                             options={students}
                             placeholder="Select a student"
                             value={newStudent}
-                            onChange={(e) => setNewStudent(e.target.value)}
+                            
                           />
                           <button
                             type="button"

@@ -1,5 +1,15 @@
 import React from 'react';
 import { useFormContext, Controller, RegisterOptions } from 'react-hook-form';
+import {
+  Checkbox,
+  FormControlLabel,
+  FormControl,
+  FormHelperText,
+  FormGroup,
+  Typography,
+  Box,
+} from '@mui/material';
+import { CheckBox as CheckBoxIcon, CheckBoxOutlineBlank } from '@mui/icons-material';
 
 interface RHFCheckboxProps {
   name: string;
@@ -9,6 +19,10 @@ interface RHFCheckboxProps {
   className?: string;
   validation?: RegisterOptions;
   description?: string;
+  // MUI specific props
+  size?: 'small' | 'medium';
+  color?: 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning';
+  placement?: 'end' | 'start' | 'top' | 'bottom';
   // For use outside of React Hook Form context
   checked?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -22,6 +36,9 @@ const RHFCheckbox: React.FC<RHFCheckboxProps> = ({
   className = '',
   validation = {},
   description,
+  size = 'medium',
+  color = 'primary',
+  placement = 'end',
   checked: externalChecked,
   onChange: externalOnChange,
   ...props
@@ -31,35 +48,40 @@ const RHFCheckbox: React.FC<RHFCheckboxProps> = ({
   // If we're using this outside of RHF context, use the controlled component approach
   if (!formContext || externalOnChange) {
     return (
-      <div className={`mb-4 ${className}`}>
-        <div className="flex items-center">
-          <input
-            type="checkbox"
-            id={name}
-            name={name}
-            checked={externalChecked || false}
-            onChange={externalOnChange}
+      <FormControl component="fieldset" className={className}>
+        <FormGroup>
+          <FormControlLabel
+            control={
+              <Checkbox
+                name={name}
+                checked={externalChecked || false}
+                onChange={externalOnChange}
+                disabled={disabled}
+                size={size}
+                color={color}
+                icon={<CheckBoxOutlineBlank />}
+                checkedIcon={<CheckBoxIcon />}
+                {...props}
+              />
+            }
+            label={
+              <Box>
+                <Typography variant="body1" component="span">
+                  {label}
+                  {required && <span className="text-red-500 ml-1">*</span>}
+                </Typography>
+                {description && (
+                  <Typography variant="caption" color="textSecondary" display="block">
+                    {description}
+                  </Typography>
+                )}
+              </Box>
+            }
+            labelPlacement={placement}
             disabled={disabled}
-            className={`
-              h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500
-              ${disabled ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : ''}
-            `}
-            {...props}
           />
-          <label
-            htmlFor={name}
-            className={`ml-2 block text-sm font-medium text-gray-700 ${disabled ? 'text-gray-400' : ''}`}
-          >
-            {label}
-            {required && <span className="text-red-500 ml-1">*</span>}
-          </label>
-        </div>
-        {description && (
-          <p className="mt-1 text-sm text-gray-500">
-            {description}
-          </p>
-        )}
-      </div>
+        </FormGroup>
+      </FormControl>
     );
   }
 
@@ -71,7 +93,13 @@ const RHFCheckbox: React.FC<RHFCheckboxProps> = ({
   const error = errors[name];
 
   return (
-    <div className={`mb-4 ${className}`}>
+    <FormControl 
+      component="fieldset" 
+      error={!!error}
+      disabled={disabled}
+      className={className}
+      fullWidth
+    >
       <Controller
         name={name}
         control={control}
@@ -80,50 +108,55 @@ const RHFCheckbox: React.FC<RHFCheckboxProps> = ({
           ...validation 
         }}
         render={({ field }) => (
-          <div className="relative flex items-start">
-            <div className="flex items-center h-5">
-              <input
-                {...field}
-                type="checkbox"
-                id={name}
-                disabled={disabled}
-                checked={field.value}
-                onChange={(e) => field.onChange(e.target.checked)}
-                className={`
-                  h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500
-                  ${error ? 'border-red-500' : ''}
-                  ${disabled ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : ''}
-                `}
-                {...props}
-              />
-            </div>
-            <div className="ml-3 text-sm">
-              <label
-                htmlFor={name}
-                className={`font-medium ${error ? 'text-red-700' : 'text-gray-700'} ${disabled ? 'text-gray-400' : ''}`}
-              >
-                {label}
-                {required && <span className="text-red-500 ml-1">*</span>}
-              </label>
-              {description && (
-                <p className={`mt-1 ${error ? 'text-red-600' : 'text-gray-500'}`}>
-                  {description}
-                </p>
-              )}
-            </div>
-          </div>
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  {...field}
+                  checked={field.value || false}
+                  onChange={(e) => field.onChange(e.target.checked)}
+                  disabled={disabled}
+                  size={size}
+                  color={error ? 'error' : color}
+                  icon={<CheckBoxOutlineBlank />}
+                  checkedIcon={<CheckBoxIcon />}
+                  {...props}
+                />
+              }
+              label={
+                <Box>
+                  <Typography 
+                    variant="body1" 
+                    component="span"
+                    color={error ? 'error' : 'textPrimary'}
+                  >
+                    {label}
+                    {required && <span className="text-red-500 ml-1">*</span>}
+                  </Typography>
+                  {description && (
+                    <Typography 
+                      variant="caption" 
+                      color={error ? 'error' : 'textSecondary'} 
+                      display="block"
+                    >
+                      {description}
+                    </Typography>
+                  )}
+                </Box>
+              }
+              labelPlacement={placement}
+              disabled={disabled}
+            />
+          </FormGroup>
         )}
       />
       
       {error && (
-        <p className="mt-1 text-sm text-red-600 flex items-center">
-          <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clipRule="evenodd" />
-          </svg>
+        <FormHelperText error>
           {error.message as string}
-        </p>
+        </FormHelperText>
       )}
-    </div>
+    </FormControl>
   );
 };
 
