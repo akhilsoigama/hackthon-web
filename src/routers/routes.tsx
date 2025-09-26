@@ -34,6 +34,7 @@ const InstituteSurveyCreate = lazy(() => import('../section/Institute-management
 const InstituteSurveyList = lazy(() => import('../section/Institute-management/institure-serveys/servey-list'));
 const DepartmentCreate = lazy(() => import('../section/Institute-management/department-master/department-create'));
 const DepartmentList = lazy(() => import('../section/Institute-management/department-master/department-list'))
+
 // In your Routers.tsx - check this path
 const AssignmentCreate = lazy(() => import('../section/Student-management/Assignment-master/assignment-create'));
 const AssignmentList = lazy(() => import('../section/Student-management/Assignment-master/assignment-list'));
@@ -41,6 +42,7 @@ const LessonCreate = lazy(() => import('../section/Student-management/Lession-ma
 const LessonList = lazy(() => import('../section/Student-management/Lession-master/lession-list'));
 const QuizCreate = lazy(() => import('../section/Student-management/Quiz-master/quiz-create'));
 const QuizList = lazy(() => import('../section/Student-management/Quiz-master/quiz-list'));
+const StudentProgress = lazy(() => import('../section/Student-management/Student-Progress/Student-Progress'));
 
 // Leave Management
 const LeaveCreate = lazy(() => import('../section/Leave-management/Leave-master/leave-create'));
@@ -293,6 +295,14 @@ export default function Routers() {
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <QuizList />
+              </Suspense>
+            }
+          />
+          <Route
+            path="student-management/progress"
+            element={
+              <Suspense fallback={<LoadingSpinner />}>
+                <StudentProgress />
               </Suspense>
             }
           />
