@@ -1,5 +1,5 @@
 import { AnimatePresence } from "framer-motion";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { motion } from 'framer-motion';
 import { useState, useEffect } from "react";
 import { modules } from "../routers/ModulePath";
@@ -16,6 +16,7 @@ const Sidebar = ({ isMobileOpen, toggleMobileSidebar }: SidebarProps) => {
   const [expandedSubLink, setExpandedSubLink] = useState<string | null>(null);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     const checkIsMobile = () => {
@@ -27,6 +28,19 @@ const Sidebar = ({ isMobileOpen, toggleMobileSidebar }: SidebarProps) => {
 
     return () => window.removeEventListener('resize', checkIsMobile);
   }, []);
+
+  useEffect(() => {
+    // Auto-expand parent links based on the current route
+    const currentPath = location.pathname;
+    for (const module of modules) {
+      for (const link of module.links) {
+        if (link.subLinks && link.subLinks.some((sub: any) => currentPath.startsWith(sub.to))) {
+          setExpandedLink(link.to);
+          return;
+        }
+      }
+    }
+  }, [location.pathname]);
 
   const toggleSidebar = (): void => {
     setIsSidebarExpanded(prev => !prev);
@@ -61,15 +75,20 @@ const Sidebar = ({ isMobileOpen, toggleMobileSidebar }: SidebarProps) => {
 
   return (
     <>
-      {isMobile && isMobileOpen && (
-        <div
-          className="fixed inset-0 backdrop-blur-md  bg-opacity-40 z-50 lg:hidden"
-          onClick={toggleMobileSidebar}
-        />
-      )}
+      <AnimatePresence>
+        {isMobile && isMobileOpen && (
+          <motion.div
+            className="fixed inset-0 bg-gray-100 bg-opacity-75 z-50 lg:hidden"
+            onClick={toggleMobileSidebar}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, transition: { duration: 0.3 } }}
+          />
+        )}
+      </AnimatePresence>
 
       <motion.aside
-        className={`h-screen fixed lg:sticky  top-0 flex flex-col transition-all duration-300 ease-in-out overflow-y-auto scrollbar-hide ${!isMobile ? 'overflow-hidden' : 'overflow-x-auto'} shadow-lg z-50
+        className={`h-screen fixed lg:sticky  top-0 flex flex-col transition-all duration-300 overflow-y-auto scrollbar-hide ${!isMobile ? 'overflow-hidden' : 'overflow-x-auto'} shadow-lg z-50
           ${isMobile ? (isMobileOpen ? 'translate-x-0' : '-translate-x-full') : 'translate-x-0'}`}
         style={{
           width: isSidebarExpanded ? (window.innerWidth >= 1024 ? '18rem' : '16rem') :
@@ -238,13 +257,13 @@ const Sidebar = ({ isMobileOpen, toggleMobileSidebar }: SidebarProps) => {
                                   {subLink.subLinks ? (
                                     <button
                                       onClick={() => toggleSubLink(subLink.to)}
-                                      className={`flex items-center p-2 pl-4 rounded-lg transition-all duration-300 w-full group/sublink ${expandedSubLink === subLink.to
-                                          ? 'bg-blue-25 text-blue-600'
-                                          : 'hover:bg-gray-50 text-gray-500 hover:text-gray-700'
+                                      className={`flex items-center p-2 pl-4 rounded-lg transition-all duration-300 w-full group/sublink ${location.pathname.startsWith(subLink.to)
+                                          ? 'bg-blue-50 text-blue-700'
+                                          : 'hover:bg-blue-50 text-gray-500 hover:text-gray-800'
                                         }`}
                                     >
                                       <div className={`flex-shrink-0 w-5 h-5 flex items-center justify-center rounded-md transition-colors ${expandedSubLink === subLink.to
-                                          ? 'bg-blue-100 text-blue-600'
+                                          ? 'bg-blue-100 text-blue-700'
                                           : 'bg-gray-100 text-gray-400 group-hover/sublink:bg-gray-200'
                                         }`}>
                                         {subLink.icon || <div className="w-1.5 h-1.5 rounded-full bg-current" />}
@@ -266,8 +285,8 @@ const Sidebar = ({ isMobileOpen, toggleMobileSidebar }: SidebarProps) => {
                                       to={subLink.to}
                                       className={({ isActive }) =>
                                         `flex items-center p-2 pl-4 rounded-lg transition-all duration-300 group/sublink ${isActive
-                                          ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-500'
-                                          : 'hover:bg-gray-50 text-gray-500 hover:text-gray-700'
+                                          ? 'bg-blue-50 text-blue-800 font-semibold'
+                                          : 'hover:bg-blue-50 text-gray-500 hover:text-gray-800'
                                         }`
                                       }
                                       onClick={handleLinkClick}
@@ -296,9 +315,9 @@ const Sidebar = ({ isMobileOpen, toggleMobileSidebar }: SidebarProps) => {
                                             key={nestedSubLink.label}
                                             to={nestedSubLink.to}
                                             className={({ isActive }) =>
-                                              `flex items-center p-2 pl-4 rounded-lg transition-all duration-300 text-sm group/nested ${isActive
-                                                ? 'bg-blue-25 text-blue-600 font-medium'
-                                                : 'text-gray-400 hover:text-gray-600 hover:bg-gray-25'
+                                              `flex items-center p-2 pl-4 rounded-md transition-all duration-300 text-sm group/nested ${isActive
+                                                ? 'text-blue-700 font-medium'
+                                                : 'text-gray-400 hover:text-gray-700 hover:bg-blue-25'
                                               }`
                                             }
                                             onClick={handleLinkClick}
@@ -323,16 +342,19 @@ const Sidebar = ({ isMobileOpen, toggleMobileSidebar }: SidebarProps) => {
                         to={link.to}
                         className={({ isActive }) =>
                           `flex items-center p-3 rounded-xl transition-all duration-300 group relative overflow-hidden ${isActive
-                            ? 'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 shadow-sm shadow-blue-100'
-                            : 'hover:bg-gray-50 text-gray-600 hover:text-gray-900 hover:shadow-sm'
+                            ? 'bg-blue-100 text-blue-800 font-semibold'
+                            : 'hover:bg-blue-50 text-gray-600 hover:text-gray-900'
                           } ${!isSidebarExpanded ? 'justify-center px-3' : ''
                           }`
                         }
                         onClick={handleLinkClick}
                       >
-
-
-                        <div className={`flex-shrink-0 transition-transform duration-300 group-hover:scale-110 ${!isSidebarExpanded ? 'mx-auto' : ''
+                        {({ isActive }) => (
+                          <>
+                            {isActive && (
+                              <motion.div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full" layoutId="activeIndicator" />
+                            )}
+                            <div className={`flex-shrink-0 transition-transform duration-300 group-hover:scale-110 ${isActive ? 'text-blue-600' : 'text-gray-400 group-hover:text-gray-600'} ${!isSidebarExpanded ? 'mx-auto' : ''
                           }`}>
                           {link.icon}
                         </div>
@@ -356,6 +378,8 @@ const Sidebar = ({ isMobileOpen, toggleMobileSidebar }: SidebarProps) => {
                             {link.label}
                           </div>
                         )}
+                          </>
+                        )}
                       </NavLink>
                     )}
                   </motion.div>
@@ -371,7 +395,7 @@ const Sidebar = ({ isMobileOpen, toggleMobileSidebar }: SidebarProps) => {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8, duration: 0.5 }}
         >
-          <div className="flex items-center">
+          <div className="flex items-center p-2 rounded-lg transition-colors hover:bg-gray-50">
             <img
               src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80"
               alt="User"

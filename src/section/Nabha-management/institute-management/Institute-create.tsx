@@ -1,5 +1,6 @@
 import { useForm, FormProvider, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { motion } from 'framer-motion';
 import { z } from 'zod';
 import { 
   FaUniversity, 
@@ -172,24 +173,30 @@ const InstituteCreate = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <motion.div
+      className="min-h-screen bg-gray-50 p-6"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 flex items-center">
+        <motion.div className="mb-8" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+          <h1 className="text-3xl font-bold text-gray-800 flex items-center"
+          >
             <FaUniversity className="mr-3 text-blue-600" />
             Create New Institute
           </h1>
           <p className="text-gray-600 mt-2">
             Add a new educational institute to the system. Fill in all the required details below.
           </p>
-        </div>
-
+        </motion.div>
+        
         <FormProvider {...methods}>
           <form onSubmit={handleSubmit(onSubmit)}>
             {/* Form Section */}
-            <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <motion.div className="bg-white rounded-lg shadow-md p-6 mb-8" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
+              <motion.div className="grid grid-cols-1 md:grid-cols-2 gap-6" initial="hidden" animate="visible" variants={{ visible: { transition: { staggerChildren: 0.05 } } }}>
                 {/* Institute Basic Information */}
                 <div className="md:col-span-2">
                   <h2 className="text-xl font-semibold text-gray-700 mb-4 pb-2 border-b">
@@ -197,7 +204,7 @@ const InstituteCreate = () => {
                   </h2>
                 </div>
 
-                <RHFFormField
+                <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}><RHFFormField
                   name="name"
                   label="Institute Name"
                   type="text"
@@ -205,8 +212,7 @@ const InstituteCreate = () => {
                   required
                   icon={<FaUniversity />}
                 />
-
-                <RHFFormField
+                </motion.div><motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}><RHFFormField
                   name="code"
                   label="Institute Code"
                   type="text"
@@ -214,15 +220,13 @@ const InstituteCreate = () => {
                   required
                   icon={<FaIdCard />}
                 />
-
-                <RHFDropDown
+                </motion.div><motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}><RHFDropDown
                   name="type"
                   label="Institute Type"
                   options={instituteTypeOptions}
                   required
                 />
-
-                <RHFFormField
+                </motion.div><motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}><RHFFormField
                   name="establishedYear"
                   label="Established Year"
                   type="number"
@@ -232,8 +236,7 @@ const InstituteCreate = () => {
                   required
                   icon={<FaCalendar />}
                 />
-
-                <RHFFormField
+                </motion.div><motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}><RHFFormField
                   name="affiliation"
                   label="Affiliation"
                   type="text"
@@ -241,21 +244,20 @@ const InstituteCreate = () => {
                   required
                   icon={<FaGraduationCap />}
                 />
-
-                <RHFFormField
+                </motion.div><motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}><RHFFormField
                   name="campusArea"
                   label="Campus Area (sq. ft.)"
                   type="number"
                   placeholder="Area in square feet"
                   required
                 />
-
-                <RHFDropDown
+                </motion.div><motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}><RHFDropDown
                   name="rolepermission"
                   label="Permission"
                   options={rolePermissionOptions}
                   required
                 />
+                </motion.div>
 
                 {/* Contact Information */}
                 <div className="md:col-span-2 mt-6">
@@ -264,7 +266,7 @@ const InstituteCreate = () => {
                   </h2>
                 </div>
 
-                <div className="md:col-span-2">
+                <motion.div className="md:col-span-2" variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}>
                   <RHFFormField
                     name="address"
                     label="Address"
@@ -273,41 +275,37 @@ const InstituteCreate = () => {
                     required
                     icon={<FaMapMarkerAlt />}
                   />
-                </div>
+                </motion.div>
 
-                <RHFFormField
+                <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}><RHFFormField
                   name="city"
                   label="City"
                   type="text"
                   placeholder="City"
                   required
                 />
-
-                <RHFFormField
+                </motion.div><motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}><RHFFormField
                   name="state"
                   label="State"
                   type="text"
                   placeholder="State"
                   required
                 />
-
-                <RHFFormField
+                </motion.div><motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}><RHFFormField
                   name="pincode"
                   label="Pincode"
                   type="text"
                   placeholder="Pincode"
                   required
                 />
-
-                <RHFFormField
+                </motion.div><motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}><RHFFormField
                   name="country"
                   label="Country"
                   type="text"
                   placeholder="Country"
                   required
                 />
-
-                <RHFFormField
+                </motion.div><motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}><RHFFormField
                   name="phone"
                   label="Phone"
                   type="text"
@@ -315,8 +313,7 @@ const InstituteCreate = () => {
                   required
                   icon={<FaPhone />}
                 />
-
-                <RHFFormField
+                </motion.div><motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}><RHFFormField
                   name="email"
                   label="Email"
                   type="email"
@@ -324,8 +321,7 @@ const InstituteCreate = () => {
                   required
                   icon={<FaEnvelope />}
                 />
-
-                <RHFFormField
+                </motion.div><motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}><RHFFormField
                   name="website"
                   label="Website"
                   type="text"
@@ -333,6 +329,7 @@ const InstituteCreate = () => {
                   required
                   icon={<FaGlobe />}
                 />
+                </motion.div>
 
                 {/* Principal Information */}
                 <div className="md:col-span-2 mt-6">
@@ -341,7 +338,7 @@ const InstituteCreate = () => {
                   </h2>
                 </div>
 
-                <RHFFormField
+                <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}><RHFFormField
                   name="principalName"
                   label="Principal Name"
                   type="text"
@@ -349,8 +346,7 @@ const InstituteCreate = () => {
                   required
                   icon={<FaUser />}
                 />
-
-                <RHFFormField
+                </motion.div><motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}><RHFFormField
                   name="principalContact"
                   label="Principal Contact"
                   type="text"
@@ -358,8 +354,7 @@ const InstituteCreate = () => {
                   required
                   icon={<FaPhone />}
                 />
-
-                <RHFFormField
+                </motion.div><motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}><RHFFormField
                   name="principalEmail"
                   label="Principal Email"
                   type="email"
@@ -367,62 +362,65 @@ const InstituteCreate = () => {
                   required
                   icon={<FaEnvelope />}
                 />
-
-                <RHFDropDown
+                </motion.div><motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}><RHFDropDown
                   name="principalQualification"
                   label="Principal Qualification"
                   options={qualificationOptions}
                   required
                 />
-
-                <RHFDropDown
+                </motion.div><motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}><RHFDropDown
                   name="principalExperience"
                   label="Principal Experience"
                   options={experienceOptions}
                   required
                 />
+                </motion.div>
 
-                <div className="md:col-span-2">
+                <motion.div className="md:col-span-2" variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}>
                   <RHFDropDown
                     name="status"
                     label="Status"
                     options={statusOptions}
                   />
-                </div>
-              </div>
+                </motion.div>
+              </motion.div>
 
               {/* Form Actions */}
-              <div className="mt-8 flex justify-end space-x-3">
-                <button
+              <motion.div className="mt-8 flex justify-end space-x-3" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
+                <motion.button
                   type="button"
                   onClick={handleReset}
                   className="flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
                   <FaTimes className="mr-2" />
                   Reset
-                </button>
-                <button
+                </motion.button>
+                <motion.button
                   type="submit"
                   disabled={isSubmitting}
                   className="flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-75"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
                   <FaSave className="mr-2" />
                   {isSubmitting ? 'Creating...' : 'Create Institute'}
-                </button>
-              </div>
-            </div>
+                </motion.button>
+              </motion.div>
+            </motion.div>
           </form>
         </FormProvider>
 
         {/* Additional Info */}
-        <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+        <motion.div className="bg-blue-50 rounded-lg p-4 border border-blue-200" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
           <h3 className="font-medium text-blue-800">Information</h3>
           <p className="text-blue-700 text-sm mt-1">
             All fields are mandatory. After creating the institute, you can add departments, courses, and faculty members from the institute management section.
           </p>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

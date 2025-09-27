@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { FaUserGraduate, FaEnvelope, FaPhone, FaIdCard, FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 interface Student {
   id: number;
@@ -46,11 +48,16 @@ const StudentList = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
+    <motion.div
+      className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
+        <motion.div className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+          <motion.div>
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 flex items-center">
               <FaUserGraduate className="mr-2 sm:mr-3 text-blue-600 text-lg sm:text-xl" />
               Student List
@@ -58,22 +65,34 @@ const StudentList = () => {
             <p className="text-gray-600 mt-2 text-sm sm:text-base">
               View and manage all students in the system.
             </p>
-          </div>
-          <button className="flex items-center px-3 py-2 sm:px-4 sm:py-2 bg-blue-600 text-white text-sm sm:text-base font-medium rounded-md shadow hover:bg-blue-700 transition-colors w-fit">
-            <FaPlus className="mr-1 sm:mr-2 text-sm sm:text-base" />
-            Add Student
-          </button>
-        </div>
+          </motion.div>
+          <Link to="/dashboard/institute-management/students/create">
+            <motion.button
+              className="flex items-center px-3 py-2 sm:px-4 sm:py-2 bg-blue-600 text-white text-sm sm:text-base font-medium rounded-md shadow hover:bg-blue-700 transition-colors w-fit"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <FaPlus className="mr-1 sm:mr-2 text-sm sm:text-base" />
+              Add Student
+            </motion.button>
+          </Link>
+        </motion.div>
 
         {/* Mobile: Card Layout */}
-        <div className="block lg:hidden">
+        <motion.div className="block lg:hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
           {students.length === 0 ? (
             <div className="text-center text-gray-500 p-6 bg-white rounded-lg shadow-md">
               No students found.
             </div>
           ) : (
-            students.map((s) => (
-              <div
+            <AnimatePresence>
+              {students.map((s, index) => (
+                <motion.div
+                  layout
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3, delay: index * 0.05 }}
                 key={s.id}
                 className="mb-4 p-4 bg-white rounded-lg shadow-md border border-gray-200"
               >
@@ -85,19 +104,23 @@ const StudentList = () => {
                     </p>
                   </div>
                   <div className="flex space-x-2">
-                    <button
+                    <motion.button
                       className="text-blue-600 hover:text-blue-800 p-1"
                       aria-label={`Edit ${s.name}`}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
                     >
                       <FaEdit className="text-lg" />
-                    </button>
-                    <button
+                    </motion.button>
+                    <motion.button
                       onClick={() => handleDelete(s.id)}
                       className="text-red-600 hover:text-red-800 p-1"
                       aria-label={`Delete ${s.name}`}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
                     >
                       <FaTrash className="text-lg" />
-                    </button>
+                    </motion.button>
                   </div>
                 </div>
                 <div className="mt-3 text-sm text-gray-600 space-y-2">
@@ -121,14 +144,15 @@ const StudentList = () => {
                     </span>
                   </p>
                 </div>
-              </div>
-            ))
+                </motion.div>
+              ))}
+            </AnimatePresence>
           )}
-        </div>
+        </motion.div>
 
         {/* Desktop: Table Layout */}
-        <div className="hidden lg:block bg-white shadow-md rounded-lg overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
+        <motion.div className="hidden lg:block bg-white shadow-md rounded-lg overflow-x-auto" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
+          <table className="min-w-full divide-y divide-gray-200 scrollbar-hide">
             <thead className="bg-gray-100">
               <tr>
                 <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-700">
@@ -158,8 +182,16 @@ const StudentList = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {students.map((s) => (
-                <tr key={s.id} className="hover:bg-gray-50">
+              <AnimatePresence>
+                {students.map((s, index) => (
+                  <motion.tr
+                    layout
+                    key={s.id}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0, x: -50 }}
+                    transition={{ duration: 0.3, delay: index * 0.05 }}
+                    className="hover:bg-gray-50">
                   <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm text-gray-800">{s.name}</td>
                   <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm text-gray-600 flex items-center">
                     <FaIdCard className="mr-2 text-gray-400" /> {s.studentId}
@@ -187,22 +219,27 @@ const StudentList = () => {
                     </span>
                   </td>
                   <td className="flex justify-center px-4 py-3 sm:px-6 sm:py-4 space-x-2">
-                    <button
+                    <motion.button
                       className="text-blue-600 hover:text-blue-800 p-1"
                       aria-label={`Edit ${s.name}`}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
                     >
                       <FaEdit className="text-lg" />
-                    </button>
-                    <button
+                    </motion.button>
+                    <motion.button
                       onClick={() => handleDelete(s.id)}
                       className="text-red-600 hover:text-red-800 p-1"
                       aria-label={`Delete ${s.name}`}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
                     >
                       <FaTrash className="text-lg" />
-                    </button>
+                    </motion.button>
                   </td>
-                </tr>
-              ))}
+                  </motion.tr>
+                ))}
+              </AnimatePresence>
               {students.length === 0 && (
                 <tr>
                   <td
@@ -215,9 +252,9 @@ const StudentList = () => {
               )}
             </tbody>
           </table>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

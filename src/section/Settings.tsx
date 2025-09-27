@@ -1,5 +1,6 @@
 import { useState, FormEvent } from 'react';
 import { FaSave, FaTimes, FaUserCog } from 'react-icons/fa';
+import { motion } from 'framer-motion';
 
 interface TeacherSettingsData {
   name: string;
@@ -56,22 +57,27 @@ const TeacherSettingsPage = () => {
   };
 
   return (
-    <div className="h-max">
-      <div className="max-w-screen mx-auto bg-white rounded-lg shadow-md p-6">
+    <motion.div
+      className="h-max"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <motion.div className="max-w-screen mx-auto bg-white rounded-lg shadow-md p-6">
         {/* Header */}
-        <div className="mb-6">
+        <motion.div className="mb-6" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
           <h1 className="text-2xl font-bold text-gray-800 flex items-center">
             <FaUserCog className="mr-2 text-blue-600" /> Teacher Settings
           </h1>
           <p className="text-gray-600 mt-2">
             Manage your account preferences and dashboard settings.
           </p>
-        </div>
-
+        </motion.div>
+        
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Profile Info */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <motion.div className="grid grid-cols-1 md:grid-cols-2 gap-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
               <input
@@ -114,10 +120,10 @@ const TeacherSettingsPage = () => {
                 className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500"
               />
             </div>
-          </div>
+          </motion.div>
 
           {/* Notifications */}
-          <div>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
             <label className="block text-sm font-medium text-gray-700 mb-2">Notification Preferences</label>
             <div className="flex flex-col space-y-2">
               {['email', 'sms', 'in-app'].map((n) => (
@@ -133,10 +139,10 @@ const TeacherSettingsPage = () => {
                 </label>
               ))}
             </div>
-          </div>
+          </motion.div>
 
           {/* Theme */}
-          <div>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
             <label className="block text-sm font-medium text-gray-700 mb-1">Dashboard Theme</label>
             <select
               name="theme"
@@ -147,10 +153,10 @@ const TeacherSettingsPage = () => {
               <option value="light">Light</option>
               <option value="dark">Dark</option>
             </select>
-          </div>
+          </motion.div>
 
           {/* Status */}
-          <div>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
             <label className="block text-sm font-medium text-gray-700 mb-1">Account Status</label>
             <div className="flex space-x-4">
               <label className="inline-flex items-center">
@@ -176,27 +182,31 @@ const TeacherSettingsPage = () => {
                 <span className="ml-2">Inactive</span>
               </label>
             </div>
-          </div>
+          </motion.div>
 
           {/* Actions */}
-          <div className="flex justify-end space-x-3">
-            <button
+          <motion.div className="flex justify-end space-x-3" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>
+            <motion.button
               type="button"
               onClick={handleReset}
               className="flex items-center px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               <FaTimes className="mr-2" /> Reset
-            </button>
-            <button
+            </motion.button>
+            <motion.button
               type="submit"
               className="flex items-center px-4 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               <FaSave className="mr-2" /> Save Settings
-            </button>
-          </div>
+            </motion.button>
+          </motion.div>
         </form>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 

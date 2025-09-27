@@ -1,4 +1,5 @@
 import { FaPlus, FaEdit, FaTrash, FaEye, FaImage, FaCalendarAlt, FaUniversity, FaPoll } from 'react-icons/fa';
+import { motion } from 'framer-motion';
 
 interface SurveyData {
   id: number;
@@ -59,10 +60,20 @@ const InstituteSurveyList = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-4 sm:p-6 lg:p-8">
+    <motion.div
+      className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-4 sm:p-6 lg:p-8"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <motion.div
+          className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+        >
           <div className="text-center sm:text-left">
             <h1 className="text-3xl sm:text-4xl font-bold  bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
               Institute Surveys
@@ -71,18 +82,28 @@ const InstituteSurveyList = () => {
               Manage and track all institutional surveys in one place. Monitor response rates and survey status at a glance.
             </p>
           </div>
-          <button 
+          <motion.button
             className="flex items-center justify-center px-5 py-3 rounded-xl shadow-sm text-sm sm:text-base font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:-translate-y-1 disabled:opacity-50 disabled:hover:transform-none disabled:cursor-not-allowed mx-auto sm:mx-0 w-full sm:w-auto"
             disabled
             title="Feature temporarily disabled"
+            whileHover={{ scale: 1.02, y: -2 }}
+            whileTap={{ scale: 0.98 }}
           >
             <FaPlus className="mr-2 text-sm" /> Create New Survey
-          </button>
-        </div>
+          </motion.button>
+        </motion.div>
 
         {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
-          <div className="bg-white rounded-2xl p-5 shadow-md border border-gray-100">
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8"
+          initial="hidden"
+          animate="visible"
+          variants={{ visible: { transition: { staggerChildren: 0.07 } } }}
+        >
+          <motion.div
+            variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+            className="bg-white rounded-2xl p-5 shadow-md border border-gray-100"
+          >
             <div className="flex items-center">
               <div className="rounded-lg bg-blue-100 p-3 mr-4">
                 <FaPoll className="text-blue-600 text-xl" />
@@ -92,9 +113,12 @@ const InstituteSurveyList = () => {
                 <p className="text-gray-600 text-sm">Total Surveys</p>
               </div>
             </div>
-          </div>
+          </motion.div>
           
-          <div className="bg-white rounded-2xl p-5 shadow-md border border-gray-100">
+          <motion.div
+            variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+            className="bg-white rounded-2xl p-5 shadow-md border border-gray-100"
+          >
             <div className="flex items-center">
               <div className="rounded-lg bg-green-100 p-3 mr-4">
                 <FaCalendarAlt className="text-green-600 text-xl" />
@@ -104,9 +128,12 @@ const InstituteSurveyList = () => {
                 <p className="text-gray-600 text-sm">Active Surveys</p>
               </div>
             </div>
-          </div>
+          </motion.div>
           
-          <div className="bg-white rounded-2xl p-5 shadow-md border border-gray-100">
+          <motion.div
+            variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+            className="bg-white rounded-2xl p-5 shadow-md border border-gray-100"
+          >
             <div className="flex items-center">
               <div className="rounded-lg bg-purple-100 p-3 mr-4">
                 <FaUniversity className="text-purple-600 text-xl" />
@@ -116,22 +143,33 @@ const InstituteSurveyList = () => {
                 <p className="text-gray-600 text-sm">Institutes</p>
               </div>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
         {/* Survey Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
+          initial="hidden"
+          animate="visible"
+          variants={{ visible: { transition: { staggerChildren: 0.05 } } }}
+        >
           {surveys.length === 0 ? (
-            <div className="col-span-full text-center text-gray-500 p-10 bg-white rounded-2xl shadow-md">
+            <motion.div
+              className="col-span-full text-center text-gray-500 p-10 bg-white rounded-2xl shadow-md"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
               <FaImage className="text-4xl mx-auto text-gray-300 mb-3" />
               <p className="text-lg">No surveys found.</p>
               <p className="text-sm mt-1">Create your first survey to get started.</p>
-            </div>
+            </motion.div>
           ) : (
             surveys.map((survey) => (
-              <div
+              <motion.div
                 key={survey.id}
                 className="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100 transition-all duration-300 hover:shadow-lg"
+                variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+                whileHover={{ y: -4 }}
               >
                 {/* Survey Image */}
                 <div className="relative h-48 w-full overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
@@ -217,12 +255,12 @@ const InstituteSurveyList = () => {
                     </button>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))
           )}
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
