@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { FiAward, FiBarChart, FiBook, FiCheckCircle, FiClock, FiFilter, FiSearch, FiTrendingUp, FiUser, FiUsers } from 'react-icons/fi';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const StudentProgress = () => {
   const [selectedFilter, setSelectedFilter] = useState('all');
@@ -211,7 +212,12 @@ const StudentProgress = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-4 sm:p-6 md:p-8">
       {/* Header */}
-      <header className="mb-8">
+      <motion.header 
+        className="mb-8"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Student Progress Dashboard</h1>
@@ -220,14 +226,22 @@ const StudentProgress = () => {
             </p>
           </div>
         </div>
-      </header>
+      </motion.header>
 
       {/* Overall Statistics */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-        {overallStats.map((stat) => (
-          <div
+      <motion.section 
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      >
+        {overallStats.map((stat, index) => (
+          <motion.div
             key={stat.title}
             className="p-5 bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-1"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
           >
             <div className="flex justify-between items-start">
               <div>
@@ -239,12 +253,17 @@ const StudentProgress = () => {
                 {stat.icon}
               </div>
             </div>
-          </div>
+          </motion.div>
         ))}
-      </section>
+      </motion.section>
 
       {/* Filters and Search */}
-      <div className="mb-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+      <motion.div 
+        className="mb-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.4 }}
+      >
         <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
           <div className="relative">
             <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -275,12 +294,20 @@ const StudentProgress = () => {
         <div className="text-sm text-gray-500">
           Showing {filteredStudents.length} of {studentsData.length} students
         </div>
-      </div>
+      </motion.div>
 
       {/* Student Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {filteredStudents.map((student) => (
-          <div key={student.id} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-200 overflow-hidden">
+        <AnimatePresence>
+        {filteredStudents.map((student, index) => (
+          <motion.div 
+            key={student.id} 
+            className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-200 overflow-hidden"
+            layout
+            initial={{ opacity: 0, y: 20, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.98 }}
+            transition={{ duration: 0.4, delay: index * 0.05 }}>
             {/* Student Header */}
             <div className="p-6 border-b border-gray-100">
               <div className="flex items-center justify-between mb-4">
@@ -376,17 +403,24 @@ const StudentProgress = () => {
                 </p>
               </div>
             </div>
-          </div>
+          </motion.div>
         ))}
+        </AnimatePresence>
       </div>
 
       {/* Empty State */}
       {filteredStudents.length === 0 && (
-        <div className="text-center py-12">
-          <FiUser className="mx-auto text-gray-400 text-4xl mb-4" />
-          <p className="text-gray-500 text-lg">No students found matching your criteria</p>
-          <p className="text-gray-400 text-sm mt-2">Try adjusting your search or filter settings</p>
-        </div>
+        <AnimatePresence>
+          <motion.div 
+            className="text-center py-12 col-span-1 lg:col-span-2"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}>
+            <FiUser className="mx-auto text-gray-400 text-4xl mb-4" />
+            <p className="text-gray-500 text-lg">No students found matching your criteria</p>
+            <p className="text-gray-400 text-sm mt-2">Try adjusting your search or filter settings</p>
+          </motion.div>
+        </AnimatePresence>
       )}
     </div>
   );

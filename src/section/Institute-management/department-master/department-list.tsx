@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
     FaSearch,
     FaEdit,
@@ -158,16 +159,21 @@ const DepartmentList = () => {
     };
 
     return (
-        <Box sx={{ 
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+        >
+            <Box sx={{ 
             minHeight: '100vh', 
             bgcolor: 'grey.50', 
             p: { xs: 2, sm: 3, md: 4, lg: 5 },
             display: 'flex',
             flexDirection: 'column'
         }}>
-            <Box sx={{ maxWidth: '1600px', mx: 'auto', width: '100%' }}>
+                <Box sx={{ maxWidth: '1600px', mx: 'auto', width: '100%' }}>
                 {/* Header */}
-                <Box sx={{ mb: { xs: 3, sm: 4 } }}>
+                    <Box component={motion.div} initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} sx={{ mb: { xs: 3, sm: 4 } }}>
                     <Stack 
                         direction={{ xs: 'column', sm: 'row' }} 
                         justifyContent="space-between" 
@@ -197,7 +203,7 @@ const DepartmentList = () => {
                                 Manage all departments in the system
                             </Typography>
                         </Box>
-                        <Button
+                            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}><Button
                             variant="contained"
                             startIcon={<FaPlus />}
                             sx={{ 
@@ -209,12 +215,12 @@ const DepartmentList = () => {
                             }}
                         >
                             Add Department
-                        </Button>
+                            </Button></motion.div>
                     </Stack>
                 </Box>
 
                 {/* Stats Cards */}
-                <Box sx={{ 
+                    <Box component={motion.div} initial="hidden" animate="visible" variants={{ visible: { transition: { staggerChildren: 0.07 } } }} sx={{ 
                     display: 'flex', 
                     flexWrap: 'wrap', 
                     gap: { xs: 1.5, sm: 2 }, 
@@ -226,8 +232,14 @@ const DepartmentList = () => {
                         { icon: FaUsers, title: 'Active Departments', value: departments.filter(d => d.status === 'active').length, color: '#2e7d32' },
                         { icon: FaChartBar, title: 'Total Faculty', value: departments.reduce((sum, dept) => sum + dept.facultyCount, 0), color: '#ed6c02' },
                         { icon: FaChartBar, title: 'Total Courses', value: departments.reduce((sum, dept) => sum + dept.courseCount, 0), color: '#9c27b0' },
-                    ].map((stat, index) => (
-                        <Card key={index} sx={{ 
+                    ].map((stat) => {
+                        const IconComponent = stat.icon;
+                        return (
+                                <Card component={motion.div}
+                                    key={stat.title}
+                                    variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+                                    whileHover={{ y: -4, boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}
+                                    sx={{ 
                             width: { xs: '100%', sm: 'calc(50% - 8px)', md: 'calc(25% - 12px)' },
                             minWidth: { xs: '160px', sm: '200px' },
                             bgcolor: 'white',
@@ -240,7 +252,7 @@ const DepartmentList = () => {
                         }}>
                             <CardContent sx={{ p: { xs: 2, sm: 2.5 } }}>
                                 <Stack direction="row" alignItems="center" spacing={{ xs: 1, sm: 1.5 }}>
-                                    <stat.icon style={{ 
+                                    <IconComponent style={{ 
                                         color: stat.color, 
                                     }} />
                                     <Box>
@@ -262,12 +274,13 @@ const DepartmentList = () => {
                                     </Box>
                                 </Stack>
                             </CardContent>
-                        </Card>
-                    ))}
+                            </Card>
+                        );
+                    })}
                 </Box>
 
                 {/* Filters and Search */}
-                <Box sx={{ 
+                    <Box component={motion.div} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} sx={{ 
                     mb: { xs: 2, sm: 3 }, 
                     bgcolor: 'white', 
                     p: { xs: 1.5, sm: 2 }, 
@@ -336,14 +349,22 @@ const DepartmentList = () => {
                 </Box>
 
                 {/* Department Cards */}
-                <Box sx={{ 
+                    <Box component={motion.div} initial="hidden" animate="visible" variants={{ visible: { transition: { staggerChildren: 0.05 } } }} sx={{ 
                     display: 'flex', 
                     flexWrap: 'wrap', 
                     gap: { xs: 1.5, sm: 2, md: 3 },
                     justifyContent: { xs: 'center', sm: 'flex-start' }
                 }}>
-                    {filteredDepartments.map((dept) => (
-                        <Card key={dept.id} sx={{ 
+                        <AnimatePresence>
+                            {filteredDepartments.map((dept) => (
+                                <Card
+                                    component={motion.div}
+                                    layout
+                                    key={dept.id}
+                                    variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+                                    exit={{ opacity: 0, scale: 0.9 }}
+                                    whileHover={{ y: -4, boxShadow: '0 5px 20px rgba(0,0,0,0.1)' }}
+                                    sx={{ 
                             width: { 
                                 xs: '100%', 
                                 sm: 'calc(50% - 8px)', 
@@ -354,11 +375,7 @@ const DepartmentList = () => {
                             maxWidth: { xs: '100%', sm: '400px' },
                             bgcolor: 'white',
                             boxShadow: 2,
-                            transition: 'transform 0.2s, box-shadow 0.2s',
-                            '&:hover': {
-                                transform: { xs: 'none', sm: 'translateY(-4px)' },
-                                boxShadow: { xs: 2, sm: 4 }
-                            },
+                                transition: 'box-shadow 0.2s',
                             borderRadius: 2
                         }}>
                             <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
@@ -387,6 +404,7 @@ const DepartmentList = () => {
                                     <Typography 
                                         variant="body2" 
                                         color="text.secondary"
+                                        component={'span'}
                                         sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
                                     >
                                         Type: {getTypeBadge(dept.type)}
@@ -459,8 +477,9 @@ const DepartmentList = () => {
                                 </IconButton>
                             </CardActions>
                         </Card>
-                    ))}
-                </Box>
+                            ))}
+                        </AnimatePresence>
+                    </Box>
 
                 <CommonModal
                     isOpen={isModalOpen}
@@ -614,8 +633,9 @@ const DepartmentList = () => {
                         Showing {filteredDepartments.length} of {departments.length} departments
                     </Typography>
                 </Box>
+                </Box>
             </Box>
-        </Box>
+        </motion.div>
     );
 };
 
