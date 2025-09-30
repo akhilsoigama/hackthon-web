@@ -98,17 +98,12 @@ const useMultiLanguageTTS = (): TTSHookReturn => {
         setIsTranslating(true);
 
         try {
-            let translatedText = await translateWithGoogle(text, targetLanguage);
-
-            if (!translatedText) {
-                translatedText = await translateWithLibre(text, targetLanguage);
+            const translationProviders = [translateWithGoogle, translateWithLibre, translateWithMyMemory];
+            for (const provider of translationProviders) {
+                const translatedText = await provider(text, targetLanguage);
+                if (translatedText) return translatedText;
             }
-
-            if (!translatedText) {
-                translatedText = await translateWithMyMemory(text, targetLanguage);
-            }
-
-            return translatedText || text; 
+            return text; // Return original text if all providers fail
         } catch (error) {
             toast.error(`Translation failed:, ${error}`);
             return text; 
