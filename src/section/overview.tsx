@@ -1,11 +1,12 @@
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { FiAward, FiBarChart2, FiBook, FiCalendar, FiCheckCircle, FiClock, FiMessageSquare, FiTrendingUp } from 'react-icons/fi';
+import MultiLanguageTTS from '../components/common/TTS';
 
 
 const Overview = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
-  
+
   // Sample data for stats cards
   const stats = [
     { title: 'Total Assignments', value: '12', description: 'Pending submissions', icon: <FiBook className="text-blue-500" />, color: 'bg-blue-100' },
@@ -42,16 +43,16 @@ const Overview = () => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
     }, 60000);
-    
+
     // Cleanup interval on component unmount
     return () => clearInterval(timer);
   }, []);
 
-  const formatTime = (date:any) => {
+  const formatTime = (date: any) => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
-  const formatDate = (date:any) => {
+  const formatDate = (date: any) => {
     return date.toLocaleDateString([], { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
   };
 
@@ -70,7 +71,7 @@ const Overview = () => {
               {formatDate(currentTime)} • {formatTime(currentTime)}
             </p>
           </div>
-          <motion.button 
+          <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             disabled
@@ -123,7 +124,7 @@ const Overview = () => {
           <div className="p-6 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl shadow-md">
             <h2 className="text-xl font-semibold mb-3">Welcome to your learning dashboard!</h2>
             <p className="mb-4">
-              You're making great progress in your courses. Keep up the good work! 
+              You're making great progress in your courses. Keep up the good work!
               You have 3 upcoming deadlines this week and 75% overall completion.
             </p>
             <div className="flex items-center">
@@ -146,7 +147,7 @@ const Overview = () => {
             </h2>
             <div className="space-y-4">
               {activities.map((activity, index) => (
-                <motion.div 
+                <motion.div
                   key={activity.id}
                   className="flex items-center"
                   initial={{ opacity: 0, x: -20 }}
@@ -181,7 +182,7 @@ const Overview = () => {
             </h2>
             <div className="space-y-4">
               {deadlines.map((deadline, index) => (
-                <motion.div 
+                <motion.div
                   key={deadline.id}
                   className="p-3 bg-gray-50 rounded-lg border border-gray-200"
                   initial={{ opacity: 0, y: 10 }}
@@ -204,7 +205,11 @@ const Overview = () => {
           </div>
         </motion.section>
 
-        {/* Progress by Subject */}
+        <MultiLanguageTTS
+          text="Education is the most powerful weapon which you can use to change the world."
+          defaultLanguage="gu"
+          showTranslation={false}
+        />
         <motion.section
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -217,7 +222,7 @@ const Overview = () => {
             </h2>
             <div className="space-y-4">
               {progressData.map((subject, index) => (
-                <motion.div 
+                <motion.div
                   key={subject.subject}
                   className="space-y-2"
                   initial={{ opacity: 0, x: 20 }}
@@ -229,7 +234,7 @@ const Overview = () => {
                     <span className="text-sm text-gray-500">{subject.progress}%</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
-                    <motion.div 
+                    <motion.div
                       className={`h-2 rounded-full ${subject.color}`}
                       initial={{ width: 0 }}
                       animate={{ width: `${subject.progress}%` }}
@@ -244,7 +249,7 @@ const Overview = () => {
       </div>
 
       {/* Quick Actions */}
-      <motion.section 
+      <motion.section
         className="mt-8"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
