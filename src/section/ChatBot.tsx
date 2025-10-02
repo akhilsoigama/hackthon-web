@@ -1,41 +1,57 @@
-import { useState, FormEvent } from 'react';
-import { FaPaperPlane, FaRobot, FaUser } from 'react-icons/fa';
-import { motion, AnimatePresence } from 'framer-motion';
-
-interface Message {
-  id: number;
-  sender: 'user' | 'bot';
-  text: string;
-}
+import { useState, FormEvent } from "react";
+import { FaPaperPlane, FaRobot, FaUser } from "react-icons/fa";
+import { motion, AnimatePresence } from "framer-motion";
+import { messagesAtom, Message } from "../atoms/chatBotAtom";
+import { useAtom } from "jotai";
+import api from "../lib/apiInstance";
 
 const ChatbotPage = () => {
-  const [messages, setMessages] = useState<Message[]>([
-    { id: 1, sender: 'bot', text: 'Hello! I am your assistant who is still in development phase :)' },
-  ]);
-  const [input, setInput] = useState('');
+  const [messages, setMessages] = useAtom(messagesAtom);
+  const [loading,setloader] = useState(false);
+  const [input, setInput] = useState("");
 
-  const handleSend = (e: FormEvent) => {
+  const handleSend = async (e: FormEvent) => {
     e.preventDefault();
     if (!input.trim()) return;
 
-    const newMessage: Message = {
-      id: messages.length + 1,
-      sender: 'user',
+    const userMessage: Message = {
+      id: Date.now(),
+      sender: "user",
       text: input,
     };
+    setMessages((prev) => [...prev, userMessage]); // Optimistic update
+    setInput("");
+    setloader(true);
 
-    setMessages([...messages, newMessage]);
-    setInput('');
+    try {
+      const res = await api.post("/chatbot", {
+        messages: [
+          ...messages.map((m) => ({ role: m.sender, content: m.text })),
+          { role: "user", content: input },
+        ],
+      });
 
-    // Simulated bot reply
-    setTimeout(() => {
-      const botReply: Message = {
-        id: messages.length + 2,
-        sender: 'bot',
-        text: "i am just a prototype model!",
-      };
-      setMessages((prev) => [...prev, botReply]);
-    }, 1000);
+      const botMessageRaw = res.data.choices?.[0]?.message;
+
+      if (botMessageRaw?.role === "assistant") {
+        const botMessage: Message = {
+          id: Date.now() + 1,
+          sender: "bot",
+          text: botMessageRaw.content,
+        };
+        setMessages((prev) => [...prev, botMessage]);
+      } else {
+        throw new Error("No assistant message returned");
+      }
+    } catch (err) {
+      console.error(err);
+      setMessages((prev) => [
+        ...prev,
+        { id: Date.now() + 2, sender: "bot", text: "Something went wrong!" },
+      ]);
+    } finally {
+      setloader(false);
+    }
   };
 
   return (
@@ -73,28 +89,61 @@ const ChatbotPage = () => {
                 initial={{ opacity: 0, y: 20, scale: 0.9 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.3, delay: index === messages.length - 1 ? 0 : 0 }}
-                className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                transition={{
+                  duration: 0.3,
+                  delay: index === messages.length - 1 ? 0 : 0,
+                }}
+                className={`flex ${
+                  msg.sender === "user" ? "justify-end" : "justify-start"
+                }`}
               >
                 <div
                   className={`flex items-start space-x-2 max-w-xs px-4 py-2 rounded-lg shadow text-sm ${
-                    msg.sender === 'user'
-                      ? 'bg-blue-600 text-white rounded-br-none'
-                      : 'bg-gray-200 text-gray-800 rounded-bl-none'
+                    msg.sender === "user"
+                      ? "bg-blue-600 text-white rounded-br-none"
+                      : "bg-gray-200 text-gray-800 rounded-bl-none"
                   }`}
                 >
-                  {msg.sender === 'bot' && <FaRobot className="mt-1 text-gray-500 flex-shrink-0" />}
+                  {msg.sender === "bot" && (
+                    <FaRobot className="mt-1 text-gray-500 flex-shrink-0" />
+                  )}
                   <span>{msg.text}</span>
-                  {msg.sender === 'user' && <FaUser className="mt-1 text-white flex-shrink-0" />}
+                  {msg.sender === "user" && (
+                    <FaUser className="mt-1 text-white flex-shrink-0" />
+                  )}
                 </div>
               </motion.div>
             ))}
+            {/* Loader / Typing indicator */}
+            {loading && (
+              <motion.div
+                layout
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="flex justify-start"
+              >
+                <div className="flex items-center space-x-2 max-w-xs px-4 py-2 rounded-lg shadow text-sm bg-gray-200 text-gray-800 rounded-bl-none">
+                  <FaRobot className="mt-1 text-gray-500 flex-shrink-0 animate-pulse" />
+                  <span>Typing...</span>
+                </div>
+              </motion.div>
+            )}
           </AnimatePresence>
         </div>
 
         {/* Input */}
-        <form onSubmit={handleSend} className="p-4 border-t flex items-center space-x-2">
-          <input type="text" value={input} onChange={(e) => setInput(e.target.value)} placeholder="Type your message..." className="flex-1 rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        <form
+          onSubmit={handleSend}
+          className="p-4 border-t flex items-center space-x-2"
+        >
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Type your message..."
+            className="flex-1 rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
           <motion.button
             type="submit"
             className="flex items-center px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700"

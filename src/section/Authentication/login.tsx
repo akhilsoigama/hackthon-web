@@ -8,9 +8,8 @@ import RHFFormField from "../../components/hook-form/RHFFormFiled";
 import RHFCheckbox from "../../components/hook-form/RHFCheckbox";
 import { Button, Typography } from "@mui/material";
 
-// ---------------------
+
 // Schema & Types
-// ---------------------
 const LoginSchema = z.object({
   id: z.string().min(1, "ID is required"),
   password: z.string().min(6, "Password must be at least 6 characters"),
