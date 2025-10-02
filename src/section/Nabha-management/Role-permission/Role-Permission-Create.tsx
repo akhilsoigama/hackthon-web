@@ -1,5 +1,8 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import useSWR, { useSWRConfig } from 'swr';
+import { useAtom } from 'jotai';
+import fetcher from '../../../utils/axios';
 import { 
   FaSave, 
   FaPlus, 
@@ -9,135 +12,13 @@ import {
   FaChevronDown,
   FaChevronUp
 } from 'react-icons/fa';
-
-// Define the Permission interface
-interface Permission {
-  [key: string]: boolean;
-}
-
-// Define the Role interface
-interface Role {
-  id: string;
-  roleName: string;
-  permissions: Permission;
-  userCount: number;
-  createdAt: string;
-}
-
-// Permission categories based on routes
-const permissionCategories: { [key: string]: string[] } = {
-  Dashboard: [
-    'OVERVIEW_LIST',
-    'PROGRESS_LIST',
-    'EVENTS_LIST',
-    'MESSAGES_LIST',
-    'SETTINGS_LIST',
-  ],
-  NabhaManagement: [
-    'INSTITUTE_CREATE',
-    'INSTITUTE_LIST',
-    'INSTITUTE_UPDATE',
-    'INSTITUTE_DELETE',
-    'SURVEY_MASTER_CREATE',
-    'SURVEY_MASTER_LIST',
-    'SURVEY_MASTER_UPDATE',
-    'SURVEY_MASTER_DELETE',
-    'ROLE_PERMISSION_CREATE',
-    'ROLE_PERMISSION_LIST',
-    'ROLE_PERMISSION_UPDATE',
-    'ROLE_PERMISSION_DELETE',
-  ],
-  InstituteManagement: [
-    'FACULTY_CREATE',
-    'FACULTY_LIST',
-    'FACULTY_UPDATE',
-    'FACULTY_DELETE',
-    'STUDENT_CREATE',
-    'STUDENT_LIST',
-    'STUDENT_UPDATE',
-    'STUDENT_DELETE',
-    'INSTITUTE_SURVEY_CREATE',
-    'INSTITUTE_SURVEY_LIST',
-    'INSTITUTE_SURVEY_UPDATE',
-    'INSTITUTE_SURVEY_DELETE',
-  ],
-  StudentManagement: [
-    'ASSIGNMENT_CREATE',
-    'ASSIGNMENT_LIST',
-    'ASSIGNMENT_UPDATE',
-    'ASSIGNMENT_DELETE',
-    'LESSON_CREATE',
-    'LESSON_LIST',
-    'LESSON_UPDATE',
-    'LESSON_DELETE',
-    'QUIZ_CREATE',
-    'QUIZ_LIST',
-    'QUIZ_UPDATE',
-    'QUIZ_DELETE',
-  ],
-  LeaveManagement: [
-    'LEAVE_CREATE',
-    'LEAVE_LIST',
-    'LEAVE_UPDATE',
-    'LEAVE_DELETE',
-    'LEAVE_APPROVAL_DONE',
-    'LEAVE_APPROVAL_REJECT',
-  ],
-  StudentUpload: [
-    'ASSIGNMENT_UPLOAD_UPLOAD',
-    'ASSIGNMENT_UPLOAD_LIST',
-    'LESSON_UPLOAD_UPLOAD',
-    'LESSON_UPLOAD_LIST',
-  ],
-  Communication: ['CHATBOT_LIST'],
-};
-
-// Sample roles data
-const sampleRoles: Role[] = [
-  {
-    id: '1',
-    roleName: 'Administrator',
-    permissions: Object.values(permissionCategories)
-      .flat()
-      .reduce((acc, perm) => ({ ...acc, [perm]: true }), {}),
-    userCount: 5,
-    createdAt: '2023-01-15',
-  },
-  {
-    id: '2',
-    roleName: 'Institute Manager',
-    permissions: {
-      ...Object.values(permissionCategories)
-        .flat()
-        .reduce((acc, perm) => ({ ...acc, [perm]: false }), {}),
-      INSTITUTE_LIST: true,
-      FACULTY_LIST: true,
-      STUDENT_LIST: true,
-      INSTITUTE_SURVEY_LIST: true,
-    },
-    userCount: 12,
-    createdAt: '2023-03-22',
-  },
-  {
-    id: '3',
-    roleName: 'Faculty',
-    permissions: {
-      ...Object.values(permissionCategories)
-        .flat()
-        .reduce((acc, perm) => ({ ...acc, [perm]: false }), {}),
-      ASSIGNMENT_CREATE: true,
-      ASSIGNMENT_LIST: true,
-      LESSON_CREATE: true,
-      LESSON_LIST: true,
-      QUIZ_CREATE: true,
-      QUIZ_LIST: true,
-      LEAVE_CREATE: true,
-      LEAVE_LIST: true,
-    },
-    userCount: 45,
-    createdAt: '2023-05-10',
-  },
-];
+import api from '../../../utils/axios'; // Assuming you have a configured axios instance
+import {
+  Permission,
+  permissionCategories,
+  ApiPermission,
+  allPermissionsAtom,
+} from '../../../atoms/rolesAtom';
 
 const itemVariants = {
   hidden: { y: 20, opacity: 0 },
@@ -150,6 +31,16 @@ const itemVariants = {
   },
 };
 
+// Helper function to generate a URL-friendly role key
+const generateRoleKey = (name: string) => {
+  return name
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, 'and') // replace ampersand
+    .replace(/\s+/g, '_') // replace spaces with underscores
+    .replace(/[^a-z0-9_]/g, ''); // remove non-alphanumeric characters except underscore
+};
+
 const RolePermissionCreate: React.FC = () => {
   const [roleName, setRoleName] = useState<string>('');
   const [permissions, setPermissions] = useState<Permission>(
@@ -157,11 +48,26 @@ const RolePermissionCreate: React.FC = () => {
       .flat()
       .reduce((acc, perm) => ({ ...acc, [perm]: false }), {}),
   );
+  const [description, setDescription] = useState<string>('');
   const [error, setError] = useState<string>('');
   const [success, setSuccess] = useState<string>('');
-  const [roles, setRoles] = useState<Role[]>(sampleRoles);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [allPermissions, setAllPermissions] = useAtom(allPermissionsAtom);
+  const { mutate } = useSWRConfig();
   const [expandedCategories, setExpandedCategories] = useState<{[key: string]: boolean}>({});
   const [viewMode, setViewMode] = useState<'create' | 'list'>('create');
+
+  // Fetch all available permissions from the backend
+  const { data: permissionsResponse, error: permissionsError } = useSWR<{ data: { data: ApiPermission[] } }>(
+    '/permissions', 
+    fetcher
+  );
+
+  useEffect(() => {
+    if (permissionsResponse?.data?.data) {
+      setAllPermissions(permissionsResponse.data.data);
+    }
+  }, [permissionsResponse, setAllPermissions]);
 
   // Toggle category expansion
   const toggleCategory = (category: string) => {
@@ -186,34 +92,59 @@ const RolePermissionCreate: React.FC = () => {
   };
 
   // Handle form submission
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!roleName.trim()) {
       setError('Role name is required');
       return;
     }
-    
+
+    setIsSubmitting(true);
     setError('');
-    const newRole: Role = {
-      id: Date.now().toString(),
+
+    // 1. Transform frontend state to API payload
+    const selectedPermissionKeys = Object.entries(permissions)
+      .filter(([, value]) => value)
+      .map(([key]) => key);
+
+    // Map string keys to numeric IDs
+    const permissionIds = selectedPermissionKeys
+      .map(key => {
+        const found = allPermissions.find(p => p.permissionKey.toUpperCase() === key);
+        return found ? found.id : null;
+      })
+      .filter((id): id is number => id !== null);
+
+    const apiPayload = {
       roleName,
-      permissions,
-      userCount: 0,
-      createdAt: new Date().toISOString().split('T')[0],
+      roleDescription: description,
+      roleKey: generateRoleKey(roleName),
+      permissionIds,
     };
-    
-    setRoles([...roles, newRole]);
-    setSuccess(`Role "${roleName}" created successfully!`);
-    
-    // Reset form
-    setRoleName('');
-    setPermissions(
-      Object.values(permissionCategories)
-        .flat()
-        .reduce((acc, perm) => ({ ...acc, [perm]: false }), {}),
-    );
-    
-    setTimeout(() => setSuccess(''), 3000);
+
+    try {
+      // 2. Send data to the API
+      await api.post('/roles', apiPayload);
+
+      // 3. Trigger a re-fetch of the roles list and update UI
+      await mutate('/roles');
+      setSuccess(`Role "${roleName}" created successfully!`);
+
+      // 4. Reset form
+      setRoleName('');
+      setDescription('');
+      setPermissions(
+        Object.values(permissionCategories)
+          .flat()
+          .reduce((acc, perm) => ({ ...acc, [perm]: false }), {}),
+      );
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (apiError) {
+      setError('Failed to create role. Please check the console for details.');
+      console.error(apiError);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Format permission name for display
@@ -223,6 +154,14 @@ const RolePermissionCreate: React.FC = () => {
       .toLowerCase()
       .replace(/\b\w/g, (c) => c.toUpperCase());
   };
+
+  if (permissionsError) {
+    return <div className="text-center text-red-500 p-8">Failed to load necessary permissions.</div>;
+  }
+
+  if (!permissionsResponse) {
+    return <div className="text-center text-gray-500 p-8">Loading permissions...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 py-4 md:py-8 px-3 sm:px-4 lg:px-8">
@@ -285,11 +224,23 @@ const RolePermissionCreate: React.FC = () => {
                   value={roleName}
                   onChange={(e) => setRoleName(e.target.value)}
                   placeholder="Enter role name (e.g., Admin, Teacher)"
-                  className="w-full p-2 md:p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 opacity-50 cursor-not-allowed"
-                  disabled
+                  className="w-full p-2 md:p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  disabled={isSubmitting}
                 />
-                {error && <p className="text-red-500 text-xs md:text-sm mt-1 md:mt-2">{error}</p>}
-                {success && <p className="text-green-500 text-xs md:text-sm mt-1 md:mt-2">{success}</p>}
+              </div>
+
+              <div className="mb-4 md:mb-6">
+                <label className="block text-base md:text-lg font-semibold text-gray-800 mb-2">
+                  Description
+                </label>
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="A short description for this role"
+                  className="w-full p-2 md:p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  rows={2}
+                  disabled={isSubmitting}
+                />
               </div>
               
               <div className="mb-4 md:mb-6">
@@ -342,16 +293,16 @@ const RolePermissionCreate: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() => selectAllInCategory(category, true)}
-                                className="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded opacity-50 cursor-not-allowed"
-                                disabled
+                                className="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded hover:bg-indigo-200 disabled:opacity-50"
+                                disabled={isSubmitting}
                               >
                                 Select All
                               </button>
                               <button
                                 type="button"
                                 onClick={() => selectAllInCategory(category, false)}
-                                className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded opacity-50 cursor-not-allowed"
-                                disabled
+                                className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded hover:bg-gray-200 disabled:opacity-50"
+                                disabled={isSubmitting}
                               >
                                 Deselect All
                               </button>
@@ -361,15 +312,15 @@ const RolePermissionCreate: React.FC = () => {
                               {perms.map((perm) => (
                                 <motion.label 
                                   key={perm}
-                                  className="flex items-start space-x-2 p-2 bg-white rounded-lg border border-gray-200 transition-colors opacity-50 cursor-not-allowed"
+                                  className={`flex items-start space-x-2 p-2 bg-white rounded-lg border border-gray-200 transition-colors ${isSubmitting ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                                   whileHover={{ scale: 1.02 }}
                                 >
                                   <input
                                     type="checkbox"
                                     checked={permissions[perm]}
                                     onChange={() => handlePermissionChange(perm)}
-                                    className="h-4 w-4 md:h-5 md:w-5 text-indigo-600 focus:ring-indigo-500 rounded mt-1 opacity-50 cursor-not-allowed"
-                                    disabled
+                                    className="h-4 w-4 md:h-5 md:w-5 text-indigo-600 focus:ring-indigo-500 rounded mt-1 disabled:opacity-50"
+                                    disabled={isSubmitting}
                                   />
                                   <span className="text-gray-700 flex-1 text-xs md:text-sm">
                                     {formatPermissionName(perm)}
@@ -385,15 +336,18 @@ const RolePermissionCreate: React.FC = () => {
                 </div>
               </div>
               
+              {error && <p className="text-red-500 text-sm mb-4 text-center">{error}</p>}
+              {success && <p className="text-green-500 text-sm mb-4 text-center">{success}</p>}
+
               <motion.button
                 type="submit"
-                className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 py-2 md:px-6 md:py-3 rounded-lg transition-colors flex items-center justify-center opacity-50 cursor-not-allowed"
+                className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 py-2 md:px-6 md:py-3 rounded-lg transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                disabled
+                disabled={isSubmitting}
               >
                 <FaSave className="mr-1 md:mr-2 text-sm md:text-base" />
-                Create Role
+                {isSubmitting ? 'Creating...' : 'Create Role'}
               </motion.button>
             </form>
           </motion.div>

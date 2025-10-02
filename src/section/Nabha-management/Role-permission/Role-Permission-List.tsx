@@ -1,5 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAtom } from 'jotai';
+import useSWR from 'swr';
+import fetcher from '../../../utils/axios';
 import {
   FaSearch,
   FaFilter,
@@ -16,174 +19,32 @@ import {
   FaSortUp,
   FaSortDown
 } from 'react-icons/fa';
-
-interface Permission {
-  [key: string]: boolean;
-}
-
-interface Role {
-  id: string;
-  roleName: string;
-  description: string;
-  permissions: Permission;
-  userCount: number;
-  createdAt: string;
-  isDefault: boolean;
-}
-
-// Permission categories based on routes
-const permissionCategories: { [key: string]: string[] } = {
-  Dashboard: [
-    'OVERVIEW_LIST',
-    'PROGRESS_LIST',
-    'EVENTS_LIST',
-    'MESSAGES_LIST',
-    'SETTINGS_LIST',
-  ],
-  NabhaManagement: [
-    'INSTITUTE_CREATE',
-    'INSTITUTE_LIST',
-    'INSTITUTE_UPDATE',
-    'INSTITUTE_DELETE',
-    'SURVEY_MASTER_CREATE',
-    'SURVEY_MASTER_LIST',
-    'SURVEY_MASTER_UPDATE',
-    'SURVEY_MASTER_DELETE',
-    'ROLE_PERMISSION_CREATE',
-    'ROLE_PERMISSION_LIST',
-    'ROLE_PERMISSION_UPDATE',
-    'ROLE_PERMISSION_DELETE',
-  ],
-  InstituteManagement: [
-    'FACULTY_CREATE',
-    'FACULTY_LIST',
-    'FACULTY_UPDATE',
-    'FACULTY_DELETE',
-    'STUDENT_CREATE',
-    'STUDENT_LIST',
-    'STUDENT_UPDATE',
-    'STUDENT_DELETE',
-    'INSTITUTE_SURVEY_CREATE',
-    'INSTITUTE_SURVEY_LIST',
-    'INSTITUTE_SURVEY_UPDATE',
-    'INSTITUTE_SURVEY_DELETE',
-  ],
-  StudentManagement: [
-    'ASSIGNMENT_CREATE',
-    'ASSIGNMENT_LIST',
-    'ASSIGNMENT_UPDATE',
-    'ASSIGNMENT_DELETE',
-    'LESSON_CREATE',
-    'LESSON_LIST',
-    'LESSON_UPDATE',
-    'LESSON_DELETE',
-    'QUIZ_CREATE',
-    'QUIZ_LIST',
-    'QUIZ_UPDATE',
-    'QUIZ_DELETE',
-  ],
-  LeaveManagement: [
-    'LEAVE_CREATE',
-    'LEAVE_LIST',
-    'LEAVE_UPDATE',
-    'LEAVE_DELETE',
-    'LEAVE_APPROVAL_DONE',
-    'LEAVE_APPROVAL_REJECT',
-  ],
-  StudentUpload: [
-    'ASSIGNMENT_UPLOAD_UPLOAD',
-    'ASSIGNMENT_UPLOAD_LIST',
-    'LESSON_UPLOAD_UPLOAD',
-    'LESSON_UPLOAD_LIST',
-  ],
-  Communication: ['CHATBOT_LIST'],
-};
-
-// Sample roles data
-const sampleRoles: Role[] = [
-  {
-    id: '1',
-    roleName: 'Administrator',
-    description: 'Full system access with all permissions',
-    permissions: Object.values(permissionCategories)
-      .flat()
-      .reduce((acc, perm) => ({ ...acc, [perm]: true }), {}),
-    userCount: 5,
-    createdAt: '2023-01-15',
-    isDefault: false
-  },
-  {
-    id: '2',
-    roleName: 'Institute Manager',
-    description: 'Manages institutes and related operations',
-    permissions: {
-      ...Object.values(permissionCategories)
-        .flat()
-        .reduce((acc, perm) => ({ ...acc, [perm]: false }), {}),
-      INSTITUTE_LIST: true,
-      FACULTY_LIST: true,
-      STUDENT_LIST: true,
-      INSTITUTE_SURVEY_LIST: true,
-      OVERVIEW_LIST: true,
-      PROGRESS_LIST: true,
-    },
-    userCount: 12,
-    createdAt: '2023-03-22',
-    isDefault: false
-  },
-  {
-    id: '3',
-    roleName: 'Faculty',
-    description: 'Teaching staff with course management permissions',
-    permissions: {
-      ...Object.values(permissionCategories)
-        .flat()
-        .reduce((acc, perm) => ({ ...acc, [perm]: false }), {}),
-      ASSIGNMENT_CREATE: true,
-      ASSIGNMENT_LIST: true,
-      LESSON_CREATE: true,
-      LESSON_LIST: true,
-      QUIZ_CREATE: true,
-      QUIZ_LIST: true,
-      LEAVE_CREATE: true,
-      LEAVE_LIST: true,
-      OVERVIEW_LIST: true,
-      MESSAGES_LIST: true,
-    },
-    userCount: 45,
-    createdAt: '2023-05-10',
-    isDefault: true
-  },
-  {
-    id: '4',
-    roleName: 'Student',
-    description: 'Basic access for students',
-    permissions: {
-      ...Object.values(permissionCategories)
-        .flat()
-        .reduce((acc, perm) => ({ ...acc, [perm]: false }), {}),
-      OVERVIEW_LIST: true,
-      PROGRESS_LIST: true,
-      EVENTS_LIST: true,
-      MESSAGES_LIST: true,
-      ASSIGNMENT_UPLOAD_UPLOAD: true,
-      ASSIGNMENT_UPLOAD_LIST: true,
-      LESSON_UPLOAD_UPLOAD: true,
-      LESSON_UPLOAD_LIST: true,
-      CHATBOT_LIST: true,
-    },
-    userCount: 320,
-    createdAt: '2023-02-18',
-    isDefault: true
-  },
-];
+import {
+  Permission,
+  Role,
+  permissionCategories,
+  rolesAtom,
+  ApiRole,
+  transformApiRolesToFrontendRoles,
+} from '../../../atoms/rolesAtom';
 
 const RolePermissionList = () => {
-  const [roles, setRoles] = useState<Role[]>(sampleRoles);
+  const [roles, setRoles] = useAtom(rolesAtom);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [expandedRole, setExpandedRole] = useState<string | null>(null);
   const [sortConfig, setSortConfig] = useState<{ key: keyof Role; direction: 'ascending' | 'descending' } | null>(null);
+
+  
+  const { data: apiResponse, error, isLoading } = useSWR<{ data: { data: ApiRole[] } }>('/roles', fetcher);
+
+  // This effect syncs the fetched data from SWR to your Jotai atom
+  useEffect(() => {
+    if (apiResponse?.data?.data) {
+      const frontendRoles = transformApiRolesToFrontendRoles(apiResponse.data.data);
+      setRoles(frontendRoles);
+    }
+  }, [apiResponse, setRoles]);
 
   // Handle sorting
   const handleSort = (key: keyof Role) => {
@@ -264,6 +125,18 @@ const RolePermissionList = () => {
     if (sortConfig.direction === 'ascending') return <FaSortUp className="ml-1" />;
     return <FaSortDown className="ml-1" />;
   };
+
+  if (isLoading) {
+    return <div className="flex justify-center items-center h-screen text-gray-500">Loading roles...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-screen text-red-500">
+        Failed to load roles. Please try again later.
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
