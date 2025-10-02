@@ -18,7 +18,7 @@ const Overview = lazy(() => import("../section/overview"));
 const Quiz = lazy(() => import("../section/quiz"));
 
 // Authentication
-const Login = lazy(() => import("../section/Authentication/login"));
+const Login = lazy(() => import("../section/auth/login"));
 
 // Nabha Management
 const InstituteCreate = lazy(
