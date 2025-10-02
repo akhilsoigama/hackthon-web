@@ -2,11 +2,12 @@ import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { motion } from "framer-motion";
+import { useState } from "react";
+import { LockOutlined, PersonOutline, Visibility, VisibilityOff } from "@mui/icons-material";
+import { Button, Typography } from "@mui/material";
 
-// Custom RHF components
 import RHFFormField from "../../components/hook-form/RHFFormFiled";
 import RHFCheckbox from "../../components/hook-form/RHFCheckbox";
-import { Button, Typography } from "@mui/material";
 
 // ---------------------
 // Schema & Types
@@ -29,6 +30,8 @@ const defaultValues: LoginFormValues = {
 // Component
 // ---------------------
 const Login = () => {
+  const [showPassword, setShowPassword] = useState(false);
+
   const methods = useForm<LoginFormValues>({
     resolver: zodResolver(LoginSchema),
     defaultValues,
@@ -38,8 +41,10 @@ const Login = () => {
     console.log("Form Submitted:", data);
   };
 
+  const togglePasswordVisibility = () => setShowPassword(!showPassword);
+
   return (
-    <div className="relative w-full h-screen flex ">
+    <div className="relative w-full h-screen flex">
       {/* Background image */}
       <div className="absolute inset-0 -z-10 opacity-50 lg:opacity-100">
         <img
@@ -62,7 +67,6 @@ const Login = () => {
           className="w-full max-w-md bg-gradient-to-br from-white/80 via-white/60 to-white/50 
                 backdrop-blur-lg rounded-2xl lg:rounded-xl shadow-2xl p-6 lg:p-8"
         >
-          {/* Animated Card Content */}
           <Typography
             variant="h4"
             component="h1"
@@ -81,16 +85,52 @@ const Login = () => {
           <FormProvider {...methods}>
             <form onSubmit={methods.handleSubmit(onSubmit)} noValidate>
               <div className="space-y-5">
-                <RHFFormField name="id" label="ID" type="text" required />
+                {/* ID Field */}
+                <RHFFormField
+                  name="id"
+                  label="ID"
+                  type="text"
+                  placeholder="Enter your Enrollment No"
+                  required
+                  icon={<PersonOutline />}
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      backgroundColor: "rgba(255, 255, 255, 0.9)",
+                      "&:hover": {
+                        backgroundColor: "rgba(255, 255, 255, 1)",
+                      },
+                    },
+                    "& .MuiInputLabel-root": {
+                      color: "rgb(55, 65, 81)",
+                    },
+                  }}
+                />
 
                 <RHFFormField
                   name="password"
                   label="Password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter Password"
                   required
+                  icon={<LockOutlined />}
+                  endAdornment={
+                    <motion.button
+                      type="button"
+                      onClick={togglePasswordVisibility}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="p-1 focus:outline-none"
+                    >
+                      {showPassword ? <VisibilityOff  /> : <Visibility />}
+                    </motion.button>
+                  }
+                  
                 />
 
-                <RHFCheckbox name="rememberMe" label="Remember me" />
+                <RHFCheckbox 
+                  name="rememberMe" 
+                  label="Remember me" 
+                />
 
                 <Button
                   type="submit"
@@ -101,7 +141,12 @@ const Login = () => {
                     py: 1.5,
                     borderRadius: "7px",
                     fontWeight: 600,
-                    background: "gray",
+                    background: "linear-gradient(135deg, #4B5563 0%, #374151 100%)",
+                    color: "white",
+                    "&:hover": { 
+                      background: "linear-gradient(135deg, #374151 0%, #1F2937 100%)",
+                      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)"
+                    },
                   }}
                 >
                   Log In

@@ -5,7 +5,9 @@ import {
   InputAdornment,
   SxProps,
   Theme,
+  TextFieldProps,
 } from '@mui/material';
+import { AnimatePresence, motion } from 'framer-motion';
 
 interface RHFFormFieldProps {
   name: string;
@@ -18,6 +20,7 @@ interface RHFFormFieldProps {
   validation?: RegisterOptions;
   autoComplete?: string;
   icon?: React.ReactNode;
+  endAdornment?: React.ReactNode;
   min?: string | number;
   max?: string | number;
   // MUI specific props
@@ -26,6 +29,10 @@ interface RHFFormFieldProps {
   size?: 'small' | 'medium';
   sx?: SxProps<Theme>;
   fullWidth?: boolean;
+
+  // new 👇
+  InputProps?: TextFieldProps['InputProps'];
+  InputLabelProps?: TextFieldProps['InputLabelProps'];
 }
 
 const RHFFormField: React.FC<RHFFormFieldProps> = ({
@@ -39,6 +46,7 @@ const RHFFormField: React.FC<RHFFormFieldProps> = ({
   validation = {},
   autoComplete = 'off',
   icon,
+  endAdornment,
   min,
   max,
   // MUI props
@@ -47,6 +55,8 @@ const RHFFormField: React.FC<RHFFormFieldProps> = ({
   size = 'medium',
   sx = {},
   fullWidth = true,
+  InputProps,
+  InputLabelProps,
   ...props
 }) => {
   const {
@@ -62,6 +72,7 @@ const RHFFormField: React.FC<RHFFormFieldProps> = ({
         <Controller
           name={name}
           control={control}
+          rules={validation}
           render={({ field }) => (
             <TextField
               {...field}
@@ -79,13 +90,40 @@ const RHFFormField: React.FC<RHFFormFieldProps> = ({
               sx={sx}
               InputProps={{
                 startAdornment: icon ? (
-                  <InputAdornment position="start">{icon}</InputAdornment>
+                  <InputAdornment position="start">
+                    {React.isValidElement(icon) 
+                      ? React.cloneElement(icon as React.ReactElement<any>, {
+                          sx: { 
+                            color: 'rgb(55, 65, 81)',
+                            fontSize: '20px'
+                          }
+                        })
+                      : icon
+                    }
+                  </InputAdornment>
+                ) : undefined,
+                endAdornment: endAdornment ? (
+                  <InputAdornment position="end">
+                    {React.isValidElement(endAdornment) 
+                      ? React.cloneElement(endAdornment as React.ReactElement<any>, {
+                          sx: { 
+                            color: 'rgb(55, 65, 81)',
+                            fontSize: '20px'
+                          }
+                        })
+                      : endAdornment
+                    }
+                  </InputAdornment>
                 ) : undefined,
                 inputProps: {
                   min,
                   max,
                   ...props,
                 },
+                ...InputProps, 
+              }}
+              InputLabelProps={{
+                ...InputLabelProps, 
               }}
             />
           )}
@@ -94,24 +132,25 @@ const RHFFormField: React.FC<RHFFormFieldProps> = ({
     );
   }
 
-  // Original custom styling (unchanged)
+  // --- Custom non-MUI input fallback ---
   return (
     <div className={`mb-5 ${className}`}>
-      <label 
-        htmlFor={name} 
-        className="block text-sm font-medium text-gray-700 mb-2"
+      <label
+        htmlFor={name}
+        className="block text-sm font-semibold text-gray-700 mb-3 transition-colors duration-200"
       >
         {label}
         {required && <span className="text-red-500 ml-1">*</span>}
       </label>
-      
+
       <Controller
         name={name}
         control={control}
+        rules={validation}
         render={({ field }) => (
           <div className="relative">
             {icon && (
-              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+              <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400 transition-colors duration-200">
                 {icon}
               </span>
             )}
@@ -125,31 +164,53 @@ const RHFFormField: React.FC<RHFFormFieldProps> = ({
               min={min}
               max={max}
               className={`
-                w-full px-4 py-3 border rounded-lg
-                focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                transition duration-200 ease-in-out
+                w-full px-4 py-4 border-2 rounded-xl
+                focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500
+                transition-all duration-300 ease-in-out
                 ${error 
-                  ? 'border-red-500 text-red-900 placeholder-red-300 bg-red-50' 
-                  : 'border-gray-300 placeholder-gray-400 bg-white'
+                  ? 'border-red-400 text-red-900 placeholder-red-300 bg-red-50' 
+                  : 'border-gray-200 placeholder-gray-400 bg-white hover:border-gray-300'
                 }
                 ${disabled ? 'bg-gray-100 text-gray-500 cursor-not-allowed' : ''}
-                ${icon ? 'pl-10' : 'pl-4'}
+                ${icon ? 'pl-12' : 'pl-4'}
+                ${endAdornment ? 'pr-12' : 'pr-4'}
                 shadow-sm
               `}
               {...props}
             />
+
+            {endAdornment && (
+              <span className="absolute inset-y-0 right-0 flex items-center pr-3">
+                {endAdornment}
+              </span>
+            )}
           </div>
         )}
       />
-      
-      {error && (
-        <p className="mt-2 text-sm text-red-600 flex items-center">
-          <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clipRule="evenodd" />
-          </svg>
-          {error.message as string}
-        </p>
-      )}
+
+      <AnimatePresence>
+        {error && (
+          <motion.p
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="mt-2 text-sm text-red-600 flex items-center"
+          >
+            <svg
+              className="w-4 h-4 mr-2 flex-shrink-0"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fillRule="evenodd"
+                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z"
+                clipRule="evenodd"
+              />
+            </svg>
+            {error.message as string}
+          </motion.p>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
