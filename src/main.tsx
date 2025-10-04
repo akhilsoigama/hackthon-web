@@ -5,6 +5,9 @@ import './index.css'
 
 import { Toaster } from 'sonner'
 
+import {SWRConfig} from 'swr'
+import { fetcher } from './utils/axios'
+
 import { registerSW } from 'virtual:pwa-register'
 const updateSW = registerSW({
   onNeedRefresh() {
@@ -32,7 +35,9 @@ const updateSW = registerSW({
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
+    <SWRConfig value={{fetcher}}>
     <App />
+    </SWRConfig>
     <Toaster 
       position="top-right"
       expand={true}

@@ -1,7 +1,7 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { useState, Suspense, lazy } from 'react';
-import Navbaar from '../section/Navbaar';
-import Sidebar from '../section/Sidebar';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useState, Suspense, lazy } from "react";
+import Navbaar from "../section/Navbaar";
+import Sidebar from "../section/Sidebar";
 
 // Loading component
 const LoadingSpinner = () => (
@@ -10,50 +10,128 @@ const LoadingSpinner = () => (
   </div>
 );
 
-const Progress = lazy(() => import('../section/Progress'));
-const Events = lazy(() => import('../section/Events'));
-const ChatBot = lazy(() => import('../section/ChatBot'));
-const Settings = lazy(() => import('../section/Settings'));
-const Overview = lazy(() => import('../section/overview'));
-const Quiz = lazy(() => import('../section/quiz'));
+const Progress = lazy(() => import("../section/Progress"));
+const Events = lazy(() => import("../section/Events"));
+const ChatBot = lazy(() => import("../section/ChatBot"));
+const Settings = lazy(() => import("../section/Settings"));
+const Overview = lazy(() => import("../section/overview"));
+const Quiz = lazy(() => import("../section/quiz"));
+
+// Authentication
+const Login = lazy(() => import("../section/auth/login"));
 
 // Nabha Management
-const InstituteCreate = lazy(() => import('../section/Nabha-management/institute-management/Institute-create'));
-const InstituteList = lazy(() => import('../section/Nabha-management/institute-management/Institute-list'));
-const GovtServeyCreate = lazy(() => import('../section/Nabha-management/servey-master/Govt-Servey-Create'));
-const GovtServeyList = lazy(() => import('../section/Nabha-management/servey-master/Govt-Servey-List'));
-const RolePermissionCreate = lazy(() => import('../section/Nabha-management/Role-permission/Role-Permission-Create'));
-const RolePermissionList = lazy(() => import('../section/Nabha-management/Role-permission/Role-Permission-List'));
+const InstituteCreate = lazy(
+  () =>
+    import("../section/Nabha-management/institute-management/Institute-create")
+);
+const InstituteList = lazy(
+  () =>
+    import("../section/Nabha-management/institute-management/Institute-list")
+);
+const GovtServeyCreate = lazy(
+  () => import("../section/Nabha-management/servey-master/Govt-Servey-Create")
+);
+const GovtServeyList = lazy(
+  () => import("../section/Nabha-management/servey-master/Govt-Servey-List")
+);
+const RolePermissionCreate = lazy(
+  () =>
+    import("../section/Nabha-management/Role-permission/Role-Permission-Create")
+);
+const RolePermissionList = lazy(
+  () =>
+    import("../section/Nabha-management/Role-permission/Role-Permission-List")
+);
 
 // Institute Management
-const FacultyCreate = lazy(() => import('../section/Institute-management/faculty/faculty-create'));
-const FacultyList = lazy(() => import('../section/Institute-management/faculty/faculty-list'));
-const StudentCreate = lazy(() => import('../section/Institute-management/students/student-create'));
-const StudentList = lazy(() => import('../section/Institute-management/students/student-list'));
-const InstituteSurveyCreate = lazy(() => import('../section/Institute-management/institure-serveys/servey-create'));
-const InstituteSurveyList = lazy(() => import('../section/Institute-management/institure-serveys/servey-list'));
-const DepartmentCreate = lazy(() => import('../section/Institute-management/department-master/department-create'));
-const DepartmentList = lazy(() => import('../section/Institute-management/department-master/department-list'))
+const FacultyCreate = lazy(
+  () => import("../section/Institute-management/faculty/faculty-create")
+);
+const FacultyList = lazy(
+  () => import("../section/Institute-management/faculty/faculty-list")
+);
+const StudentCreate = lazy(
+  () => import("../section/Institute-management/students/student-create")
+);
+const StudentList = lazy(
+  () => import("../section/Institute-management/students/student-list")
+);
+const InstituteSurveyCreate = lazy(
+  () =>
+    import("../section/Institute-management/institure-serveys/servey-create")
+);
+const InstituteSurveyList = lazy(
+  () => import("../section/Institute-management/institure-serveys/servey-list")
+);
+const DepartmentCreate = lazy(
+  () =>
+    import(
+      "../section/Institute-management/department-master/department-create"
+    )
+);
+const DepartmentList = lazy(
+  () =>
+    import("../section/Institute-management/department-master/department-list")
+);
 
 // In your Routers.tsx - check this path
-const AssignmentCreate = lazy(() => import('../section/Student-management/Assignment-master/assignment-create'));
-const AssignmentList = lazy(() => import('../section/Student-management/Assignment-master/assignment-list'));
-const LessonCreate = lazy(() => import('../section/Student-management/Lession-master/lession-create'));
-const LessonList = lazy(() => import('../section/Student-management/Lession-master/lession-list'));
-const QuizCreate = lazy(() => import('../section/Student-management/Quiz-master/quiz-create'));
-const QuizList = lazy(() => import('../section/Student-management/Quiz-master/quiz-list'));
-const StudentProgress = lazy(() => import('../section/Student-management/Student-Progress/Student-Progress'));
+const AssignmentCreate = lazy(
+  () =>
+    import("../section/Student-management/Assignment-master/assignment-create")
+);
+const AssignmentList = lazy(
+  () =>
+    import("../section/Student-management/Assignment-master/assignment-list")
+);
+const LessonCreate = lazy(
+  () => import("../section/Student-management/Lession-master/lession-create")
+);
+const LessonList = lazy(
+  () => import("../section/Student-management/Lession-master/lession-list")
+);
+const QuizCreate = lazy(
+  () => import("../section/Student-management/Quiz-master/quiz-create")
+);
+const QuizList = lazy(
+  () => import("../section/Student-management/Quiz-master/quiz-list")
+);
+const StudentProgress = lazy(
+  () =>
+    import("../section/Student-management/Student-Progress/Student-Progress")
+);
 
 // Leave Management
-const LeaveCreate = lazy(() => import('../section/Leave-management/Leave-master/leave-create'));
-const LeaveList = lazy(() => import('../section/Leave-management/Leave-master/leave-list'));
-const LeaveApprovalDone = lazy(() => import('../section/Leave-management/Leave-Approval-master/leave-approval-done'));
+const LeaveCreate = lazy(
+  () => import("../section/Leave-management/Leave-master/leave-create")
+);
+const LeaveList = lazy(
+  () => import("../section/Leave-management/Leave-master/leave-list")
+);
+const LeaveApprovalDone = lazy(
+  () =>
+    import(
+      "../section/Leave-management/Leave-Approval-master/leave-approval-done"
+    )
+);
 
 // Student Upload
-const AssignmentUploadCreate = lazy(() => import('../section/Student-upload/Assignment-upload/assignment-upload-create'));
-const AssignmentUploadList = lazy(() => import('../section/Student-upload/Assignment-upload/assignment-upload-list'));
-const LessionUploadCreate = lazy(() => import('../section/Student-upload/Lession-upload/lession-upload-create'));
-const LessonUploadList = lazy(() => import('../section/Student-upload/Lession-upload/lession-upload-list'));
+const AssignmentUploadCreate = lazy(
+  () =>
+    import(
+      "../section/Student-upload/Assignment-upload/assignment-upload-create"
+    )
+);
+const AssignmentUploadList = lazy(
+  () =>
+    import("../section/Student-upload/Assignment-upload/assignment-upload-list")
+);
+const LessionUploadCreate = lazy(
+  () => import("../section/Student-upload/Lession-upload/lession-upload-create")
+);
+const LessonUploadList = lazy(
+  () => import("../section/Student-upload/Lession-upload/lession-upload-list")
+);
 
 export default function Routers() {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -67,11 +145,24 @@ export default function Routers() {
       <Routes>
         {/* Redirect root path to /dashboard */}
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
+
+        <Route
+          path="/login"
+          element={
+            <Suspense fallback={<LoadingSpinner />}>
+              <Login />
+            </Suspense>
+          }
+        />
+
         <Route
           path="/dashboard"
           element={
             <div className="flex min-h-screen w-full">
-              <Sidebar isMobileOpen={isMobileSidebarOpen} toggleMobileSidebar={toggleMobileSidebar} />
+              <Sidebar
+                isMobileOpen={isMobileSidebarOpen}
+                toggleMobileSidebar={toggleMobileSidebar}
+              />
               <Navbaar toggleMobileSidebar={toggleMobileSidebar} />
             </div>
           }
