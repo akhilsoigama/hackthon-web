@@ -14,9 +14,16 @@ import {
   FaQuestionCircle,
   FaSignOutAlt,
   FaUpload,
+  FaDownload,
+  FaTrash,
+  FaMedal,
+  FaCheck,
+  FaTimes,
 } from 'react-icons/fa';
 
 export const modules: any = [
+  
+
   {
     moduleName: "Nabha Management",
     links: [
@@ -167,6 +174,23 @@ export const modules: any = [
         ],
       },
       {
+        to: '/dashboard/student-management/lecture',
+        label: "Lecture Upload",
+        icon: <FaUpload className="size-6" />,
+        subLinks: [
+          {
+            to: '/dashboard/student-management/lecture-upload',
+            label: 'Lecture Upload',
+            icon: <FaUpload className="size-6" />,
+          },
+          {
+            to: '/dashboard/student-management/lecture-list',
+            label: 'Lecture list',
+            icon: <FaUpload className="size-6" />,
+          },
+        ],
+      },
+      {
         to: '/dashboard/student-management/lession',
         label: 'Lesson',
         icon: <FaBook className="size-6" />,
@@ -204,9 +228,30 @@ export const modules: any = [
         to: '/dashboard/student-management/progress',
         label: 'Student Progress',
         icon: <FaChartBar className="size-6" />,
-      }
+      },
+      {
+        to: '/dashboard/student-management/attendance',
+        label: 'Attendance',
+        icon: <FaClipboardCheck className="size-6" />,
+      },
     ],
   },
+  {
+    moduleName: "Student Query",
+    links: [
+      {
+        to: '/dashboard/qna/teacher',
+        label: 'Student Q&A',
+        icon: <FaQuestionCircle className="size-6" />,
+        subLinks: [
+          { to: '/dashboard/qna/teacher/questions', label: 'All Questions', icon: <FaList className="size-6" /> },
+          { to: '/dashboard/qna/teacher/answered', label: 'Answered', icon: <FaCheck className="size-6" /> },
+          { to: '/dashboard/qna/teacher/unanswered', label: 'Unanswered', icon: <FaTimes className="size-6" /> },
+        ],
+      },
+    ],
+  },
+
   {
     moduleName: "Leave Management",
     links: [
@@ -311,12 +356,74 @@ export const modules: any = [
     ],
   },
   {
+    moduleName: "Gamification",
+    links: [
+      {
+        to: '/dashboard/gamification',
+        label: 'Achievements / Badges',
+        icon: <FaMedal className="size-6" />,
+      },
+    ],
+  },
+
+  {
+    moduleName: "Offline Library",
+    links: [
+      {
+        to: '/dashboard/offline-library',
+        label: 'Offline Library',
+        icon: <FaDownload className="size-6" />,
+        subLinks: [
+          {
+            to: '/dashboard/offline-library/lessons',
+            label: 'Lessons',
+            icon: <FaBook className="size-6" />,
+          },
+          {
+            to: '/dashboard/offline-library/videos',
+            label: 'Videos',
+            icon: <FaBook className="size-6" />,
+          },
+          {
+            to: '/dashboard/offline-library/audio',
+            label: 'Audio Lessons',
+            icon: <FaBook className="size-6" />,
+          },
+          {
+            to: '/dashboard/offline-library/downloads',
+            label: 'Downloaded Files',
+            icon: <FaList className="size-6" />,
+          },
+          {
+            to: '/dashboard/offline-library/manage',
+            label: 'Manage Storage',
+            icon: <FaTrash className="size-6" />,
+          },
+        ],
+      },
+    ],
+  },
+  {
     moduleName: "Communication",
     links: [
       {
         to: '/dashboard/chatbot',
         label: 'Chatbot',
         icon: <FaEnvelope className="size-6" />,
+      },
+    ],
+  },
+  {
+    moduleName: "Q&A / Discussion",
+    links: [
+      {
+        to: '/dashboard/qna',
+        label: 'Q&A',
+        icon: <FaQuestionCircle className="size-6" />,
+        subLinks: [
+          { to: '/dashboard/qna/questions', label: 'All Questions', icon: <FaList className="size-6" /> },
+          { to: '/dashboard/qna/ask', label: 'Ask Question', icon: <FaPlus className="size-6" /> },
+        ],
       },
     ],
   },
