@@ -1,14 +1,24 @@
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useRef, useEffect } from "react";
 import { FaPaperPlane, FaRobot, FaUser } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
+import ReactMarkdown from "react-markdown";
 import { messagesAtom, Message } from "../atoms/chatBotAtom";
 import { useAtom } from "jotai";
 import api from "../utils/axios";
 
 const ChatbotPage = () => {
   const [messages, setMessages] = useAtom(messagesAtom);
-  const [loading,setloader] = useState(false);
+  const [loading, setloader] = useState(false);
   const [input, setInput] = useState("");
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    chatContainerRef.current?.scrollTo({ top: chatContainerRef.current.scrollHeight, behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, loading]);
 
   const handleSend = async (e: FormEvent) => {
     e.preventDefault();
@@ -80,7 +90,7 @@ const ChatbotPage = () => {
         </motion.div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4">
           <AnimatePresence>
             {messages.map((msg, index) => (
               <motion.div
@@ -107,7 +117,9 @@ const ChatbotPage = () => {
                   {msg.sender === "bot" && (
                     <FaRobot className="mt-1 text-gray-500 flex-shrink-0" />
                   )}
-                  <span>{msg.text}</span>
+                    <div className="prose prose-sm max-w-none">
+                      <ReactMarkdown>{msg.text}</ReactMarkdown>
+                    </div>
                   {msg.sender === "user" && (
                     <FaUser className="mt-1 text-white flex-shrink-0" />
                   )}

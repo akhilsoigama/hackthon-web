@@ -191,17 +191,17 @@ export const modules: any = [
         ],
       },
       {
-        to: '/dashboard/student-management/lession',
-        label: 'Lesson',
+        to: '/dashboard/student-management/material',
+        label: 'Material',
         icon: <FaBook className="size-6" />,
         subLinks: [
           {
-            to: '/dashboard/student-management/lession/create',
+            to: '/dashboard/student-management/material/create',
             label: 'Create',
             icon: <FaPlus className="size-6" />,
           },
           {
-            to: '/dashboard/student-management/lession/list',
+            to: '/dashboard/student-management/material/list',
             label: 'List',
             icon: <FaList className="size-6" />,
           },
@@ -312,21 +312,9 @@ export const modules: any = [
         ],
       },
       {
-        to: '/dashboard/student-upload/lession-upload',
-        label: 'Lesson Upload',
-        icon: <FaUpload className="size-6" />,
-        subLinks: [
-          {
-            to: '/dashboard/student-upload/lession-upload/upload',
-            label: 'Upload',
-            icon: <FaUpload className="size-6" />,
-          },
-          {
-            to: '/dashboard/student-upload/lession-upload/list',
-            label: 'List',
-            icon: <FaList className="size-6" />,
-          },
-        ],
+        to: '/dashboard/student-upload/materials',
+        label: 'Materials',
+        icon: <FaBook className="size-6" /> 
       },
     ],
   },

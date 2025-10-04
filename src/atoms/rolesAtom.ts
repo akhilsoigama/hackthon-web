@@ -37,70 +37,133 @@ export interface Role {
 // Permission categories based on routes
 export const permissionCategories: { [key: string]: string[] } = {
   Dashboard: [
-    'OVERVIEW_LIST',
-    'PROGRESS_LIST',
-    'EVENTS_LIST',
-    'MESSAGES_LIST',
-    'SETTINGS_LIST',
+    'DASHBOARD_OVERVIEW',
+    'DASHBOARD_PROGRESS',
+    'DASHBOARD_EVENTS',
+    'DASHBOARD_QUIZ',
   ],
+
   NabhaManagement: [
     'INSTITUTE_CREATE',
     'INSTITUTE_LIST',
     'INSTITUTE_UPDATE',
     'INSTITUTE_DELETE',
-    'SURVEY_MASTER_CREATE',
-    'SURVEY_MASTER_LIST',
-    'SURVEY_MASTER_UPDATE',
-    'SURVEY_MASTER_DELETE',
-    'ROLE_PERMISSION_CREATE',
-    'ROLE_PERMISSION_LIST',
-    'ROLE_PERMISSION_UPDATE',
-    'ROLE_PERMISSION_DELETE',
+
+    'SURVEY_CREATE',
+    'SURVEY_LIST',
+    'SURVEY_UPDATE',
+    'SURVEY_DELETE',
+    'SURVEY_SUBMIT',
+    'SURVEY_APPROVE',
+
+    'ROLES_CREATE',
+    'ROLES_LIST',
+    'ROLES_UPDATE',
+    'ROLES_DELETE',
+
+    'PERMISSIONS_VIEW',
+    'PERMISSIONS_LIST',
+    'PERMISSIONS_ASSIGN',
   ],
+
   InstituteManagement: [
     'FACULTY_CREATE',
     'FACULTY_LIST',
     'FACULTY_UPDATE',
     'FACULTY_DELETE',
+
     'STUDENT_CREATE',
     'STUDENT_LIST',
     'STUDENT_UPDATE',
     'STUDENT_DELETE',
+
+    'DEPARTMENT_CREATE',
+    'DEPARTMENT_LIST',
+    'DEPARTMENT_UPDATE',
+    'DEPARTMENT_DELETE',
+
     'INSTITUTE_SURVEY_CREATE',
     'INSTITUTE_SURVEY_LIST',
     'INSTITUTE_SURVEY_UPDATE',
     'INSTITUTE_SURVEY_DELETE',
   ],
+
   StudentManagement: [
     'ASSIGNMENT_CREATE',
     'ASSIGNMENT_LIST',
     'ASSIGNMENT_UPDATE',
     'ASSIGNMENT_DELETE',
+    'ASSIGNMENT_SUBMIT',
+    'ASSIGNMENT_GRADE',
+
     'LESSON_CREATE',
     'LESSON_LIST',
     'LESSON_UPDATE',
     'LESSON_DELETE',
+
     'QUIZ_CREATE',
     'QUIZ_LIST',
     'QUIZ_UPDATE',
     'QUIZ_DELETE',
+    'QUIZ_TAKE',
+    'QUIZ_EVALUATE',
+
+    'PROGRESS_VIEW',
+    'PROGRESS_TRACK',
+    'PROGRESS_REPORT',
   ],
+
   LeaveManagement: [
     'LEAVE_CREATE',
     'LEAVE_LIST',
     'LEAVE_UPDATE',
     'LEAVE_DELETE',
-    'LEAVE_APPROVAL_DONE',
-    'LEAVE_APPROVAL_REJECT',
+    'LEAVE_APPROVE',
+    'LEAVE_REJECT',
   ],
+
   StudentUpload: [
-    'ASSIGNMENT_UPLOAD_UPLOAD',
+    'ASSIGNMENT_UPLOAD_CREATE',
     'ASSIGNMENT_UPLOAD_LIST',
-    'LESSON_UPLOAD_UPLOAD',
+    'ASSIGNMENT_UPLOAD_UPDATE',
+    'ASSIGNMENT_UPLOAD_DELETE',
+
+    'LESSON_UPLOAD_CREATE',
     'LESSON_UPLOAD_LIST',
+    'LESSON_UPLOAD_UPDATE',
+    'LESSON_UPLOAD_DELETE',
   ],
-  Communication: ['CHATBOT_LIST'],
+
+  Communication: [
+    'CHATBOT_ACCESS',
+    'MESSAGING_SEND',
+    'MESSAGING_RECEIVE',
+  ],
+
+  Settings: [
+    'SETTINGS_VIEW',
+    'SETTINGS_UPDATE',
+    'SYSTEM_CONFIG',
+  ],
+
+  Admin: [
+    'ADMIN_ACCESS',
+    'SUPER_ADMIN',
+    'MODERATOR_ACCESS',
+  ],
+
+  ExportImport: [
+    'DATA_EXPORT',
+    'DATA_IMPORT',
+  ],
+
+  AuditReports: [
+    'AUDIT_LOGS_VIEW',
+    'REPORTS_GENERATE',
+    'REPORTS_VIEW',
+  ],
 };
+
 
 // Sample roles data
 const sampleRoles: Role[] = [

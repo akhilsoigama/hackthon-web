@@ -84,11 +84,11 @@ const AssignmentList = lazy(
   () =>
     import("../section/Student-management/Assignment-master/assignment-list")
 );
-const LessonCreate = lazy(
-  () => import("../section/Student-management/Lession-master/lession-create")
+const MaterialCreate = lazy(
+  () => import("../section/Student-management/Material-master/Material-create")
 );
-const LessonList = lazy(
-  () => import("../section/Student-management/Lession-master/lession-list")
+const MaterialList = lazy(
+  () => import("../section/Student-management/Material-master/Material-list")
 );
 const QuizCreate = lazy(
   () => import("../section/Student-management/Quiz-master/quiz-create")
@@ -126,11 +126,8 @@ const AssignmentUploadList = lazy(
   () =>
     import("../section/Student-upload/Assignment-upload/assignment-upload-list")
 );
-const LessionUploadCreate = lazy(
-  () => import("../section/Student-upload/Lession-upload/lession-upload-create")
-);
-const LessonUploadList = lazy(
-  () => import("../section/Student-upload/Lession-upload/lession-upload-list")
+const StudentMaterialList = lazy(
+  () => import("../section/Student-upload/Material/Material-list")
 );
 
 export default function Routers() {
@@ -163,7 +160,7 @@ export default function Routers() {
                 isMobileOpen={isMobileSidebarOpen}
                 toggleMobileSidebar={toggleMobileSidebar}
               />
-              <Navbaar toggleMobileSidebar={toggleMobileSidebar} />
+                <Navbaar toggleMobileSidebar={toggleMobileSidebar} />
             </div>
           }
         >
@@ -358,18 +355,18 @@ export default function Routers() {
             }
           />
           <Route
-            path="student-management/lession/create"
+            path="student-management/material/create"
             element={
               <Suspense fallback={<LoadingSpinner />}>
-                <LessonCreate />
+                <MaterialCreate />
               </Suspense>
             }
           />
           <Route
-            path="student-management/lession/list"
+            path="student-management/material/list"
             element={
               <Suspense fallback={<LoadingSpinner />}>
-                <LessonList />
+                <MaterialList />
               </Suspense>
             }
           />
@@ -442,18 +439,10 @@ export default function Routers() {
             }
           />
           <Route
-            path="student-upload/lession-upload/upload"
+            path="student-upload/materials"
             element={
               <Suspense fallback={<LoadingSpinner />}>
-                <LessionUploadCreate />
-              </Suspense>
-            }
-          />
-          <Route
-            path="student-upload/lession-upload/list"
-            element={
-              <Suspense fallback={<LoadingSpinner />}>
-                <LessonUploadList />
+                <StudentMaterialList />
               </Suspense>
             }
           />

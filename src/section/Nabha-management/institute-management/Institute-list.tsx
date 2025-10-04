@@ -5,7 +5,10 @@ import { Institute } from '../../../types/Institute';
 import CommonModal from '../../../components/common/ViewModel';
 import SearchAndFilter from '../../../components/common/SearchAndFilter';
 import InstituteCard from './Institute-card';
-import { instituteData } from './InstituteData';
+import { institutesAtom } from '../../../atoms/institutesAtom';
+import { useAtom } from 'jotai';
+import useSWR from 'swr';
+import fetcher from '../../../utils/axios';
 
 
 
@@ -91,7 +94,6 @@ const ListView = ({ institutes, onViewDetails }: { institutes: Institute[]; onVi
           <tr>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Institute</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Established</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
@@ -117,9 +119,6 @@ const ListView = ({ institutes, onViewDetails }: { institutes: Institute[]; onVi
                   {institute.city}
                 </div>
                 <div className="text-sm text-gray-500 truncate">{institute.state}</div>
-              </td>
-              <td className="px-4 py-4 whitespace-nowrap sm:px-6 hidden md:table-cell" data-label="Type">
-                <div className="text-sm text-gray-500">{institute.type}</div>
               </td>
               <td className="px-4 py-4 whitespace-nowrap sm:px-6 hidden lg:table-cell" data-label="Established">
                 <div className="text-sm text-gray-500">{institute.establishedYear}</div>
@@ -174,10 +173,6 @@ const InstituteDetailsModal = ({ institute, isOpen, onClose, footerContent }: {
                 <p className="mt-1 text-gray-900">{institute.code}</p>
               </div>
               <div>
-                <span className="block text-sm font-medium text-gray-500">Type</span>
-                <p className="mt-1 text-gray-900">{institute.type}</p>
-              </div>
-              <div>
                 <span className="block text-sm font-medium text-gray-500">Established Year</span>
                 <p className="mt-1 text-gray-900">{institute.establishedYear}</p>
               </div>
@@ -186,10 +181,6 @@ const InstituteDetailsModal = ({ institute, isOpen, onClose, footerContent }: {
               <div>
                 <span className="block text-sm font-medium text-gray-500">Affiliation</span>
                 <p className="mt-1 text-gray-900">{institute.affiliation}</p>
-              </div>
-              <div>
-                <span className="block text-sm font-medium text-gray-500">Campus Area</span>
-                <p className="mt-1 text-gray-900">{institute.campusArea}</p>
               </div>
               <div>
                 <span className="block text-sm font-medium text-gray-500">Status</span>
@@ -248,11 +239,10 @@ const InstituteDetailsModal = ({ institute, isOpen, onClose, footerContent }: {
 
 // Main component
 const InstituteList = () => {
-  const [institutes] = useState<Institute[]>(instituteData);
-  const [filteredInstitutes, setFilteredInstitutes] = useState<Institute[]>(instituteData);
+  const [institutes,setInsitutes] = useAtom(institutesAtom);
+  const [filteredInstitutes, setFilteredInstitutes] = useState<Institute[]>(institutes);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
-  const [typeFilter, setTypeFilter] = useState('All');
   const [selectedInstitute, setSelectedInstitute] = useState<Institute | null>(null);
   const [isGridView, setIsGridView] = useState(true);
 
@@ -262,14 +252,6 @@ const InstituteList = () => {
       { value: 'Active', label: 'Active' },
       { value: 'Inactive', label: 'Inactive' }
     ],
-    type: [
-      { value: 'All', label: 'All Types' },
-      { value: 'Engineering', label: 'Engineering' },
-      { value: 'Medical', label: 'Medical' },
-      { value: 'Business', label: 'Business' },
-      { value: 'Arts & Science', label: 'Arts & Science' },
-      { value: 'Law', label: 'Law' }
-    ]
   };
 
   const handleSearch = () => {
@@ -287,21 +269,27 @@ const InstituteList = () => {
       results = results.filter(institute => institute.status === statusFilter);
     }
 
-    if (typeFilter !== 'All') {
-      results = results.filter(institute => institute.type === typeFilter);
-    }
-
     setFilteredInstitutes(results);
   };
 
   useEffect(() => {
     handleSearch();
-  }, [searchTerm, statusFilter, typeFilter]);
+  }, [searchTerm, statusFilter, institutes]);
+
+  const { data: apiResponse, error, isLoading } = useSWR<{ data: { data: Institute[] } }>('/institutes', fetcher);
+
+  // This effect syncs the fetched data from SWR to your Jotai atom
+  useEffect(() => {
+    if (apiResponse?.data?.data) {
+      const data = apiResponse.data.data;
+      setInsitutes(data)
+      console.log(data)
+    }
+   }, [apiResponse, setInsitutes]);
 
   const handleReset = () => {
     setSearchTerm('');
     setStatusFilter('All');
-    setTypeFilter('All');
     setFilteredInstitutes(institutes);
   };
 
@@ -347,9 +335,7 @@ const InstituteList = () => {
           onSearchChange={setSearchTerm}
           statusFilter={statusFilter}
           onStatusFilterChange={setStatusFilter}
-          typeFilter={typeFilter}
           onReset={handleReset}
-          onTypeFilterChange={setTypeFilter}
           filterOptions={filterOptions}
           placeholder="Search by name, code or city..."
         />
