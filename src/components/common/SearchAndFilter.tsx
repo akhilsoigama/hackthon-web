@@ -6,12 +6,9 @@ interface SearchAndFilterProps {
   onSearchChange: (value: string) => void;
   statusFilter: string;
   onStatusFilterChange: (value: string) => void;
-  typeFilter: string;
-  onTypeFilterChange: (value: string) => void;
   onReset: () => void;
   filterOptions: {
     status: { value: string; label: string }[];
-    type: { value: string; label: string }[];
   };
   placeholder?: string;
 }
@@ -21,8 +18,6 @@ const SearchAndFilter = ({
   onSearchChange,
   statusFilter,
   onStatusFilterChange,
-  typeFilter,
-  onTypeFilterChange,
   onReset,
   filterOptions,
   placeholder = "Search..."
@@ -52,16 +47,6 @@ const SearchAndFilter = ({
             className="px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
           >
             {filterOptions.status.map(option => (
-              <option key={option.value} value={option.value}>{option.label}</option>
-            ))}
-          </select>
-
-          <select
-            value={typeFilter}
-            onChange={(e) => onTypeFilterChange(e.target.value)}
-            className="px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-          >
-            {filterOptions.type.map(option => (
               <option key={option.value} value={option.value}>{option.label}</option>
             ))}
           </select>

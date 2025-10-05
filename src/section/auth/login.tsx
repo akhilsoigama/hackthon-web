@@ -5,14 +5,18 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { LockOutlined, PersonOutline, Visibility, VisibilityOff } from "@mui/icons-material";
 import { Button, Typography } from "@mui/material";
+import Cookies from "js-cookie";
+import { toast } from "sonner";
 
 import RHFFormField from "../../components/hook-form/RHFFormFiled";
 import RHFCheckbox from "../../components/hook-form/RHFCheckbox";
+import api from "../../utils/axios";
+import { useNavigate } from "react-router-dom";
 
 
 // Schema & Types
 const LoginSchema = z.object({
-  id: z.string().min(1, "ID is required"),
+  email: z.string().min(1, "email is required"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   rememberMe: z.boolean().optional(),
 });
@@ -20,7 +24,7 @@ const LoginSchema = z.object({
 type LoginFormValues = z.infer<typeof LoginSchema>;
 
 const defaultValues: LoginFormValues = {
-  id: "",
+  email: "",
   password: "",
   rememberMe: false,
 };
@@ -30,14 +34,22 @@ const defaultValues: LoginFormValues = {
 // ---------------------
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
   const methods = useForm<LoginFormValues>({
     resolver: zodResolver(LoginSchema),
     defaultValues,
   });
 
-  const onSubmit = (data: LoginFormValues) => {
-    console.log("Form Submitted:", data);
+  const onSubmit = async (data: LoginFormValues) => {
+    try{
+      const res = await api.post("/login", data);
+      Cookies.set('token', res.data.token, { expires: 7, path: '' })
+      toast("Login Successful");
+      navigate("/dashboard");
+    }catch (error) {
+      console.log(error);
+    }
   };
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
@@ -84,12 +96,12 @@ const Login = () => {
           <FormProvider {...methods}>
             <form onSubmit={methods.handleSubmit(onSubmit)} noValidate>
               <div className="space-y-5">
-                {/* ID Field */}
+                {/* email Field */}
                 <RHFFormField
-                  name="id"
-                  label="ID"
+                  name="email"
+                  label="email"
                   type="text"
-                  placeholder="Enter your Enrollment No"
+                  placeholder="Enter your email"
                   required
                   icon={<PersonOutline />}
                   sx={{

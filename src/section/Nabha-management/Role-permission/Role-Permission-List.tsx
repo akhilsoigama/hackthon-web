@@ -27,6 +27,7 @@ import {
   ApiRole,
   transformApiRolesToFrontendRoles,
 } from '../../../atoms/rolesAtom';
+import api from '../../../utils/axios';
 
 const RolePermissionList = () => {
   const [roles, setRoles] = useAtom(rolesAtom);
@@ -87,9 +88,24 @@ const RolePermissionList = () => {
   };
 
   // Delete a role
-  const deleteRole = (id: string) => {
+  const deleteRole = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this role?')) {
-      setRoles(roles.filter(role => role.id !== id));
+      try{
+
+      const res = await api.delete(`/roles/${id}`);
+      if (res.status === 200) {
+        setRoles(roles.filter(role => role.id !== id));
+      } else {
+        console.error("Failed to delete role:", res);
+        alert("Failed to delete role. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error deleting role:", error);
+      alert("An error occurred while deleting the role. Please try again.")
+
+    }
+        setRoles(roles.filter(role => role.id !== id));
+
     }
   };
 

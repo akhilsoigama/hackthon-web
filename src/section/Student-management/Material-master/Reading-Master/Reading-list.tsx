@@ -12,7 +12,6 @@ import {
     FaSortUp,
     FaSortDown,
     FaBook,
-    FaPlus,
     FaVideo,
     FaFilePdf,
     FaImage,
@@ -24,8 +23,8 @@ import {
     FaTimes
 } from 'react-icons/fa';
 
-// Define the Lesson interface
-interface Lesson {
+// Define the ReadingMaterial interface
+interface ReadingMaterial {
     id: string;
     title: string;
     subject: string;
@@ -43,9 +42,9 @@ interface Lesson {
     imageUrl?: string;
 }
 
-const LessonList = () => {
-    // Sample lesson data with image URLs
-    const [lessons] = useState<Lesson[]>([
+const ReadingList = () => {
+    // Sample material data with image URLs
+    const [readingMaterials] = useState<ReadingMaterial[]>([
         {
             id: '1',
             title: 'Introduction to Quadratic Equations',
@@ -152,8 +151,8 @@ const LessonList = () => {
     const [statusFilter, setStatusFilter] = useState<string>('all');
     const [subjectFilter, setSubjectFilter] = useState<string>('all');
     const [gradeFilter, setGradeFilter] = useState<string>('all');
-    const [sortConfig, setSortConfig] = useState<{ key: keyof Lesson; direction: 'ascending' | 'descending' } | null>(null);
-    const [expandedLesson, setExpandedLesson] = useState<string | null>(null);
+    const [sortConfig, setSortConfig] = useState<{ key: keyof ReadingMaterial; direction: 'ascending' | 'descending' } | null>(null);
+    const [expandedReading, setExpandedReading] = useState<string | null>(null);
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
     const [showFilters, setShowFilters] = useState(false);
 
@@ -163,7 +162,7 @@ const LessonList = () => {
         '6th Grade', '7th Grade', '8th Grade', '9th Grade', '10th Grade', '11th Grade', '12th Grade'];
 
     // Handle sorting
-    const handleSort = (key: keyof Lesson) => {
+    const handleSort = (key: keyof ReadingMaterial) => {
         let direction: 'ascending' | 'descending' = 'ascending';
         if (sortConfig && sortConfig.key === key && sortConfig.direction === 'ascending') {
             direction = 'descending';
@@ -171,11 +170,11 @@ const LessonList = () => {
         setSortConfig({ key, direction });
     };
 
-    // Get sorted lessons
-     const getSortedLessons = () => {
-    if (!sortConfig) return lessons;
+    // Get sorted materials
+     const getSortedReadings = () => {
+    if (!sortConfig) return readingMaterials;
 
-    return [...lessons].sort((a, b) => {
+    return [...readingMaterials].sort((a, b) => {
         const aValue = a[sortConfig.key];
         const bValue = b[sortConfig.key];
         
@@ -206,14 +205,14 @@ const LessonList = () => {
     });
 };
 
-    // Filter lessons based on search term and filters
-    const filteredLessons = getSortedLessons().filter(lesson => {
-        const matchesSearch = lesson.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            lesson.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            lesson.objectives.some(obj => obj.toLowerCase().includes(searchTerm.toLowerCase()));
-        const matchesStatus = statusFilter === 'all' || lesson.status === statusFilter;
-        const matchesSubject = subjectFilter === 'all' || lesson.subject === subjectFilter;
-        const matchesGrade = gradeFilter === 'all' || lesson.gradeLevel === gradeFilter;
+    // Filter materials based on search term and filters
+    const filteredReadings = getSortedReadings().filter(reading => {
+        const matchesSearch = reading.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            reading.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            reading.objectives.some(obj => obj.toLowerCase().includes(searchTerm.toLowerCase()));
+        const matchesStatus = statusFilter === 'all' || reading.status === statusFilter;
+        const matchesSubject = subjectFilter === 'all' || reading.subject === subjectFilter;
+        const matchesGrade = gradeFilter === 'all' || reading.gradeLevel === gradeFilter;
 
         return matchesSearch && matchesStatus && matchesSubject && matchesGrade;
     });
@@ -267,15 +266,15 @@ const LessonList = () => {
     };
 
     // Render sort icon
-    const renderSortIcon = (key: keyof Lesson) => {
+    const renderSortIcon = (key: keyof ReadingMaterial) => {
         if (!sortConfig || sortConfig.key !== key) return <FaSort className="ml-1 opacity-50" />;
         if (sortConfig.direction === 'ascending') return <FaSortUp className="ml-1" />;
         return <FaSortDown className="ml-1" />;
     };
 
-    // Toggle lesson expansion
-    const toggleLessonExpansion = (lessonId: string) => {
-        setExpandedLesson(expandedLesson === lessonId ? null : lessonId);
+    // Toggle material expansion
+    const toggleReadingExpansion = (readingId: string) => {
+        setExpandedReading(expandedReading === readingId ? null : readingId);
     };
 
     // Render star rating
@@ -306,10 +305,10 @@ const LessonList = () => {
                 <div className="mb-6 md:mb-8">
                     <h1 className="text-2xl md:text-3xl font-bold text-gray-800 flex items-center">
                         <FaBook className="mr-3 text-indigo-600" />
-                        Lesson Library
+                        Reading Materials
                     </h1>
                     <p className="text-gray-600 mt-1 md:mt-2 text-sm md:text-base">
-                        Browse and manage all teaching lessons
+                        Browse and access all your reading materials
                     </p>
                 </div>
 
@@ -325,8 +324,8 @@ const LessonList = () => {
                             <FaBook className="text-indigo-600 text-xl" />
                         </div>
                         <div>
-                            <p className="text-gray-600 text-sm">Total Lessons</p>
-                            <p className="text-xl md:text-2xl font-bold">{lessons.length}</p>
+                            <p className="text-gray-600 text-sm">Total Readings</p>
+                            <p className="text-xl md:text-2xl font-bold">{readingMaterials.length}</p>
                         </div>
                     </div>
 
@@ -336,7 +335,7 @@ const LessonList = () => {
                         </div>
                         <div>
                             <p className="text-gray-600 text-sm">Published</p>
-                            <p className="text-xl md:text-2xl font-bold">{lessons.filter(l => l.status === 'published').length}</p>
+                            <p className="text-xl md:text-2xl font-bold">{readingMaterials.filter(l => l.status === 'published').length}</p>
                         </div>
                     </div>
 
@@ -346,7 +345,7 @@ const LessonList = () => {
                         </div>
                         <div>
                             <p className="text-gray-600 text-sm">Drafts</p>
-                            <p className="text-xl md:text-2xl font-bold">{lessons.filter(l => l.status === 'draft').length}</p>
+                            <p className="text-xl md:text-2xl font-bold">{readingMaterials.filter(l => l.status === 'draft').length}</p>
                         </div>
                     </div>
 
@@ -356,7 +355,7 @@ const LessonList = () => {
                         </div>
                         <div>
                             <p className="text-gray-600 text-sm">Total Taught</p>
-                            <p className="text-xl md:text-2xl font-bold">{lessons.reduce((acc, lesson) => acc + lesson.timesTaught, 0)}</p>
+                            <p className="text-xl md:text-2xl font-bold">{readingMaterials.reduce((acc, reading) => acc + reading.timesTaught, 0)}</p>
                         </div>
                     </div>
                 </motion.div>
@@ -375,14 +374,14 @@ const LessonList = () => {
                             </div>
                             <input
                                 type="text"
-                                placeholder="Search lessons by title, subject, or objectives..."
+                                placeholder="Search reading materials by title, subject, or objectives..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="pl-10 pr-4 py-3 border border-gray-200 rounded-lg w-full focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition-colors"
                             />
                         </div>
 
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 justify-between">
                             <button 
                                 onClick={() => setShowFilters(!showFilters)}
                                 className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
@@ -406,11 +405,6 @@ const LessonList = () => {
                                     <FaList />
                                 </button>
                             </div>
-
-                            <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors shadow-md hover:shadow-lg">
-                                <FaPlus />
-                                New Lesson
-                            </button>
                         </div>
                     </div>
 
@@ -471,10 +465,10 @@ const LessonList = () => {
                 </motion.div>
 
                 {/* Lessons Grid/List */}
-                {filteredLessons.length === 0 ? (
+                {filteredReadings.length === 0 ? (
                     <div className="bg-white rounded-xl shadow-md p-8 text-center text-gray-500 border border-gray-100">
                         <FaSearch className="mx-auto text-4xl mb-4 text-gray-300" />
-                        <p className="text-lg">No lessons found</p>
+                        <p className="text-lg">No reading materials found</p>
                         <p className="mt-2">Try adjusting your search or filters</p>
                     </div>
                 ) : viewMode === 'grid' ? (
@@ -482,57 +476,57 @@ const LessonList = () => {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.3, delay: 0.2 }}
-                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
                     >
-                        {filteredLessons.map((lesson) => {
-                            const statusInfo = getStatusInfo(lesson.status);
+                        {filteredReadings.map((reading) => {
+                            const statusInfo = getStatusInfo(reading.status);
 
                             return (
                                 <motion.div 
-                                    key={lesson.id}
+                                    key={reading.id}
                                     whileHover={{ y: -5 }}
                                     className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 transition-all duration-300"
                                 >
-                                    <div className="relative">
-                                        <img 
-                                            src={lesson.imageUrl} 
-                                            alt={lesson.title}
-                                            className="w-full h-48 object-cover"
-                                        />
+                                    <a 
+                                        href={reading.resources.find(r => r.type === 'pdf')?.url} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer" 
+                                        className="relative flex-grow flex flex-col items-center justify-center p-6 bg-gray-100 hover:bg-gray-200 transition-colors h-48 text-center"
+                                    >
+                                        <FaFilePdf className="text-5xl text-red-500 mb-3" />
+                                        <p className="font-semibold text-gray-700 line-clamp-3">{reading.title}</p>
                                         <div className="absolute top-4 right-4">
                                             <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${statusInfo.style}`}>
                                                 {statusInfo.icon}
                                             </span>
                                         </div>
-                                    </div>
+                                    </a>
                                     
-                                    <div className="p-5">
+                                    <div className="p-5 flex-shrink-0">
                                         <div className="flex justify-between items-start mb-3">
                                             <span className="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded">
-                                                {lesson.subject}
+                                                {reading.subject}
                                             </span>
                                             <span className="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded">
-                                                {lesson.gradeLevel}
+                                                {reading.gradeLevel}
                                             </span>
                                         </div>
                                         
-                                        <h3 className="font-bold text-lg mb-2 text-gray-800 line-clamp-1">{lesson.title}</h3>
-                                        <p className="text-gray-600 text-sm mb-4 line-clamp-2">{lesson.objectives[0]}</p>
                                         
                                         <div className="flex items-center text-sm text-gray-500 mb-4">
                                             <FaChalkboardTeacher className="mr-1" />
-                                            <span>by {lesson.author}</span>
+                                            <span>by {reading.author}</span>
                                             <span className="mx-2">•</span>
                                             <FaClock className="mr-1" />
-                                            <span>{lesson.duration}</span>
+                                            <span>{reading.duration}</span>
                                         </div>
                                         
                                         <div className="flex justify-between items-center mb-4">
                                             <div className="flex items-center">
                                                 <FaUsers className="mr-1 text-gray-400" />
-                                                <span className="text-sm text-gray-600">Taught {lesson.timesTaught} times</span>
+                                                <span className="text-sm text-gray-600">Taught {reading.timesTaught} times</span>
                                             </div>
-                                            {renderRating(lesson.rating)}
+                                            {renderRating(reading.rating)}
                                         </div>
                                         
                                         <div className="flex justify-between pt-4 border-t border-gray-100">
@@ -540,7 +534,7 @@ const LessonList = () => {
                                                 whileHover={{ scale: 1.05 }}
                                                 whileTap={{ scale: 0.95 }}
                                                 className="text-indigo-600 hover:text-indigo-800 font-medium flex items-center gap-1"
-                                                onClick={() => toggleLessonExpansion(lesson.id)}
+                                                onClick={() => toggleReadingExpansion(reading.id)}
                                             >
                                                 <FaEye className="text-sm" />
                                                 View Details
@@ -551,7 +545,7 @@ const LessonList = () => {
                                                     whileHover={{ scale: 1.1 }}
                                                     whileTap={{ scale: 0.9 }}
                                                     className="p-2 text-gray-400 rounded-full cursor-not-allowed"
-                                                    title="Edit Lesson (disabled)"
+                                                    title="Edit Reading (disabled)"
                                                     disabled
                                                 >
                                                     <FaEdit />
@@ -561,7 +555,7 @@ const LessonList = () => {
                                                     whileHover={{ scale: 1.1 }}
                                                     whileTap={{ scale: 0.9 }}
                                                     className="p-2 text-gray-400 rounded-full cursor-not-allowed"
-                                                    title="Delete Lesson (disabled)"
+                                                    title="Delete Reading (disabled)"
                                                     disabled
                                                 >
                                                     <FaTrash />
@@ -570,9 +564,9 @@ const LessonList = () => {
                                         </div>
                                     </div>
 
-                                    {/* Expanded Lesson Details */}
+                                    {/* Expanded Reading Details */}
                                     <AnimatePresence>
-                                        {expandedLesson === lesson.id && (
+                                        {expandedReading === reading.id && (
                                             <motion.div
                                                 initial={{ opacity: 0, height: 0 }}
                                                 animate={{ opacity: 1, height: 'auto' }}
@@ -581,9 +575,9 @@ const LessonList = () => {
                                                 className="bg-gray-50 p-5 border-t border-gray-200"
                                             >
                                                 <div className="flex justify-between items-center mb-4">
-                                                    <h3 className="font-medium text-gray-800">Lesson Details</h3>
+                                                    <h3 className="font-medium text-gray-800">Reading Details</h3>
                                                     <button 
-                                                        onClick={() => setExpandedLesson(null)}
+                                                        onClick={() => setExpandedReading(null)}
                                                         className="text-gray-400 hover:text-gray-600"
                                                     >
                                                         <FaTimes />
@@ -594,16 +588,16 @@ const LessonList = () => {
                                                     <div>
                                                         <h4 className="font-medium text-gray-700 mb-2">Learning Objectives</h4>
                                                         <ul className="list-disc pl-5 space-y-1">
-                                                            {lesson.objectives.map((obj, i) => (
+                                                            {reading.objectives.map((obj, i) => (
                                                                 <li key={i} className="text-sm text-gray-600">{obj}</li>
                                                             ))}
                                                         </ul>
                                                     </div>
 
                                                     <div>
-                                                        <h4 className="font-medium text-gray-700 mb-2">Resources</h4>
+                                                        <h4 className="font-medium text-gray-700 mb-2">Attached Files</h4>
                                                         <div className="space-y-2">
-                                                            {lesson.resources.map((resource, i) => (
+                                                            {reading.resources.map((resource, i) => (
                                                                 <div key={i} className="flex items-center bg-white p-2 rounded-lg border">
                                                                     <span className="mr-2">{getResourceIcon(resource.type)}</span>
                                                                     <span className="text-sm text-gray-700 flex-1">{resource.title}</span>
@@ -614,8 +608,8 @@ const LessonList = () => {
 
                                                     <div className="flex justify-between text-sm text-gray-500">
                                                         <div>
-                                                            <div>Created: {formatDate(lesson.createdAt)}</div>
-                                                            <div>Modified: {formatDate(lesson.lastModified)}</div>
+                                                            <div>Created: {formatDate(reading.createdAt)}</div>
+                                                            <div>Modified: {formatDate(reading.lastModified)}</div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -639,7 +633,7 @@ const LessonList = () => {
                                 className="col-span-4 flex items-center cursor-pointer"
                                 onClick={() => handleSort('title')}
                             >
-                                Lesson {renderSortIcon('title')}
+                                Reading {renderSortIcon('title')}
                             </div>
                             <div
                                 className="col-span-2 flex items-center cursor-pointer"
@@ -664,41 +658,41 @@ const LessonList = () => {
                             </div>
                         </div>
 
-                        {/* Lesson Items */}
-                        {filteredLessons.map((lesson) => {
-                            const statusInfo = getStatusInfo(lesson.status);
+                        {/* Reading Items */}
+                        {filteredReadings.map((reading) => {
+                            const statusInfo = getStatusInfo(reading.status);
 
                             return (
-                                <div key={lesson.id} className="border-b border-gray-100 last:border-b-0">
-                                    {/* Lesson Summary */}
+                                <div key={reading.id} className="border-b border-gray-100 last:border-b-0">
+                                    {/* Reading Summary */}
                                     <div
                                         className="grid grid-cols-1 md:grid-cols-12 gap-4 p-4 hover:bg-gray-50 transition-colors duration-200 cursor-pointer"
-                                        onClick={() => toggleLessonExpansion(lesson.id)}
+                                        onClick={() => toggleReadingExpansion(reading.id)}
                                     >
                                         <div className="md:col-span-4">
-                                            <div className="font-medium text-gray-900">{lesson.title}</div>
+                                            <div className="font-medium text-gray-900">{reading.title}</div>
                                             <div className="text-sm text-gray-500 mt-1">
-                                                {lesson.objectives[0]}
-                                                {lesson.objectives.length > 1 && '...'}
+                                                {reading.objectives[0]}
+                                                {reading.objectives.length > 1 && '...'}
                                             </div>
                                             <div className="flex items-center text-sm text-gray-500 mt-1">
                                                 <FaChalkboardTeacher className="mr-1" />
-                                                <span>by {lesson.author}</span>
+                                                <span>by {reading.author}</span>
                                                 <span className="mx-2">•</span>
                                                 <FaClock className="mr-1" />
-                                                <span>{lesson.duration}</span>
+                                                <span>{reading.duration}</span>
                                             </div>
                                         </div>
 
                                         <div className="md:col-span-2 flex items-center">
                                             <span className="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded">
-                                                {lesson.subject}
+                                                {reading.subject}
                                             </span>
                                         </div>
 
                                         <div className="md:col-span-2 flex items-center">
                                             <span className="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded">
-                                                {lesson.gradeLevel}
+                                                {reading.gradeLevel}
                                             </span>
                                         </div>
 
@@ -711,9 +705,9 @@ const LessonList = () => {
                                             <div className="text-sm text-gray-500 mt-1">
                                                 <div className="flex items-center">
                                                     <FaUsers className="mr-1" />
-                                                    <span>Taught {lesson.timesTaught} times</span>
+                                                    <span>Taught {reading.timesTaught} times</span>
                                                 </div>
-                                                {renderRating(lesson.rating)}
+                                                {renderRating(reading.rating)}
                                             </div>
                                         </div>
 
@@ -725,7 +719,7 @@ const LessonList = () => {
                                                 title="View Details"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    toggleLessonExpansion(lesson.id);
+                                                    toggleReadingExpansion(reading.id);
                                                 }}
                                             >
                                                 <FaEye />
@@ -735,7 +729,7 @@ const LessonList = () => {
                                                 whileHover={{ scale: 1.1 }}
                                                 whileTap={{ scale: 0.9 }}
                                                 className="p-2 text-gray-400 rounded-full cursor-not-allowed"
-                                                title="Edit Lesson (disabled)"
+                                                title="Edit Reading (disabled)"
                                                 disabled
                                             >
                                                 <FaEdit />
@@ -745,7 +739,7 @@ const LessonList = () => {
                                                 whileHover={{ scale: 1.1 }}
                                                 whileTap={{ scale: 0.9 }}
                                                 className="p-2 text-gray-400 rounded-full cursor-not-allowed"
-                                                title="Delete Lesson (disabled)"
+                                                title="Delete Reading (disabled)"
                                                 disabled
                                             >
                                                 <FaTrash />
@@ -753,9 +747,9 @@ const LessonList = () => {
                                         </div>
                                     </div>
 
-                                    {/* Expanded Lesson Details */}
+                                    {/* Expanded Reading Details */}
                                     <AnimatePresence>
-                                        {expandedLesson === lesson.id && (
+                                        {expandedReading === reading.id && (
                                             <motion.div
                                                 initial={{ opacity: 0, height: 0 }}
                                                 animate={{ opacity: 1, height: 'auto' }}
@@ -764,9 +758,9 @@ const LessonList = () => {
                                                 className="bg-gray-50 p-4 border-t border-gray-200"
                                             >
                                                 <div className="flex justify-between items-center mb-4">
-                                                    <h3 className="font-medium text-gray-800">Lesson Details</h3>
+                                                    <h3 className="font-medium text-gray-800">Reading Details</h3>
                                                     <button 
-                                                        onClick={() => setExpandedLesson(null)}
+                                                        onClick={() => setExpandedReading(null)}
                                                         className="text-gray-400 hover:text-gray-600"
                                                     >
                                                         <FaTimes />
@@ -777,23 +771,23 @@ const LessonList = () => {
                                                     <div>
                                                         <h4 className="font-medium text-gray-700 mb-2">Learning Objectives</h4>
                                                         <ul className="list-disc pl-5 space-y-1">
-                                                            {lesson.objectives.map((obj, i) => (
+                                                            {reading.objectives.map((obj, i) => (
                                                                 <li key={i} className="text-sm text-gray-600">{obj}</li>
                                                             ))}
                                                         </ul>
 
                                                         <h4 className="font-medium text-gray-700 mt-4 mb-2">Standards</h4>
                                                         <ul className="list-disc pl-5 space-y-1">
-                                                            {lesson.standards.map((standard, i) => (
+                                                            {reading.standards.map((standard, i) => (
                                                                 <li key={i} className="text-sm text-gray-600">{standard}</li>
                                                             ))}
                                                         </ul>
                                                     </div>
 
                                                     <div>
-                                                        <h4 className="font-medium text-gray-700 mb-2">Resources</h4>
+                                                        <h4 className="font-medium text-gray-700 mb-2">Attached Files</h4>
                                                         <div className="space-y-2">
-                                                            {lesson.resources.map((resource, i) => (
+                                                            {reading.resources.map((resource, i) => (
                                                                 <div key={i} className="flex items-center bg-white p-2 rounded-lg border">
                                                                     <span className="mr-2">{getResourceIcon(resource.type)}</span>
                                                                     <span className="text-sm text-gray-700 flex-1">{resource.title}</span>
@@ -803,15 +797,15 @@ const LessonList = () => {
 
                                                         <div className="flex justify-between mt-4 text-sm text-gray-500">
                                                             <div>
-                                                                <div>Created: {formatDate(lesson.createdAt)}</div>
-                                                                <div>Modified: {formatDate(lesson.lastModified)}</div>
+                                                                <div>Created: {formatDate(reading.createdAt)}</div>
+                                                                <div>Modified: {formatDate(reading.lastModified)}</div>
                                                             </div>
                                                             <div className="text-right">
                                                                 <div className="flex items-center">
                                                                     <FaChartBar className="mr-1" />
-                                                                    <span>Taught {lesson.timesTaught} times</span>
+                                                                    <span>Taught {reading.timesTaught} times</span>
                                                                 </div>
-                                                                {renderRating(lesson.rating)}
+                                                                {renderRating(reading.rating)}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -829,4 +823,4 @@ const LessonList = () => {
     );
 };
 
-export default LessonList;
+export default ReadingList;

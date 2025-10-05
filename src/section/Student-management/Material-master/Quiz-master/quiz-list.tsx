@@ -13,7 +13,6 @@ import {
   FaSort,
   FaSortUp,
   FaSortDown,
-  FaPlus,
   FaUsers,
   FaCheckCircle,
   FaTimesCircle,
@@ -328,11 +327,7 @@ const QuizList: React.FC = () => {
               Create and manage assessments for your students
             </p>
           </div>
-          
-          <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md flex items-center">
-            <FaPlus className="mr-2" />
-            New Quiz
-          </button>
+        
         </div>
 
         {/* Filters and Search */}
@@ -357,8 +352,7 @@ const QuizList: React.FC = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3">
-              <div className="flex items-center">
-                <FaFilter className="text-gray-400 mr-2" />
+              <div className="flex items-center gap-2">
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
@@ -370,6 +364,7 @@ const QuizList: React.FC = () => {
                   <option value="completed">Completed</option>
                   <option value="archived">Archived</option>
                 </select>
+                <FaFilter className="text-gray-400 mr-2" />
               </div>
 
               <select
