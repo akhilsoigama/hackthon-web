@@ -13,7 +13,6 @@ import {
 import RHFFormField from '../../../components/hook-form/RHFFormFiled';
 import RHFDropDown from '../../../components/hook-form/RHFDropDown';
 import RHFCheckbox from '../../../components/hook-form/RHFCheckbox';
-import RHFImageUpload from '../../../components/hook-form/RHFImageUpload';
 
 
 // Define Zod schema for validation
@@ -325,12 +324,12 @@ const AssignmentCreate = () => {
                 <div className="space-y-6">
                   <h2 className="text-xl font-semibold text-gray-800 border-b pb-2">Attachments & Review</h2>
 
-                  <RHFImageUpload
+                  {/* <RHFImageUpload
                     name="attachments"
                     label="Attachments"
                     accept="image/*,application/pdf"
                     maxSize={5}
-                  />
+                  /> */}
 
                   <div className="bg-gray-50 p-4 rounded-lg">
                     <h3 className="font-medium text-gray-800 mb-3">Assignment Summary</h3>

@@ -85,10 +85,10 @@ const AssignmentList = lazy(
     import("../section/Student-management/Assignment-master/assignment-list")
 );
 const LessonCreate = lazy(
-  () => import("../section/Student-management/Lession-master/lession-create")
+  () => import("../section/Student-management/Materials-management/materials-new-edit-form")
 );
 const LessonList = lazy(
-  () => import("../section/Student-management/Lession-master/lession-list")
+  () => import("../section/Student-management/Materials-management/materials-list")
 );
 const QuizCreate = lazy(
   () => import("../section/Student-management/Quiz-master/quiz-create")
@@ -358,7 +358,7 @@ export default function Routers() {
             }
           />
           <Route
-            path="faculty-management/lession/create"
+            path="faculty-management/materials/create"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <LessonCreate />
@@ -366,7 +366,7 @@ export default function Routers() {
             }
           />
           <Route
-            path="faculty-management/lession/list"
+            path="faculty-management/materials/list"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <LessonList />

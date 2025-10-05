@@ -3,10 +3,10 @@ import { useForm, FormProvider, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  FaPlus, 
-  FaTrash, 
-  FaQuestionCircle, 
+import {
+  FaPlus,
+  FaTrash,
+  FaQuestionCircle,
   FaStar,
   FaCalendarAlt,
   FaUserTie,
@@ -18,8 +18,8 @@ import {
 import RHFFormField from '../../../components/hook-form/RHFFormFiled';
 import RHFDropDown from '../../../components/hook-form/RHFDropDown';
 import RHFCheckbox from '../../../components/hook-form/RHFCheckbox';
-import RHFImageUpload from '../../../components/hook-form/RHFImageUpload';
 import { toast } from 'sonner';
+
 
 const surveySchema = z.object({
   title: z.string().min(1, 'Survey title is required'),
@@ -29,14 +29,14 @@ const surveySchema = z.object({
   endDate: z.string().min(1, 'End date is required'),
   isPublic: z.boolean(),
   allowAnonymous: z.boolean(),
-  coverImage: z.any().optional(), 
+  coverImage: z.any().optional(),
   questions: z.array(z.object({
     id: z.string(),
     type: z.enum(['text', 'multiple-choice', 'checkbox', 'rating', 'date', 'image']),
     question: z.string().min(1, 'Question text is required'),
     options: z.array(z.string()).optional(),
     required: z.boolean(),
-    image: z.any().optional() 
+    image: z.any().optional()
   })).min(1, 'At least one question is required')
 });
 
@@ -84,24 +84,24 @@ const GovtServeyCreate: React.FC = () => {
 
   const addQuestion = () => {
     if (newQuestion.question.trim() === '') return;
-    
+
     const question = {
       ...newQuestion,
       id: Date.now().toString(),
-      options: newQuestion.type === 'multiple-choice' || newQuestion.type === 'checkbox' 
-        ? ['Option 1', 'Option 2', 'Option 3'] 
+      options: newQuestion.type === 'multiple-choice' || newQuestion.type === 'checkbox'
+        ? ['Option 1', 'Option 2', 'Option 3']
         : undefined,
       image: newQuestion.type === 'image' ? '' : undefined
     };
-    
+
     append(question);
-    
+
     setNewQuestion({
       type: 'text',
       question: '',
       required: false
     });
-    
+
     setShowQuestionModal(false);
   };
 
@@ -214,7 +214,7 @@ const GovtServeyCreate: React.FC = () => {
                 onClick={handleReset}
                 className="flex items-center px-3 py-1 md:px-4 md:py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors"
               >
-                <FaTimes className="mr-1 md:mr-2 text-sm md:text-base" /> 
+                <FaTimes className="mr-1 md:mr-2 text-sm md:text-base" />
                 <span className="text-sm md:text-base">Reset</span>
               </motion.button>
               <motion.button
@@ -224,7 +224,7 @@ const GovtServeyCreate: React.FC = () => {
                 disabled={isSubmitting}
                 className="flex items-center px-3 py-1 md:px-4 md:py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-75 transition-colors"
               >
-                <FaCheckCircle className="mr-1 md:mr-2 text-sm md:text-base" /> 
+                <FaCheckCircle className="mr-1 md:mr-2 text-sm md:text-base" />
                 <span className="text-sm md:text-base">
                   {isSubmitting ? 'Publishing...' : 'Publish Survey'}
                 </span>
@@ -273,7 +273,7 @@ const GovtServeyCreate: React.FC = () => {
                         required
                       />
                     </div>
-                    
+
                     <div className="md:col-span-2">
                       <RHFDropDown
                         name="department"
@@ -282,7 +282,7 @@ const GovtServeyCreate: React.FC = () => {
                         required
                       />
                     </div>
-                    
+
                     <div>
                       <RHFFormField
                         name="startDate"
@@ -291,7 +291,7 @@ const GovtServeyCreate: React.FC = () => {
                         required
                       />
                     </div>
-                    
+
                     <div>
                       <RHFFormField
                         name="endDate"
@@ -302,13 +302,10 @@ const GovtServeyCreate: React.FC = () => {
                     </div>
 
                     <div className="md:col-span-2">
-                      <RHFImageUpload
-                        name="coverImage"
-                        label="Cover Image (Optional)"
-                        maxSize={10}
-                      />
+                      {/* <RHFDropzoneField value={field.value as string | undefined}
+                        onChange={(url) => field.onChange(url)} /> */}
                     </div>
-                    
+
                     <div className="md:col-span-2">
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Description <span className="text-red-500">*</span>
@@ -323,14 +320,14 @@ const GovtServeyCreate: React.FC = () => {
                         <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
                       )}
                     </div>
-                    
+
                     <div className="md:col-span-2">
                       <RHFCheckbox
                         name="isPublic"
                         label="Make this survey public"
                       />
                     </div>
-                    
+
                     <div className="md:col-span-2">
                       <RHFCheckbox
                         name="allowAnonymous"
@@ -359,7 +356,7 @@ const GovtServeyCreate: React.FC = () => {
                       onClick={() => setShowQuestionModal(true)}
                       className="flex items-center px-3 py-1 md:px-4 md:py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500 transition-colors"
                     >
-                      <FaPlus className="mr-1 md:mr-2 text-sm md:text-base" /> 
+                      <FaPlus className="mr-1 md:mr-2 text-sm md:text-base" />
                       <span className="text-sm md:text-base">Add Question</span>
                     </motion.button>
                   </div>
@@ -421,7 +418,7 @@ const GovtServeyCreate: React.FC = () => {
                   className="bg-white rounded-lg shadow-md p-4 md:p-6"
                 >
                   <h2 className="text-lg md:text-xl font-semibold mb-4">Survey Preview</h2>
-                  
+
                   {fields.length === 0 ? (
                     <div className="text-center py-8 md:py-12 text-gray-500">
                       <p className="text-sm md:text-base">No questions to preview. Add questions in the Questions tab.</p>
@@ -438,7 +435,7 @@ const GovtServeyCreate: React.FC = () => {
                           />
                         </div>
                       )}
-                      
+
                       <div className="bg-blue-50 p-4 md:p-6 rounded-lg mb-4 md:mb-6">
                         <h1 className="text-xl md:text-2xl font-bold text-blue-800 mb-2">
                           {methods.watch('title') || 'Survey Title'}
@@ -457,7 +454,7 @@ const GovtServeyCreate: React.FC = () => {
                           </span>
                         </div>
                       </div>
-                      
+
                       {fields.map((field, index) => (
                         <div key={field.id} className="border border-gray-200 rounded-lg p-4 md:p-6">
                           <h3 className="font-medium mb-3 md:mb-4 flex items-center text-sm md:text-base">
@@ -472,7 +469,7 @@ const GovtServeyCreate: React.FC = () => {
                           </div>
                         </div>
                       ))}
-                      
+
                       <div className="mt-4 md:mt-6">
                         <motion.button
                           whileHover={{ scale: 1.02 }}
@@ -507,13 +504,13 @@ const GovtServeyCreate: React.FC = () => {
                     onClick={(e) => e.stopPropagation()}
                   >
                     <h3 className="text-lg md:text-xl font-semibold mb-3 md:mb-4">Add New Question</h3>
-                    
+
                     <div className="mb-3 md:mb-4">
                       <label className="block text-sm font-medium text-gray-700 mb-1">Question Type</label>
                       <select
                         value={newQuestion.type}
                         onChange={(e) => setNewQuestion({
-                          ...newQuestion, 
+                          ...newQuestion,
                           type: e.target.value as QuestionType // Cast to QuestionType
                         })}
                         className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
@@ -525,31 +522,31 @@ const GovtServeyCreate: React.FC = () => {
                         ))}
                       </select>
                     </div>
-                    
+
                     <div className="mb-3 md:mb-4">
                       <label className="block text-sm font-medium text-gray-700 mb-1">Question Text</label>
                       <input
                         type="text"
                         value={newQuestion.question}
-                        onChange={(e) => setNewQuestion({...newQuestion, question: e.target.value})}
+                        onChange={(e) => setNewQuestion({ ...newQuestion, question: e.target.value })}
                         className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
                         placeholder="Enter your question"
                       />
                     </div>
-                    
+
                     <div className="flex items-center mb-4">
                       <input
                         type="checkbox"
                         id="required"
                         checked={newQuestion.required}
-                        onChange={(e) => setNewQuestion({...newQuestion, required: e.target.checked})}
+                        onChange={(e) => setNewQuestion({ ...newQuestion, required: e.target.checked })}
                         className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                       />
                       <label htmlFor="required" className="ml-2 block text-sm text-gray-900">
                         Required question
                       </label>
                     </div>
-                    
+
                     <div className="flex justify-end space-x-2 md:space-x-3">
                       <button
                         type="button"

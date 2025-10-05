@@ -191,17 +191,17 @@ export const modules: any = [
         ],
       },
       {
-        to: '/dashboard/faculty-management/lession',
-        label: 'Lesson',
+        to: '/dashboard/faculty-management/materials',
+        label: 'Material',
         icon: <FaBook className="size-6" />,
         subLinks: [
           {
-            to: '/dashboard/faculty-management/lession/create',
+            to: '/dashboard/faculty-management/materials/create',
             label: 'Create',
             icon: <FaPlus className="size-6" />,
           },
           {
-            to: '/dashboard/faculty-management/lession/list',
+            to: '/dashboard/faculty-management/materials/list',
             label: 'List',
             icon: <FaList className="size-6" />,
           },
@@ -226,7 +226,7 @@ export const modules: any = [
       },
       {
         to: '/dashboard/faculty-management/progress',
-        label: 'faculty Progress',
+        label: 'student Progress',
         icon: <FaChartBar className="size-6" />,
       },
       {

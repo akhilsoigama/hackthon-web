@@ -6,7 +6,6 @@ import { FaPoll, FaCalendarAlt, FaUniversity, FaSave, FaTimes } from 'react-icon
 import { toast } from 'sonner';
 import RHFDropDown from '../../../components/hook-form/RHFDropDown';
 import RHFFormField from '../../../components/hook-form/RHFFormFiled';
-import RHFImageUpload from '../../../components/hook-form/RHFImageUpload';
 
 // Zod schema for form validation - updated with image field
 const surveySchema = z.object({
@@ -113,12 +112,12 @@ const SurveyCreate = () => {
               >
                 {/* Image Upload Section */}
                 <motion.div className="md:col-span-2" variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}>
-                  <RHFImageUpload
+                  {/* <RHFImageUpload
                     name="image"
                     label="Survey Image"
                     maxSize={5}
                     accept="image/*"
-                  />
+                  /> */}
                 </motion.div>
 
                 <motion.div className="md:col-span-2" variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}>
