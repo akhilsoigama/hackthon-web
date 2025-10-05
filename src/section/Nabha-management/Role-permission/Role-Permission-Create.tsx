@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
 import { useAtom } from 'jotai';
 import fetcher from '../../../utils/axios';
+import { rolesAtom } from '../../../atoms/rolesAtom';
 import { 
   FaSave, 
   FaPlus, 
@@ -56,6 +57,8 @@ const RolePermissionCreate: React.FC = () => {
   const { mutate } = useSWRConfig();
   const [expandedCategories, setExpandedCategories] = useState<{[key: string]: boolean}>({});
   const [viewMode, setViewMode] = useState<'create' | 'list'>('create');
+  const [,setRoles] = useAtom(rolesAtom);
+
 
   // Fetch all available permissions from the backend
   const { data: permissionsResponse, error: permissionsError } = useSWR<{ data: { data: ApiPermission[] } }>(
@@ -124,10 +127,15 @@ const RolePermissionCreate: React.FC = () => {
 
     try {
       // 2. Send data to the API
-      await api.post('/roles', apiPayload);
+      const res = await api.post('/roles', apiPayload);
 
-      // 3. Trigger a re-fetch of the roles list and update UI
-      await mutate('/roles');
+      // 3. Update local state and re-validate
+      if (res.data && res.data.data) {
+        const newRole = res.data.data;
+        setRoles((prevRoles) => [...prevRoles, newRole]);
+      }
+      // Re-validate in the background to ensure data consistency
+      mutate('/roles');
       setSuccess(`Role "${roleName}" created successfully!`);
 
       // 4. Reset form

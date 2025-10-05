@@ -1,4 +1,4 @@
-import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { NavLink, Outlet } from 'react-router-dom';
 import { FaBook, FaFileAlt, FaQuestionCircle, FaBookOpen } from 'react-icons/fa';
 
 const materialTypes = [
@@ -9,19 +9,14 @@ const materialTypes = [
 ];
 
 const MaterialCreate = () => {
-  const location = useLocation();
-  const pathSegments = location.pathname.split('/').filter(Boolean);
-  const activePath = pathSegments[pathSegments.length - 1];
-  const activeMaterial = materialTypes.find(item => item.path === activePath);
-  const pageTitle = activeMaterial ? `Create New ${activeMaterial.name}` : 'Create New Material';
 
   return (
     <div className="p-4 md:p-6 bg-gray-50 min-h-full">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-6">
+        {/* <div className="mb-6">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800">{pageTitle}</h1>
           <p className="text-gray-600 mt-1">Select a material type and fill in the details.</p>
-        </div>
+        </div> */}
 
         <nav className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           {materialTypes.map((item) => (

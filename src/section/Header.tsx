@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { NavLink } from 'react-router-dom';
+import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom';
 import {
   FiBookOpen,
   FiSearch,
@@ -14,6 +16,8 @@ import {
   FiWifiOff,
   FiGlobe
 } from 'react-icons/fi';
+import { useUser } from ".././atoms/userAtom";
+import { toast } from 'sonner';
 
 interface Notification {
   id: number;
@@ -24,12 +28,6 @@ interface Notification {
 
 interface HeaderProps {
   toggleMobileSidebar: () => void;
-}
-
-interface UserProfile {
-  name: string;
-  email: string;
-  avatar: string;
 }
 
 interface Language {
@@ -45,12 +43,13 @@ const Header = ({ toggleMobileSidebar }: HeaderProps) => {
   const [showNotificationPanel, setShowNotificationPanel] = useState<boolean>(false);
   const [showLanguagePanel, setShowLanguagePanel] = useState<boolean>(false);
   const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const { user } = useUser();
+  const userProfile = user?.data;
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [currentLanguage, setCurrentLanguage] = useState<string>('en');
-  const profileRef = useRef<HTMLDivElement>(null);
+  const [currentLanguage, setCurrentLanguage] = useState<string>('en');  
   const notificationRef = useRef<HTMLDivElement>(null);
   const languageRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   const languages: Language[] = [
     { code: 'en', name: 'English', nativeName: 'English' },
@@ -63,37 +62,21 @@ const Header = ({ toggleMobileSidebar }: HeaderProps) => {
       if (isOnline) {
         try {
           // Simulated API fetch (replace with your API endpoint)
-          const fetchedProfile: UserProfile = {
-            name: 'User',
-            email: 'user@example.com',
-            avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80',
-          };
           const fetchedNotifications: Notification[] = [
             { id: 1, text: 'New mathematics lesson available', time: '10 mins ago', read: false },
             { id: 2, text: 'Your assignment was graded', time: '2 hours ago', read: false },
             { id: 3, text: 'Live session starting soon', time: '5 hours ago', read: true },
           ];
-          setUserProfile(fetchedProfile);
           setNotifications(fetchedNotifications);
-          localStorage.setItem('userProfile', JSON.stringify(fetchedProfile));
-          localStorage.setItem('notifications', JSON.stringify(fetchedNotifications));
         } catch (error) {
           console.error('Failed to fetch data:', error);
-          const cachedProfile = localStorage.getItem('userProfile');
           const cachedNotifications = localStorage.getItem('notifications');
-          if (cachedProfile) {
-            setUserProfile(JSON.parse(cachedProfile));
-          }
           if (cachedNotifications) {
             setNotifications(JSON.parse(cachedNotifications));
           }
         }
       } else {
-        const cachedProfile = localStorage.getItem('userProfile');
         const cachedNotifications = localStorage.getItem('notifications');
-        if (cachedProfile) {
-          setUserProfile(JSON.parse(cachedProfile));
-        }
         if (cachedNotifications) {
           setNotifications(JSON.parse(cachedNotifications));
         }
@@ -101,6 +84,7 @@ const Header = ({ toggleMobileSidebar }: HeaderProps) => {
     };
     loadData();
   }, [isOnline]);
+
 
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
@@ -115,9 +99,6 @@ const Header = ({ toggleMobileSidebar }: HeaderProps) => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
-        setIsProfileOpen(false);
-      }
       if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
         setShowNotificationPanel(false);
       }
@@ -128,6 +109,16 @@ const Header = ({ toggleMobileSidebar }: HeaderProps) => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  async function logoutHandler() {
+    try {
+      Cookies.remove('token');
+      toast("Logout Successful");
+      navigate('/login');
+    }catch(err){
+      console.log(err);
+    }
+  }
 
   const toggleProfile = (): void => setIsProfileOpen(!isProfileOpen);
   const toggleSearch = (): void => setIsSearchOpen(!isSearchOpen);
@@ -335,7 +326,6 @@ const Header = ({ toggleMobileSidebar }: HeaderProps) => {
           {/* User Profile */}
           <motion.div
             className="relative"
-            ref={profileRef}
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.3, delay: 0.3 }}
@@ -347,7 +337,7 @@ const Header = ({ toggleMobileSidebar }: HeaderProps) => {
             >
               <div className="relative">
                 <img
-                  src={userProfile?.avatar || 'https://via.placeholder.com/100'}
+                  src={userProfile?.avatar || 'https://plus.unsplash.com/premium_photo-1738980401922-70995a1b6ade?q=80&w=1267&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'}
                   alt="User"
                   className="w-6 h-6 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full border-2 border-white shadow-sm"
                 />
@@ -359,9 +349,9 @@ const Header = ({ toggleMobileSidebar }: HeaderProps) => {
               </div>
               <div className="text-left hidden sm:block">
                 <p className="font-medium text-xs sm:text-sm md:text-base">
-                  {userProfile?.name || 'Guest'}
+                  {userProfile?.fullName || 'Guest'}
                 </p>
-                <p className="text-[10px] sm:text-xs text-gray-500">{isOnline ? 'Super Admin' : 'Offline'}</p>
+                <p className="text-[10px] sm:text-xs text-gray-500">{userProfile?.authType || 'Guest'}</p>
               </div>
               <motion.div
                 animate={{ rotate: isProfileOpen ? 180 : 0 }}
@@ -381,7 +371,7 @@ const Header = ({ toggleMobileSidebar }: HeaderProps) => {
                 >
                   <div className="px-3 py-2 sm:px-4 sm:py-3 border-b border-gray-100">
                     <p className="font-semibold text-xs sm:text-sm md:text-base">
-                      {userProfile?.name || 'Guest'}
+                      {userProfile?.fullName || 'Guest'}
                     </p>
                     <p className="text-[10px] sm:text-xs text-gray-500">
                       {userProfile?.email || 'No email available'}
@@ -410,14 +400,13 @@ const Header = ({ toggleMobileSidebar }: HeaderProps) => {
                     Settings
                   </NavLink>
                   <div className="border-t border-gray-100 my-1 sm:my-2"></div>
-                  <NavLink
-                    to="#"
+                  <div
                     className="flex items-center px-3 py-1.5 sm:px-4 sm:py-2 hover:bg-red-50 text-red-600 transition-colors text-xs sm:text-sm md:text-base"
-                    onClick={toggleProfile}
+                    onClick={logoutHandler}
                   >
                     <FiLogOut className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
                     Logout
-                  </NavLink>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>

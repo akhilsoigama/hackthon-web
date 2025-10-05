@@ -12,10 +12,6 @@ const MaterialList = () => {
   return (
     <div className="p-4 md:p-6 bg-gray-50 min-h-full">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-6">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-800">Material Library</h1>
-          <p className="text-gray-600 mt-1">Browse all educational content in one place.</p>
-        </div>
 
         <nav className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           {materialTypes.map((item) => (
