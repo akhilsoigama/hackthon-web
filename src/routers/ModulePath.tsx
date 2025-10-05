@@ -157,72 +157,14 @@ export const modules: any = [
     moduleName: "Faculty Management (only for faculty)",
     links: [
       {
-        to: '/dashboard/faculty-management/Assignment',
-        label: 'Assignment',
-        icon: <FaClipboardList className="size-6" />,
-        subLinks: [
-          {
-            to: '/dashboard/faculty-management/assignment/create',
-            label: 'Create',
-            icon: <FaPlus className="size-6" />,
-          },
-          {
-            to: '/dashboard/faculty-management/assignment/list',
-            label: 'List',
-            icon: <FaList className="size-6" />,
-          },
-        ],
-      },
-      {
-        to: '/dashboard/faculty-management/lecture',
-        label: "Lecture Upload",
-        icon: <FaUpload className="size-6" />,
-        subLinks: [
-          {
-            to: '/dashboard/faculty-management/lecture-upload',
-            label: 'Lecture Upload',
-            icon: <FaUpload className="size-6" />,
-          },
-          {
-            to: '/dashboard/faculty-management/lecture-list',
-            label: 'Lecture list',
-            icon: <FaUpload className="size-6" />,
-          },
-        ],
-      },
-      {
-        to: '/dashboard/faculty-management/materials',
-        label: 'Material',
+        to: '/dashboard/student-management/material/list',
+        label: 'Material Library',
         icon: <FaBook className="size-6" />,
-        subLinks: [
-          {
-            to: '/dashboard/faculty-management/materials/create',
-            label: 'Create',
-            icon: <FaPlus className="size-6" />,
-          },
-          {
-            to: '/dashboard/faculty-management/materials/list',
-            label: 'List',
-            icon: <FaList className="size-6" />,
-          },
-        ],
       },
       {
-        to: '/dashboard/faculty-management/quize',
-        label: 'Quiz',
-        icon: <FaQuestionCircle className="size-6" />,
-        subLinks: [
-          {
-            to: '/dashboard/faculty-management/quize/create',
-            label: 'Create',
-            icon: <FaPlus className="size-6" />,
-          },
-          {
-            to: '/dashboard/faculty-management/quize/list',
-            label: 'List',
-            icon: <FaList className="size-6" />,
-          },
-        ],
+        to: '/dashboard/student-management/material/create',
+        label: 'Create Material',
+        icon: <FaPlus className="size-6" />,
       },
       {
         to: '/dashboard/faculty-management/progress',
@@ -312,21 +254,9 @@ export const modules: any = [
         ],
       },
       {
-        to: '/dashboard/student-upload/lession-upload',
-        label: 'Lesson Upload',
-        icon: <FaUpload className="size-6" />,
-        subLinks: [
-          {
-            to: '/dashboard/student-upload/lession-upload/upload',
-            label: 'Upload',
-            icon: <FaUpload className="size-6" />,
-          },
-          {
-            to: '/dashboard/student-upload/lession-upload/list',
-            label: 'List',
-            icon: <FaList className="size-6" />,
-          },
-        ],
+        to: '/dashboard/student-upload/materials',
+        label: 'Materials',
+        icon: <FaBook className="size-6" /> 
       },
     ],
   },

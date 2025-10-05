@@ -12,10 +12,10 @@ import {
   FaArrowUp,
   FaArrowDown
 } from 'react-icons/fa';
-import RHFFormField from '../../../components/hook-form/RHFFormFiled';
-import RHFDropDown from '../../../components/hook-form/RHFDropDown';
-import RHFCheckbox from '../../../components/hook-form/RHFCheckbox';
-import RHFOption from '../../../components/hook-form/RHFOption';
+import RHFFormField from '../../../../components/hook-form/RHFFormFiled';
+import RHFDropDown from '../../../../components/hook-form/RHFDropDown';
+import RHFCheckbox from '../../../../components/hook-form/RHFCheckbox';
+import RHFOption from '../../../../components/hook-form/RHFOption';
 
 // Zod schema for validation
 const quizSchema = z.object({

@@ -10,9 +10,10 @@ import {
   FaPlus,
   FaTimes,
 } from 'react-icons/fa';
-import RHFFormField from '../../../components/hook-form/RHFFormFiled';
-import RHFDropDown from '../../../components/hook-form/RHFDropDown';
-import RHFCheckbox from '../../../components/hook-form/RHFCheckbox';
+import RHFFormField from '../../../../components/hook-form/RHFFormFiled';
+import RHFDropDown from '../../../../components/hook-form/RHFDropDown';
+import RHFCheckbox from '../../../../components/hook-form/RHFCheckbox';
+// import RHFImageUpload from '../../../../components/hook-form/RHFImageUpload';
 
 
 // Define Zod schema for validation
