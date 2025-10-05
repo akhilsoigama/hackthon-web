@@ -91,6 +91,10 @@ const AssignmentList = lazy(
   () =>
     import("../section/Student-management/Material-master/Assignment-master/assignment-list")
 );
+const MaterialsCreate = lazy(
+  () => import("../section/Student-management/Materials-management/materials-new-edit-form")
+);
+
 const LectureList = lazy(
   () => import("../section/Student-management/Material-master/Lecture-master/Lecture-list")
 );
@@ -408,7 +412,7 @@ export default function Routers() {
               path="student-management/material/create"
               element={
                 <Suspense fallback={<LoadingSpinner />}>
-                  <MaterialCreate />
+                  <MaterialsCreate />
                 </Suspense>
               }
             >
@@ -496,6 +500,14 @@ export default function Routers() {
               element={
                 <Suspense fallback={<LoadingSpinner />}>
                   <AssignmentUploadList />
+                </Suspense>
+              }
+            />
+            <Route
+              path="student-upload/assignment-upload/list"
+              element={
+                <Suspense fallback={<LoadingSpinner />}>
+                  <MaterialCreate />
                 </Suspense>
               }
             />

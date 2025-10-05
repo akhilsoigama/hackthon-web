@@ -12,7 +12,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 interface RHFFormFieldProps {
   name: string;
   label: string;
-  type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'date' | 'time' | 'datetime-local';
+  type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'date' | 'time' | 'datetime-local'|'file';
   placeholder?: string;
   required?: boolean;
   disabled?: boolean;

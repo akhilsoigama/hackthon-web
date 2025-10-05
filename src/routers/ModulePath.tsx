@@ -25,7 +25,7 @@ export const modules: any = [
   
 
   {
-    moduleName: "Nabha Management",
+    moduleName: "Nabha Management (only for super admin)",
     links: [
       {
         to: '/dashboard/nabha-master/institute',
@@ -81,7 +81,7 @@ export const modules: any = [
     ],
   },
   {
-    moduleName: "Institute Management",
+    moduleName: "Institute Management (only for institute admin)",
     links: [
       {
         to: '/dashboard/institute-management',
@@ -154,7 +154,7 @@ export const modules: any = [
     ],
   },
   {
-    moduleName: "Student Management",
+    moduleName: "Faculty Management (only for faculty)",
     links: [
       {
         to: '/dashboard/student-management/material/list',
@@ -167,19 +167,19 @@ export const modules: any = [
         icon: <FaPlus className="size-6" />,
       },
       {
-        to: '/dashboard/student-management/progress',
-        label: 'Student Progress',
+        to: '/dashboard/faculty-management/progress',
+        label: 'student Progress',
         icon: <FaChartBar className="size-6" />,
       },
       {
-        to: '/dashboard/student-management/attendance',
+        to: '/dashboard/faculty-management/attendance',
         label: 'Attendance',
         icon: <FaClipboardCheck className="size-6" />,
       },
     ],
   },
   {
-    moduleName: "Student Query",
+    moduleName: "Student Query(only for faculty )",
     links: [
       {
         to: '/dashboard/qna/teacher',
@@ -195,7 +195,7 @@ export const modules: any = [
   },
 
   {
-    moduleName: "Leave Management",
+    moduleName: "Leave Management (only for faculty and institute admin)",
     links: [
       {
         to: '/dashboard/Leave-management/Leave',
@@ -234,7 +234,7 @@ export const modules: any = [
     ],
   },
   {
-    moduleName: "Student Upload",
+    moduleName: "Student Upload (only for students)",
     links: [
       {
         to: '/dashboard/student-upload/assignment-upload',
@@ -261,7 +261,7 @@ export const modules: any = [
     ],
   },
   {
-    moduleName: "Dashboard",
+    moduleName: "Dashboard (separate)",
     links: [
       {
         to: '/dashboard/overview',
@@ -286,7 +286,7 @@ export const modules: any = [
     ],
   },
   {
-    moduleName: "Gamification",
+    moduleName: "Gamification (only for students)",
     links: [
       {
         to: '/dashboard/gamification',
@@ -297,7 +297,7 @@ export const modules: any = [
   },
 
   {
-    moduleName: "Offline Library",
+    moduleName: "Offline Library (only for students and faculty )",
     links: [
       {
         to: '/dashboard/offline-library',
@@ -334,7 +334,7 @@ export const modules: any = [
     ],
   },
   {
-    moduleName: "Communication",
+    moduleName: "Communication (only for institute admin and faculty",
     links: [
       {
         to: '/dashboard/chatbot',
@@ -344,7 +344,7 @@ export const modules: any = [
     ],
   },
   {
-    moduleName: "Q&A / Discussion",
+    moduleName: "Issue/Discussion (only for student)",
     links: [
       {
         to: '/dashboard/qna',
@@ -358,7 +358,7 @@ export const modules: any = [
     ],
   },
   {
-    moduleName: "Settings",
+    moduleName: "Settings(over All)",
     links: [
       {
         to: '/dashboard/settings',
