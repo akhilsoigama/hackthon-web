@@ -342,7 +342,7 @@ export default function Routers() {
           />
           {/* Student Management Routes */}
           <Route
-            path="student-management/assignment/create"
+            path="faculty-management/assignment/create"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <AssignmentCreate />
@@ -350,7 +350,7 @@ export default function Routers() {
             }
           />
           <Route
-            path="student-management/assignment/list"
+            path="faculty-management/assignment/list"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <AssignmentList />
@@ -358,7 +358,7 @@ export default function Routers() {
             }
           />
           <Route
-            path="student-management/lession/create"
+            path="faculty-management/lession/create"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <LessonCreate />
@@ -366,7 +366,7 @@ export default function Routers() {
             }
           />
           <Route
-            path="student-management/lession/list"
+            path="faculty-management/lession/list"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <LessonList />
@@ -374,7 +374,7 @@ export default function Routers() {
             }
           />
           <Route
-            path="student-management/quize/create"
+            path="faculty-management/quize/create"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <QuizCreate />
@@ -382,7 +382,7 @@ export default function Routers() {
             }
           />
           <Route
-            path="student-management/quize/list"
+            path="faculty-management/quize/list"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <QuizList />
@@ -390,7 +390,7 @@ export default function Routers() {
             }
           />
           <Route
-            path="student-management/progress"
+            path="faculty-management/progress"
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <StudentProgress />

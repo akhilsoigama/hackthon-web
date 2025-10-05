@@ -140,7 +140,7 @@ const LessonCreate = () => {
             className="text-center mb-8"
           >
             <h1 className="text-3xl font-bold text-gray-800 flex items-center justify-center">
-              <FaChalkboardTeacher className="极速加速器-3 text-indigo-600" />
+              <FaChalkboardTeacher className="pt-3 text-indigo-600" />
               Create New Lesson
             </h1>
             <p className="text-gray-600 mt-2">Design comprehensive lessons for your students</p>
@@ -258,7 +258,7 @@ const LessonCreate = () => {
               {/* Step 2: Lesson Plan */}
               {currentStep === 2 && (
                 <div className="space-y-6">
-                  <h2 className="text-xl font-semib极速加速器 text-gray-800 border-b pb-2">Lesson Plan</h2>
+                  <h2 className="text-xl font-semibold text-gray-800 border-b pb-2">Lesson Plan</h2>
                   
                   <RHFFormField
                     name="introduction"

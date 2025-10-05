@@ -25,7 +25,7 @@ export const modules: any = [
   
 
   {
-    moduleName: "Nabha Management",
+    moduleName: "Nabha Management (only for super admin)",
     links: [
       {
         to: '/dashboard/nabha-master/institute',
@@ -81,7 +81,7 @@ export const modules: any = [
     ],
   },
   {
-    moduleName: "Institute Management",
+    moduleName: "Institute Management (only for institute admin)",
     links: [
       {
         to: '/dashboard/institute-management',
@@ -154,90 +154,90 @@ export const modules: any = [
     ],
   },
   {
-    moduleName: "Student Management",
+    moduleName: "Faculty Management (only for faculty)",
     links: [
       {
-        to: '/dashboard/student-management/Assignment',
+        to: '/dashboard/faculty-management/Assignment',
         label: 'Assignment',
         icon: <FaClipboardList className="size-6" />,
         subLinks: [
           {
-            to: '/dashboard/student-management/assignment/create',
+            to: '/dashboard/faculty-management/assignment/create',
             label: 'Create',
             icon: <FaPlus className="size-6" />,
           },
           {
-            to: '/dashboard/student-management/assignment/list',
+            to: '/dashboard/faculty-management/assignment/list',
             label: 'List',
             icon: <FaList className="size-6" />,
           },
         ],
       },
       {
-        to: '/dashboard/student-management/lecture',
+        to: '/dashboard/faculty-management/lecture',
         label: "Lecture Upload",
         icon: <FaUpload className="size-6" />,
         subLinks: [
           {
-            to: '/dashboard/student-management/lecture-upload',
+            to: '/dashboard/faculty-management/lecture-upload',
             label: 'Lecture Upload',
             icon: <FaUpload className="size-6" />,
           },
           {
-            to: '/dashboard/student-management/lecture-list',
+            to: '/dashboard/faculty-management/lecture-list',
             label: 'Lecture list',
             icon: <FaUpload className="size-6" />,
           },
         ],
       },
       {
-        to: '/dashboard/student-management/lession',
+        to: '/dashboard/faculty-management/lession',
         label: 'Lesson',
         icon: <FaBook className="size-6" />,
         subLinks: [
           {
-            to: '/dashboard/student-management/lession/create',
+            to: '/dashboard/faculty-management/lession/create',
             label: 'Create',
             icon: <FaPlus className="size-6" />,
           },
           {
-            to: '/dashboard/student-management/lession/list',
+            to: '/dashboard/faculty-management/lession/list',
             label: 'List',
             icon: <FaList className="size-6" />,
           },
         ],
       },
       {
-        to: '/dashboard/student-management/quize',
+        to: '/dashboard/faculty-management/quize',
         label: 'Quiz',
         icon: <FaQuestionCircle className="size-6" />,
         subLinks: [
           {
-            to: '/dashboard/student-management/quize/create',
+            to: '/dashboard/faculty-management/quize/create',
             label: 'Create',
             icon: <FaPlus className="size-6" />,
           },
           {
-            to: '/dashboard/student-management/quize/list',
+            to: '/dashboard/faculty-management/quize/list',
             label: 'List',
             icon: <FaList className="size-6" />,
           },
         ],
       },
       {
-        to: '/dashboard/student-management/progress',
-        label: 'Student Progress',
+        to: '/dashboard/faculty-management/progress',
+        label: 'faculty Progress',
         icon: <FaChartBar className="size-6" />,
       },
       {
-        to: '/dashboard/student-management/attendance',
+        to: '/dashboard/faculty-management/attendance',
         label: 'Attendance',
         icon: <FaClipboardCheck className="size-6" />,
       },
     ],
   },
   {
-    moduleName: "Student Query",
+    moduleName: "Student Query(only for faculty )",
     links: [
       {
         to: '/dashboard/qna/teacher',
@@ -253,7 +253,7 @@ export const modules: any = [
   },
 
   {
-    moduleName: "Leave Management",
+    moduleName: "Leave Management (only for faculty and institute admin)",
     links: [
       {
         to: '/dashboard/Leave-management/Leave',
@@ -292,7 +292,7 @@ export const modules: any = [
     ],
   },
   {
-    moduleName: "Student Upload",
+    moduleName: "Student Upload (only for students)",
     links: [
       {
         to: '/dashboard/student-upload/assignment-upload',
@@ -331,7 +331,7 @@ export const modules: any = [
     ],
   },
   {
-    moduleName: "Dashboard",
+    moduleName: "Dashboard (separate)",
     links: [
       {
         to: '/dashboard/overview',
@@ -356,7 +356,7 @@ export const modules: any = [
     ],
   },
   {
-    moduleName: "Gamification",
+    moduleName: "Gamification (only for students)",
     links: [
       {
         to: '/dashboard/gamification',
@@ -367,7 +367,7 @@ export const modules: any = [
   },
 
   {
-    moduleName: "Offline Library",
+    moduleName: "Offline Library (only for students and faculty )",
     links: [
       {
         to: '/dashboard/offline-library',
@@ -404,7 +404,7 @@ export const modules: any = [
     ],
   },
   {
-    moduleName: "Communication",
+    moduleName: "Communication (only for institute admin and faculty",
     links: [
       {
         to: '/dashboard/chatbot',
@@ -414,7 +414,7 @@ export const modules: any = [
     ],
   },
   {
-    moduleName: "Q&A / Discussion",
+    moduleName: "Issue/Discussion (only for student)",
     links: [
       {
         to: '/dashboard/qna',
@@ -428,7 +428,7 @@ export const modules: any = [
     ],
   },
   {
-    moduleName: "Settings",
+    moduleName: "Settings(over All)",
     links: [
       {
         to: '/dashboard/settings',
