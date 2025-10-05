@@ -17,7 +17,6 @@ import {
   FaCheckCircle,
   FaExclamationCircle,
   FaTimesCircle,
-  FaPlus,
   FaUserGraduate
 } from 'react-icons/fa';
 
@@ -318,10 +317,6 @@ const AssignmentList = () => {
                 ))}
               </select>
 
-              <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg flex items-center transition-colors shadow-sm hover:shadow-md">
-                <FaPlus className="mr-2" />
-                New Assignment
-              </button>
             </div>
           </div>
         </motion.div>

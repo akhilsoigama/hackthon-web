@@ -276,7 +276,9 @@ const InstituteList = () => {
     handleSearch();
   }, [searchTerm, statusFilter, institutes]);
 
-  const { data: apiResponse, error, isLoading } = useSWR<{ data: { data: Institute[] } }>('/institutes', fetcher);
+  const { data: apiResponse } = useSWR<{ data: { data: Institute[] } }>('/institutes', fetcher);
+      // error, isLoading
+
 
   // This effect syncs the fetched data from SWR to your Jotai atom
   useEffect(() => {

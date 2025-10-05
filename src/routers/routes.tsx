@@ -75,26 +75,38 @@ const DepartmentList = lazy(
     import("../section/Institute-management/department-master/department-list")
 );
 
-// In your Routers.tsx - check this path
-const AssignmentCreate = lazy(
-  () =>
-    import("../section/Student-management/Assignment-master/assignment-create")
-);
-const AssignmentList = lazy(
-  () =>
-    import("../section/Student-management/Assignment-master/assignment-list")
-);
+// Student management
 const MaterialCreate = lazy(
   () => import("../section/Student-management/Material-master/Material-create")
 );
 const MaterialList = lazy(
   () => import("../section/Student-management/Material-master/Material-list")
 );
+const AssignmentCreate = lazy(
+  () =>
+    import("../section/Student-management/Material-master/Assignment-master/assignment-create")
+);
+const AssignmentList = lazy(
+  () =>
+    import("../section/Student-management/Material-master/Assignment-master/assignment-list")
+);
+const LectureList = lazy(
+  () => import("../section/Student-management/Material-master/Lecture-master/Lecture-list")
+);
+const LectureCreate = lazy(
+  () => import("../section/Student-management/Material-master/Lecture-master/Lecture-create")
+);
+const ReadingCreate = lazy(
+  () => import("../section/Student-management/Material-master/Reading-Master/Reading-create")
+);
+const ReadingList = lazy(
+  () => import("../section/Student-management/Material-master/Reading-Master/Reading-list")
+);
 const QuizCreate = lazy(
-  () => import("../section/Student-management/Quiz-master/quiz-create")
+  () => import("../section/Student-management/Material-master/Quiz-master/quiz-create")
 );
 const QuizList = lazy(
-  () => import("../section/Student-management/Quiz-master/quiz-list")
+  () => import("../section/Student-management/Material-master/Quiz-master/quiz-list")
 );
 const StudentProgress = lazy(
   () =>
@@ -339,21 +351,47 @@ export default function Routers() {
           />
           {/* Student Management Routes */}
           <Route
-            path="student-management/assignment/create"
+            path="student-management/material/list"
             element={
               <Suspense fallback={<LoadingSpinner />}>
-                <AssignmentCreate />
+                <MaterialList />
               </Suspense>
             }
-          />
-          <Route
-            path="student-management/assignment/list"
-            element={
-              <Suspense fallback={<LoadingSpinner />}>
-                <AssignmentList />
-              </Suspense>
-            }
-          />
+          >
+            <Route index element={<Navigate to="reading" replace />} />
+            <Route
+              path="reading"
+              element={
+                <Suspense fallback={<LoadingSpinner />}>
+                  <ReadingList />
+                </Suspense>
+              }
+            />
+            <Route
+              path="lectures"
+              element={
+                <Suspense fallback={<LoadingSpinner />}>
+                  <LectureList />
+                </Suspense>
+              }
+            />
+            <Route
+              path="assignments"
+              element={
+                <Suspense fallback={<LoadingSpinner />}>
+                  <AssignmentList />
+                </Suspense>
+              }
+            />
+            <Route
+              path="quiz"
+              element={
+                <Suspense fallback={<LoadingSpinner />}>
+                  <QuizList />
+                </Suspense>
+              }
+            />
+          </Route>
           <Route
             path="student-management/material/create"
             element={
@@ -361,25 +399,35 @@ export default function Routers() {
                 <MaterialCreate />
               </Suspense>
             }
-          />
+          >
+            <Route index element={<Navigate to="reading" replace />} />
+            <Route
+              path="reading"
+              element={<Suspense fallback={<LoadingSpinner />}><ReadingCreate /></Suspense>}
+            />
+            <Route
+              path="lectures"
+              element={<Suspense fallback={<LoadingSpinner />}><LectureCreate /></Suspense>}
+            />
+            <Route
+              path="assignments"
+              element={<Suspense fallback={<LoadingSpinner />}><AssignmentCreate /></Suspense>}
+            />
+            <Route
+              path="quiz"
+              element={<Suspense fallback={<LoadingSpinner />}><QuizCreate /></Suspense>}
+            />
+          </Route>
+
+          {/* 
+            The individual create routes below are now handled by the nested structure above.
+            They are removed to avoid route conflicts and centralize the creation flow.
+            The `NewMaterialButton` in `MaterialList.tsx` already links to the new nested paths.
+          */}
+
+          {/* This legacy route can be kept if other parts of the app link to it directly */}
           <Route
-            path="student-management/material/list"
-            element={
-              <Suspense fallback={<LoadingSpinner />}>
-                <MaterialList />
-              </Suspense>
-            }
-          />
-          <Route
-            path="student-management/quize/create"
-            element={
-              <Suspense fallback={<LoadingSpinner />}>
-                <QuizCreate />
-              </Suspense>
-            }
-          />
-          <Route
-            path="student-management/quize/list"
+            path="student-management/material/list/quize" // Legacy path for dashboard link
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <QuizList />
@@ -387,6 +435,7 @@ export default function Routers() {
             }
           />
           <Route
+
             path="student-management/progress"
             element={
               <Suspense fallback={<LoadingSpinner />}>

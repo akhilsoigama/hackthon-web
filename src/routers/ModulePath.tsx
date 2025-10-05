@@ -157,72 +157,14 @@ export const modules: any = [
     moduleName: "Student Management",
     links: [
       {
-        to: '/dashboard/student-management/Assignment',
-        label: 'Assignment',
-        icon: <FaClipboardList className="size-6" />,
-        subLinks: [
-          {
-            to: '/dashboard/student-management/assignment/create',
-            label: 'Create',
-            icon: <FaPlus className="size-6" />,
-          },
-          {
-            to: '/dashboard/student-management/assignment/list',
-            label: 'List',
-            icon: <FaList className="size-6" />,
-          },
-        ],
-      },
-      {
-        to: '/dashboard/student-management/lecture',
-        label: "Lecture Upload",
-        icon: <FaUpload className="size-6" />,
-        subLinks: [
-          {
-            to: '/dashboard/student-management/lecture-upload',
-            label: 'Lecture Upload',
-            icon: <FaUpload className="size-6" />,
-          },
-          {
-            to: '/dashboard/student-management/lecture-list',
-            label: 'Lecture list',
-            icon: <FaUpload className="size-6" />,
-          },
-        ],
-      },
-      {
-        to: '/dashboard/student-management/material',
-        label: 'Material',
+        to: '/dashboard/student-management/material/list',
+        label: 'Material Library',
         icon: <FaBook className="size-6" />,
-        subLinks: [
-          {
-            to: '/dashboard/student-management/material/create',
-            label: 'Create',
-            icon: <FaPlus className="size-6" />,
-          },
-          {
-            to: '/dashboard/student-management/material/list',
-            label: 'List',
-            icon: <FaList className="size-6" />,
-          },
-        ],
       },
       {
-        to: '/dashboard/student-management/quize',
-        label: 'Quiz',
-        icon: <FaQuestionCircle className="size-6" />,
-        subLinks: [
-          {
-            to: '/dashboard/student-management/quize/create',
-            label: 'Create',
-            icon: <FaPlus className="size-6" />,
-          },
-          {
-            to: '/dashboard/student-management/quize/list',
-            label: 'List',
-            icon: <FaList className="size-6" />,
-          },
-        ],
+        to: '/dashboard/student-management/material/create',
+        label: 'Create Material',
+        icon: <FaPlus className="size-6" />,
       },
       {
         to: '/dashboard/student-management/progress',
