@@ -22,7 +22,7 @@ import {
 } from 'react-icons/fa';
 
 export const modules: any = [
-  
+
 
   {
     moduleName: "Nabha Management (only for super admin)",
@@ -156,19 +156,44 @@ export const modules: any = [
   {
     moduleName: "Faculty Management (only for faculty)",
     links: [
-      {
-        to: '/dashboard/student-management/material/list',
-        label: 'Material Library',
+       {
+        to: '/dashboard/faculty-management/assignment',
+        label: 'Assignment',
         icon: <FaBook className="size-6" />,
+        subLinks: [
+          {
+            to: '/dashboard/faculty-managament/assignment/create',
+            label: 'Create',
+            icon: <FaPlus className="size-6" />,
+          },
+          {
+            to: '/dashboard/faculty-managament/assignment/list',
+            label: 'List',
+            icon: <FaList className="size-6" />,
+          },
+        ]
       },
       {
-        to: '/dashboard/student-management/material/create',
-        label: 'Create Material',
-        icon: <FaPlus className="size-6" />,
+        to: '/dashboard/faculty-management/material',
+        label: 'Student Material',
+        icon: <FaBook className="size-6" />,
+        subLinks: [
+          {
+            to: '/dashboard/faculty-managament/material/create',
+            label: 'Create',
+            icon: <FaPlus className="size-6" />,
+          },
+          {
+            to: '/dashboard/faculty-managament/material/list',
+            label: 'List',
+            icon: <FaList className="size-6" />,
+          },
+        ]
       },
+      
       {
         to: '/dashboard/faculty-management/progress',
-        label: 'student Progress',
+        label: 'faculty Progress',
         icon: <FaChartBar className="size-6" />,
       },
       {
@@ -256,7 +281,7 @@ export const modules: any = [
       {
         to: '/dashboard/student-upload/materials',
         label: 'Materials',
-        icon: <FaBook className="size-6" /> 
+        icon: <FaBook className="size-6" />
       },
     ],
   },

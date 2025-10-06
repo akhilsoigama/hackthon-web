@@ -45,10 +45,10 @@ const Login = () => {
     try{
       const res = await api.post("/login", data);
       Cookies.set('token', res.data.token, { expires: 7, path: '' })
-      toast("Login Successful");
+      toast.success("Login Successful");
       navigate("/dashboard");
     }catch (error) {
-      console.log(error);
+      toast.error(`${error}`);
     }
   };
 

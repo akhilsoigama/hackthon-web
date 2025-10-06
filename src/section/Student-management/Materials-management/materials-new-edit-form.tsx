@@ -18,7 +18,7 @@ const MaterialNewEditForm: React.FC = () => {
 
   return (
     <FormProvider {...methods}>
-      <div className="min-h-screen bg-blue-200/20 p-4">
+      <div className="min-h-screen  p-4">
         <div className="">
           <form >
             {currentStep === 1 && (

@@ -113,7 +113,7 @@ const Header = ({ toggleMobileSidebar }: HeaderProps) => {
   async function logoutHandler() {
     try {
       Cookies.remove('token');
-      toast("Logout Successful");
+      toast.success("Logout Successful");
       navigate('/login');
     }catch(err){
       console.log(err);

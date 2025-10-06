@@ -19,7 +19,7 @@ const Overview = lazy(() => import("../section/overview"));
 const Quiz = lazy(() => import("../section/quiz"));
 
 // Authentication
-const Login = lazy(() => import("../section/auth/login"));
+const Login = lazy(() => import("../auth/login/login"));
 
 // Nabha Management
 const InstituteCreate = lazy(
@@ -78,7 +78,7 @@ const DepartmentList = lazy(
 
 // Student management
 const MaterialCreate = lazy(
-  () => import("../section/Student-management/Material-master/Material-create")
+  () => import("../section/Student-management/Materials-management/materials-new-edit-form")
 );
 const MaterialList = lazy(
   () => import("../section/Student-management/Material-master/Material-list")
@@ -89,11 +89,11 @@ const AssignmentCreate = lazy(
 );
 const AssignmentList = lazy(
   () =>
-    import("../section/Student-management/Material-master/Assignment-master/assignment-list")
+    import("../section/Student-management/Materials-management/materials-list")
 );
-const MaterialsCreate = lazy(
-  () => import("../section/Student-management/Materials-management/materials-new-edit-form")
-);
+// const MaterialsCreate = lazy(
+//   () => import("../section/Student-management/Materials-management/materials-new-edit-form")
+// );
 
 const LectureList = lazy(
   () => import("../section/Student-management/Material-master/Lecture-master/Lecture-list")
@@ -365,9 +365,26 @@ export default function Routers() {
                 </Suspense>
               }
             />
-            {/* Student Management Routes */}
             <Route
-              path="student-management/material/list"
+              path="faculty-managament/assignment/create"
+              element={
+                <Suspense fallback={<LoadingSpinner />}>
+                  <AssignmentCreate />
+                </Suspense>
+              }
+            >
+            </Route>
+            <Route
+              path="faculty-managament/assignment/list"
+              element={
+                <Suspense fallback={<LoadingSpinner />}>
+                  <AssignmentList />
+                </Suspense>
+              }
+            >
+            </Route>
+            <Route
+              path="faculty-managament/material/list"
               element={
                 <Suspense fallback={<LoadingSpinner />}>
                   <MaterialList />
@@ -412,7 +429,7 @@ export default function Routers() {
               path="student-management/material/create"
               element={
                 <Suspense fallback={<LoadingSpinner />}>
-                  <MaterialsCreate />
+                  {/* <MaterialsCreate /> */}
                 </Suspense>
               }
             >
@@ -504,7 +521,7 @@ export default function Routers() {
               }
             />
             <Route
-              path="student-upload/assignment-upload/list"
+              path="faculty-managament/material/create"
               element={
                 <Suspense fallback={<LoadingSpinner />}>
                   <MaterialCreate />

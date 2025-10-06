@@ -8,8 +8,7 @@ import {
 } from 'react-icons/fa';
 
 export const subjects = ['Mathematics', 'Science', 'English', 'History', 'Art', 'Physical Education'];
-export const gradeLevels = ['Kindergarten', '1st Grade', '2nd Grade', '3rd Grade', '4th Grade', '5th Grade', 
-                     '6th Grade', '7th Grade', '8th Grade', '9th Grade', '10th Grade', '11th Grade', '12th Grade'];
+export const gradeLevels = ['5 STD','6 STD','7 STD','8 STD','9 STD','10 STD','11 STD','12 STD'];
 
 export const resourceTypes = [
   { value: 'link', label: 'Web Link', icon: <FaLink /> },
