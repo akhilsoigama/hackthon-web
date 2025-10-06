@@ -42,16 +42,16 @@ const BasicInfoStep: React.FC<BasicInfoStepProps> = ({
 
             <RHFFormField
                 name="title"
-                label="Lesson Title"
+                label="Material Title"
                 type="text"
-                placeholder="Enter lesson title"
+                placeholder="Enter Material title"
                 required
             />
 
             <RHFFormField
                 name="description"
                 label="Description"
-                placeholder="Enter lesson description"
+                placeholder="Enter Material description"
             />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -64,8 +64,8 @@ const BasicInfoStep: React.FC<BasicInfoStepProps> = ({
                 />
 
                 <RHFDropDown
-                    name="gradeLevel"
-                    label="Grade Level"
+                    name="std"
+                    label="Select STD"
                     options={gradeLevels.map(level => ({ value: level, label: level }))}
                     placeholder="Select grade level"
                     required
@@ -75,7 +75,7 @@ const BasicInfoStep: React.FC<BasicInfoStepProps> = ({
             <RHFFormField
                 name="duration"
                 label="Estimated Duration"
-                type="text"
+                type="date"
                 placeholder="e.g., 45 minutes, 2 class periods"
                 icon={<FaClock className="text-indigo-500" />}
             />

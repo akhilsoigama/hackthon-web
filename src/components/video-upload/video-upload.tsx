@@ -300,6 +300,7 @@ const VideoUpload: React.FC = () => {
                         <label className="block text-sm font-medium text-gray-700 mb-2">Select video file</label>
                         <input
                             type="file"
+                            name='contentUrl'
                             accept="video/*"
                             onChange={handleFileSelect}
                             ref={fileInputRef}
