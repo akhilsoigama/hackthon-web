@@ -15,11 +15,12 @@ import {
 } from 'react-icons/fa';
 import api from '../../../utils/axios'; // Assuming you have a configured axios instance
 import {
-  Permission,
   permissionCategories,
   ApiPermission,
   allPermissionsAtom,
 } from '../../../atoms/rolesAtom';
+import { Permission } from '../../../types/Permissions';
+
 
 const itemVariants = {
   hidden: { y: 20, opacity: 0 },
@@ -82,7 +83,7 @@ const RolePermissionCreate: React.FC = () => {
 
   // Handle permission change
   const handlePermissionChange = (permission: string) => {
-    setPermissions((prev) => ({ ...prev, [permission]: !prev[permission] }));
+    setPermissions((prev : Permission) => ({ ...prev, [permission]: !prev[permission] }));
   };
 
   // Select all permissions in a category

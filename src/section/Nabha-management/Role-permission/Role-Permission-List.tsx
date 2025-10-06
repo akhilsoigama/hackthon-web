@@ -20,13 +20,13 @@ import {
   FaSortDown
 } from 'react-icons/fa';
 import {
-  Permission,
-  Role,
   permissionCategories,
   rolesAtom,
   ApiRole,
   transformApiRolesToFrontendRoles,
 } from '../../../atoms/rolesAtom';
+import { Permission } from '../../../types/Permissions';
+import { Role } from '../../../types/Roles';
 import api from '../../../utils/axios';
 
 const RolePermissionList = () => {
@@ -61,10 +61,17 @@ const RolePermissionList = () => {
     if (!sortConfig) return roles;
     
     return [...roles].sort((a, b) => {
-      if (a[sortConfig.key] < b[sortConfig.key]) {
+      const aValue = a[sortConfig.key];
+      const bValue = b[sortConfig.key];
+
+      if (aValue === undefined || bValue === undefined) {
+        return 0;
+      }
+
+      if (aValue < bValue) {
         return sortConfig.direction === 'ascending' ? -1 : 1;
       }
-      if (a[sortConfig.key] > b[sortConfig.key]) {
+      if (aValue > bValue) {
         return sortConfig.direction === 'ascending' ? 1 : -1;
       }
       return 0;

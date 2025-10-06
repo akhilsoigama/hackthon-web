@@ -1,10 +1,16 @@
-import { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { NavLink, useNavigate } from 'react-router-dom';
-import Cookies from 'js-cookie';
-import { FiChevronDown, FiUser, FiSettings, FiLogOut, FiWifiOff } from 'react-icons/fi';
-import { toast } from 'sonner';
-import { endpoints } from '../../utils/axios';
+import { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { NavLink, useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
+import {
+  FiChevronDown,
+  FiUser,
+  FiSettings,
+  FiLogOut,
+  FiWifiOff,
+} from "react-icons/fi";
+import { toast } from "sonner";
+import { endpoints } from "../../utils/axios";
 
 interface UserProfileProps {
   userProfile: any;
@@ -20,8 +26,8 @@ const UserProfile = ({ userProfile, isOnline }: UserProfileProps) => {
 
   async function logoutHandler() {
     try {
-      Cookies.remove('token');
-      toast.success('Logout Successful');
+      Cookies.remove("token");
+      toast.success("Logout Successful");
       navigate(endpoints.auth.logout);
     } catch (err) {
       console.log(err);
@@ -31,21 +37,24 @@ const UserProfile = ({ userProfile, isOnline }: UserProfileProps) => {
   // ✅ Close menu when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
+      if (
+        profileRef.current &&
+        !profileRef.current.contains(event.target as Node)
+      ) {
         setIsProfileOpen(false);
       }
     }
 
     // Attach listener only when dropdown is open (for performance)
     if (isProfileOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     } else {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     }
 
     // Cleanup
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isProfileOpen]);
 
@@ -63,26 +72,21 @@ const UserProfile = ({ userProfile, isOnline }: UserProfileProps) => {
         whileHover={{ scale: 1.03 }}
       >
         <div className="relative">
-          <img
-            src={
-              userProfile?.avatar ||
-              'https://plus.unsplash.com/premium_photo-1738980401922-70995a1b6ade?q=80&w=1267&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
-            }
-            alt="User"
-            className="w-6 h-6 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full border-2 border-white shadow-sm"
-          />
+          <span className="w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full bg-gray-500 text-white flex items-center justify-center font-semibold text-sm sm:text-base md:text-lg shadow-sm">
+            {userProfile?.fullName.charAt(0).toUpperCase() || "@"}
+          </span>
           <span
             className={`absolute bottom-0 right-0 w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full border border-white ${
-              isOnline ? 'bg-green-500' : 'bg-gray-400'
+              isOnline ? "bg-green-500" : "bg-gray-400"
             }`}
           ></span>
         </div>
         <div className="text-left hidden sm:block">
           <p className="font-medium text-xs sm:text-sm md:text-base">
-            {userProfile?.fullName || 'Guest'}
+            {userProfile?.fullName || "Guest"}
           </p>
           <p className="text-[10px] sm:text-xs text-gray-500">
-            {userProfile?.authType || 'Guest'}
+            {userProfile?.authType || "Guest"}
           </p>
         </div>
         <motion.div
@@ -104,10 +108,10 @@ const UserProfile = ({ userProfile, isOnline }: UserProfileProps) => {
           >
             <div className="px-3 py-2 sm:px-4 sm:py-3 border-b border-gray-100">
               <p className="font-semibold text-xs sm:text-sm md:text-base">
-                {userProfile?.fullName || 'Guest'}
+                {userProfile?.fullName || "Guest"}
               </p>
               <p className="text-[10px] sm:text-xs text-gray-500">
-                {userProfile?.email || 'No email available'}
+                {userProfile?.email || "No email available"}
               </p>
               {!isOnline && (
                 <p className="text-[10px] sm:text-xs text-red-500 flex items-center">

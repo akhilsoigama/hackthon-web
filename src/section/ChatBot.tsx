@@ -1,5 +1,6 @@
 import { useState, FormEvent, useRef, useEffect } from "react";
 import { FaPaperPlane, FaRobot, FaUser } from "react-icons/fa";
+import { ImSpinner2 } from "react-icons/im";
 import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import { messagesAtom, Message } from "../atoms/chatBotAtom";
@@ -13,7 +14,10 @@ const ChatbotPage = () => {
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
-    chatContainerRef.current?.scrollTo({ top: chatContainerRef.current.scrollHeight, behavior: 'smooth' });
+    chatContainerRef.current?.scrollTo({
+      top: chatContainerRef.current.scrollHeight,
+      behavior: "smooth",
+    });
   };
 
   useEffect(() => {
@@ -90,7 +94,10 @@ const ChatbotPage = () => {
         </motion.div>
 
         {/* Messages */}
-        <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4">
+        <div
+          ref={chatContainerRef}
+          className="flex-1 overflow-y-auto p-4 space-y-4"
+        >
           <AnimatePresence>
             {messages.map((msg, index) => (
               <motion.div
@@ -117,9 +124,9 @@ const ChatbotPage = () => {
                   {msg.sender === "bot" && (
                     <FaRobot className="mt-1 text-gray-500 flex-shrink-0" />
                   )}
-                    <div className="prose prose-sm max-w-none">
-                      <ReactMarkdown>{msg.text}</ReactMarkdown>
-                    </div>
+                  <div className="prose prose-sm max-w-none">
+                    <ReactMarkdown>{msg.text}</ReactMarkdown>
+                  </div>
                   {msg.sender === "user" && (
                     <FaUser className="mt-1 text-white flex-shrink-0" />
                   )}
@@ -157,12 +164,23 @@ const ChatbotPage = () => {
             className="flex-1 rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <motion.button
+            disabled={loading}
             type="submit"
-            className="flex items-center px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700"
+            className={`flex items-center justify-center px-4 py-2 rounded-md w-28 ${
+              loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700"
+            } text-white`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <FaPaperPlane className="mr-2" /> Send
+            {loading ? (
+              <>
+                <ImSpinner2 className="animate-spin mr-2" />
+              </>
+            ) : (
+              <><FaPaperPlane className="mr-2" /> Send</>
+            )}
           </motion.button>
         </form>
       </motion.div>

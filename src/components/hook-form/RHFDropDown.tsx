@@ -251,6 +251,7 @@ const RHFDropDown: React.FC<RHFDropDownProps> = ({
             disabled={disabled}
             size={size}
             variant={variant}
+            value={field.value || ''}
             error={!!error}
             IconComponent={KeyboardArrowDown}
             displayEmpty
