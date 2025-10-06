@@ -156,7 +156,7 @@ export const modules: any = [
   {
     moduleName: "Faculty Management (only for faculty)",
     links: [
-       {
+      {
         to: '/dashboard/faculty-management/assignment',
         label: 'Assignment',
         icon: <FaBook className="size-6" />,
@@ -190,7 +190,25 @@ export const modules: any = [
           },
         ]
       },
-      
+
+      {
+        to: '/dashboard/faculty-management/quiz',
+        label: 'Quiz',
+        icon: <FaBook className="size-6" />,
+        subLinks: [
+          {
+            to: '/dashboard/faculty-managament/quiz/create',
+            label: 'Create',
+            icon: <FaPlus className="size-6" />,
+          },
+          {
+            to: '/dashboard/faculty-managament/quiz/list',
+            label: 'List',
+            icon: <FaList className="size-6" />,
+          },
+        ]
+      },
+
       {
         to: '/dashboard/faculty-management/progress',
         label: 'faculty Progress',

@@ -1,42 +1,62 @@
 import React from 'react';
 import { FormProvider } from 'react-hook-form';
-import { LessonFormData, useLessonForm } from '../../../hooks/useLectureUploadForm';
-import BasicInfoStep from '../../../components/lecture-upload-constant/basic-info-step';
+import { useLessonForm } from '../../../hooks/useLectureUploadForm';
+import { ILecture } from '../../../types/material';
+import { BasicInfoStep } from '../../../components/lecture-upload-constant';
+import { toast } from 'sonner';
+import { createLecture, updateLecture } from '../../../action/material';
 
 
-const MaterialNewEditForm: React.FC = () => {
-  const {
-    methods,
-    currentStep,
+type Props = {
+  currentData?: ILecture;
+};
 
-  } = useLessonForm();
+const MaterialNewEditForm: React.FC<Props> = ({ currentData }) => {
+  const { methods, currentStep } = useLessonForm(currentData);
 
-  const onSubmit = (data: LessonFormData) => {
-    console.log('Lesson created:', data);
-    alert('Lesson created successfully!');
+  const onSubmit = async (data: any) => {
+    try {
+      if (currentData?.id) {
+        await updateLecture(currentData.id, {
+          ...data,
+          videoUrl: data.contentUrl 
+        });
+      } else {
+        await createLecture({
+          ...data,
+          facultyId: 1, 
+          videoUrl: data.contentUrl
+        });
+      }
+    } catch (error) {
+      toast.error(`${error}`);
+    }
   };
 
   return (
     <FormProvider {...methods}>
-      <div className="min-h-screen  p-4">
-        <div className="">
-          <form >
-            {currentStep === 1 && (
-              <BasicInfoStep
-                watch={methods.watch}
-                setValue={methods.setValue}
-                getValues={methods.getValues}
-              />
-            )}
+      <div className="min-h-screen p-4">
+        <form onSubmit={methods.handleSubmit(onSubmit)}>
+          {currentStep === 1 && (
+            <BasicInfoStep
+              watch={methods.watch}
+              setValue={methods.setValue}
+              getValues={methods.getValues}
+              currentData={currentData}
+            />
+          )}
+
+          <div className="mt-4 flex gap-2">
+
+
             <button
               type="submit"
-              onClick={()=>onSubmit}
-              className="px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700"
+              className="px-4 py-2 rounded-lg bg-green-600 text-white"
             >
               Submit
             </button>
-          </form>
-        </div>
+          </div>
+        </form>
       </div>
     </FormProvider>
   );

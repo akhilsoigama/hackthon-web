@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BiCheckCircle, BiPlus, BiEdit, BiArrowBack } from 'react-icons/bi';
 import { BsTextParagraph } from 'react-icons/bs';
-import PDFDropZone from '../../../../components/common/pdfUploader';
+import PDFDropZone from '../../../components/common/pdfUploader';
 import axios from 'axios'; // Assuming you use axios
 import { toast } from 'sonner'; // For user feedback
 
