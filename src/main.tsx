@@ -9,6 +9,8 @@ import {SWRConfig} from 'swr'
 import { fetcher } from './utils/axios'
 
 import { registerSW } from 'virtual:pwa-register'
+// import { setupWDYR } from "./wdyr";
+// setupWDYR();
 const updateSW = registerSW({
   onNeedRefresh() {
     import('sonner').then(({ toast }) => {

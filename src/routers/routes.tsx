@@ -11,6 +11,7 @@ const LoadingSpinner = () => (
   </div>
 );
 
+// Lazy loaded components
 const Progress = lazy(() => import("../section/Progress"));
 const Events = lazy(() => import("../section/Events"));
 const ChatBot = lazy(() => import("../section/ChatBot"));
@@ -22,130 +23,44 @@ const Quiz = lazy(() => import("../section/quiz"));
 const Login = lazy(() => import("../auth/login/login"));
 
 // Nabha Management
-const InstituteCreate = lazy(
-  () =>
-    import("../section/Nabha-management/institute-management/Institute-create")
-);
-const InstituteList = lazy(
-  () =>
-    import("../section/Nabha-management/institute-management/Institute-list")
-);
-const GovtServeyCreate = lazy(
-  () => import("../section/Nabha-management/servey-master/Govt-Servey-Create")
-);
-const GovtServeyList = lazy(
-  () => import("../section/Nabha-management/servey-master/Govt-Servey-List")
-);
-const RolePermissionCreate = lazy(
-  () =>
-    import("../section/Nabha-management/Role-permission/Role-Permission-Create")
-);
-const RolePermissionList = lazy(
-  () =>
-    import("../section/Nabha-management/Role-permission/Role-Permission-List")
-);
+const InstituteCreate = lazy(() => import("../section/Nabha-management/institute-management/Institute-create"));
+const InstituteList = lazy(() => import("../section/Nabha-management/institute-management/Institute-list"));
+const GovtServeyCreate = lazy(() => import("../section/Nabha-management/servey-master/Govt-Servey-Create"));
+const GovtServeyList = lazy(() => import("../section/Nabha-management/servey-master/Govt-Servey-List"));
+const RolePermissionCreate = lazy(() => import("../section/Nabha-management/Role-permission/Role-Permission-Create"));
+const RolePermissionList = lazy(() => import("../section/Nabha-management/Role-permission/Role-Permission-List"));
 
 // Institute Management
-const FacultyCreate = lazy(
-  () => import("../section/Institute-management/faculty/faculty-create")
-);
-const FacultyList = lazy(
-  () => import("../section/Institute-management/faculty/faculty-list")
-);
-const StudentCreate = lazy(
-  () => import("../section/Institute-management/students/student-create")
-);
-const StudentList = lazy(
-  () => import("../section/Institute-management/students/student-list")
-);
-const InstituteSurveyCreate = lazy(
-  () =>
-    import("../section/Institute-management/institure-serveys/servey-create")
-);
-const InstituteSurveyList = lazy(
-  () => import("../section/Institute-management/institure-serveys/servey-list")
-);
-const DepartmentCreate = lazy(
-  () =>
-    import(
-      "../section/Institute-management/department-master/department-create"
-    )
-);
-const DepartmentList = lazy(
-  () =>
-    import("../section/Institute-management/department-master/department-list")
-);
+const FacultyCreate = lazy(() => import("../section/Institute-management/faculty/faculty-create"));
+const FacultyList = lazy(() => import("../section/Institute-management/faculty/faculty-list"));
+const StudentCreate = lazy(() => import("../section/Institute-management/students/student-create"));
+const StudentList = lazy(() => import("../section/Institute-management/students/student-list"));
+const InstituteSurveyCreate = lazy(() => import("../section/Institute-management/institure-serveys/servey-create"));
+const InstituteSurveyList = lazy(() => import("../section/Institute-management/institure-serveys/servey-list"));
+const DepartmentCreate = lazy(() => import("../section/Institute-management/department-master/department-create"));
+const DepartmentList = lazy(() => import("../section/Institute-management/department-master/department-list"));
 
-// Student management
-const MaterialCreate = lazy(
-  () => import("../section/Student-management/Materials-management/materials-new-edit-form")
-);
-const MaterialList = lazy(
-  () => import("../section/Student-management/Material-master/Material-list")
-);
-const AssignmentCreate = lazy(
-  () =>
-    import("../section/Student-management/Material-master/Assignment-master/assignment-create")
-);
-const AssignmentList = lazy(
-  () =>
-    import("../section/Student-management/Materials-management/materials-list")
-);
-// const MaterialsCreate = lazy(
-//   () => import("../section/Student-management/Materials-management/materials-new-edit-form")
-// );
+// Student Management
+const MaterialCreate = lazy(() => import("../section/Student-management/Materials-management/materials-new-edit-form"));
+const MaterialList = lazy(() => import("../section/Student-management/Materials-management/materials-list"));
+const AssignmentCreate = lazy(() => import("../section/Student-management/Assignment-master/assignment-create"));
+const AssignmentList = lazy(() => import("../section/Student-management/Materials-management/materials-list"));
+const LectureList = lazy(() => import("../section/Student-management/Lecture-master/Lecture-list"));
 
-const LectureList = lazy(
-  () => import("../section/Student-management/Material-master/Lecture-master/Lecture-list")
-);
-const LectureCreate = lazy(
-  () => import("../section/Student-management/Material-master/Lecture-master/Lecture-create")
-);
-const ReadingCreate = lazy(
-  () => import("../section/Student-management/Material-master/Reading-Master/Reading-create")
-);
-const ReadingList = lazy(
-  () => import("../section/Student-management/Material-master/Reading-Master/Reading-list")
-);
-const QuizCreate = lazy(
-  () => import("../section/Student-management/Material-master/Quiz-master/quiz-create")
-);
-const QuizList = lazy(
-  () => import("../section/Student-management/Material-master/Quiz-master/quiz-list")
-);
-const StudentProgress = lazy(
-  () =>
-    import("../section/Student-management/Student-Progress/Student-Progress")
-);
+const ReadingList = lazy(() => import("../section/Student-management/Reading-Master/Reading-list"));
+const QuizCreate = lazy(() => import("../section/Student-management/Quiz-master/quiz-create"));
+const QuizList = lazy(() => import("../section/Student-management/Quiz-master/quiz-list"));
+const StudentProgress = lazy(() => import("../section/Student-management/Student-Progress/Student-Progress"));
 
 // Leave Management
-const LeaveCreate = lazy(
-  () => import("../section/Leave-management/Leave-master/leave-create")
-);
-const LeaveList = lazy(
-  () => import("../section/Leave-management/Leave-master/leave-list")
-);
-const LeaveApprovalDone = lazy(
-  () =>
-    import(
-      "../section/Leave-management/Leave-Approval-master/leave-approval-done"
-    )
-);
+const LeaveCreate = lazy(() => import("../section/Leave-management/Leave-master/leave-create"));
+const LeaveList = lazy(() => import("../section/Leave-management/Leave-master/leave-list"));
+const LeaveApprovalDone = lazy(() => import("../section/Leave-management/Leave-Approval-master/leave-approval-done"));
 
 // Student Upload
-const AssignmentUploadCreate = lazy(
-  () =>
-    import(
-      "../section/Student-upload/Assignment-upload/assignment-upload-create"
-    )
-);
-const AssignmentUploadList = lazy(
-  () =>
-    import("../section/Student-upload/Assignment-upload/assignment-upload-list")
-);
-const StudentMaterialList = lazy(
-  () => import("../section/Student-upload/Material/Material-list")
-);
+const AssignmentUploadCreate = lazy(() => import("../section/Student-upload/Assignment-upload/assignment-upload-create"));
+const AssignmentUploadList = lazy(() => import("../section/Student-upload/Assignment-upload/assignment-upload-list"));
+const StudentMaterialList = lazy(() => import("../section/Student-upload/Material/Material-list"));
 
 const ProtectedRoute = () => {
   const token = Cookies.get("token");
@@ -167,6 +82,7 @@ export default function Routers() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Public Routes */}
         <Route
           path="/login"
           element={
@@ -176,6 +92,7 @@ export default function Routers() {
           }
         />
 
+        {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>
           {/* Redirect root path to /dashboard */}
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
@@ -365,6 +282,8 @@ export default function Routers() {
                 </Suspense>
               }
             />
+
+            {/* Faculty Management Routes */}
             <Route
               path="faculty-managament/assignment/create"
               element={
@@ -372,8 +291,7 @@ export default function Routers() {
                   <AssignmentCreate />
                 </Suspense>
               }
-            >
-            </Route>
+            />
             <Route
               path="faculty-managament/assignment/list"
               element={
@@ -381,8 +299,9 @@ export default function Routers() {
                   <AssignmentList />
                 </Suspense>
               }
-            >
-            </Route>
+            />
+
+            {/* Material Management Routes */}
             <Route
               path="faculty-managament/material/list"
               element={
@@ -426,49 +345,24 @@ export default function Routers() {
               />
             </Route>
             <Route
-              path="student-management/material/create"
+              path="faculty-managament/quiz/create"
               element={
                 <Suspense fallback={<LoadingSpinner />}>
-                  {/* <MaterialsCreate /> */}
+                  <QuizCreate />
                 </Suspense>
               }
-            >
-              <Route index element={<Navigate to="reading" replace />} />
-              <Route
-                path="reading"
-                element={<Suspense fallback={<LoadingSpinner />}><ReadingCreate /></Suspense>}
-              />
-              <Route
-                path="lectures"
-                element={<Suspense fallback={<LoadingSpinner />}><LectureCreate /></Suspense>}
-              />
-              <Route
-                path="assignments"
-                element={<Suspense fallback={<LoadingSpinner />}><AssignmentCreate /></Suspense>}
-              />
-              <Route
-                path="quiz"
-                element={<Suspense fallback={<LoadingSpinner />}><QuizCreate /></Suspense>}
-              />
-            </Route>
-
-            {/* 
-            The individual create routes below are now handled by the nested structure above.
-            They are removed to avoid route conflicts and centralize the creation flow.
-            The `NewMaterialButton` in `MaterialList.tsx` already links to the new nested paths.
-          */}
-
-            {/* This legacy route can be kept if other parts of the app link to it directly */}
+            />
+            {/* Legacy route for backward compatibility */}
             <Route
-              path="student-management/material/list/quize" // Legacy path for dashboard link
+              path="faculty-managament/quiz/list"
               element={
                 <Suspense fallback={<LoadingSpinner />}>
                   <QuizList />
                 </Suspense>
               }
             />
-            <Route
 
+            <Route
               path="student-management/progress"
               element={
                 <Suspense fallback={<LoadingSpinner />}>
