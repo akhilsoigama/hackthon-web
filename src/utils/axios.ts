@@ -46,12 +46,23 @@ export const fetcher = async (args: string | [string, AxiosRequestConfig]) => {
   }
 };
 
+// Fetcher for SWR that expects the data array to be in a `data` property
+export const listFetcher = async (args: string | [string, AxiosRequestConfig]) => {
+  try {
+    const [url, config] = Array.isArray(args) ? args : [args];
+    const res = await axiosInstance.get(url, config);
+    return res.data.data; // <-- Extracts the array from the nested 'data' property
+  } catch (error) {
+    throw error;
+  }
+};
+
 // Remove baseUrl from here since axiosInstance already has baseURL
 export const endpoints = {
   auth: {
     me: "/profile",
     signIn: "/login",
-    logout: "/logout",
+    logout: "/login",
   },
   lecture: {
     getAll: "/lectures",
@@ -61,11 +72,11 @@ export const endpoints = {
     delete: (id: number) => `/lectures/${id}`,
   },
   faculty: {
-    getAll: "/faculties",
-    details: (id: number) => `/faculties/${id}`,
-    create: "/faculties",
-    update: (id: number) => `/faculties/${id}`,
-    delete: (id: number) => `/faculties/${id}`,
+    getAll: "/faculty",
+    details: (id: number) => `/faculty/${id}`,
+    create: "/faculty",
+    update: (id: number) => `/faculty/${id}`,
+    delete: (id: number) => `/faculty/${id}`,
   },
   material: {
     getAll: "/materials",
@@ -108,5 +119,12 @@ export const endpoints = {
     create: "/institutes",
     update: (id: number) => `/institutes/${id}`,
     delete: (id: number) => `/institutes/${id}`,
+  },
+  role: {
+    getAll: "/roles",
+    details: (id: number) => `/roles/${id}`,
+    create: "/roles",
+    update: (id: number) => `/roles/${id}`,
+    delete: (id: number) => `/roles/${id}`,
   },
 };

@@ -1,53 +1,43 @@
-import { useState } from "react";
+import { useFaculty } from "../../../atoms/facultyAtom";
+import api, { endpoints } from "../../../utils/axios";
+import Faculty from "../../../types/Faculty";
 import {
   FaUser,
-  FaEnvelope,
-  FaPhone,
+  FaPlus,
+  FaSpinner,
   FaEdit,
   FaTrash,
-  FaPlus,
+  FaEnvelope,
+  FaPhone,
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
 
-interface Faculty {
-  id: number;
-  name: string;
-  facultyId: string;
-  designation: string;
-  department: string;
-  email: string;
-  phone: string;
-  status: string;
-}
 
 const FacultyList = () => {
-  const [faculty, setFaculty] = useState<Faculty[]>([
-    {
-      id: 1,
-      name: "Dr. John Doe",
-      facultyId: "FAC001",
-      designation: "Professor",
-      department: "Computer Science",
-      email: "john.doe@example.com",
-      phone: "+91 9876543210",
-      status: "active",
-    },
-    {
-      id: 2,
-      name: "Ms. Jane Smith",
-      facultyId: "FAC002",
-      designation: "Lecturer",
-      department: "Mathematics",
-      email: "jane.smith@example.com",
-      phone: "+91 9876501234",
-      status: "inactive",
-    },
-  ]);
+  const {
+    faculties,
+    isLoading,
+    isError: error,
+    mutate,
+  } = useFaculty();
 
-  const handleDelete = (id: number) => {
-    if (confirm("Are you sure you want to delete this faculty member?")) {
-      setFaculty(faculty.filter((f) => f.id !== id));
+  // Handle deletion
+  const handleDelete = async (id: number) => {
+    if (!window.confirm("Are you sure you want to delete this faculty member?")) return;
+    try {
+      // Make the API call to delete the item
+      await api.delete(endpoints.faculty.delete(id));
+      toast.success("Faculty member deleted successfully!");
+      // Perform an optimistic update
+      await mutate((currentData = []) => {
+        // Return the new list without the deleted item
+        return currentData.filter((f) => f.id !== id);
+      }, { revalidate: false });
+    } catch (err) {
+      console.error("Failed to delete faculty:", err);
+      mutate(); // Revalidate to fetch the correct state from the server if the delete fails
     }
   };
 
@@ -94,33 +84,42 @@ const FacultyList = () => {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
         >
-          {faculty.length === 0 ? (
-            <div className="text-center text-gray-500 p-6 bg-white rounded-lg shadow-md">
-              No faculty members found.
+          {faculties && faculties.length === 0 ? (
+            <div className="text-center text-gray-500 p-6 bg-white rounded-lg shadow-md">No faculty members found.</div>
+          ) : null}
+          {isLoading && (
+            <div className="flex justify-center items-center p-10">
+              <FaSpinner className="animate-spin text-4xl text-blue-600" />
             </div>
-          ) : (
+          )}
+          {error && (
+            <div className="text-center text-red-500 p-6 bg-red-50 rounded-lg shadow-md">
+              Failed to load faculty data. Please try again.
+            </div>
+          )}
+          {!isLoading && !error && faculties && (
             <AnimatePresence>
-              {faculty.map((f, index) => (
+              {faculties.map((f : Faculty, index : number) => (
                 <motion.div
+                  key={f.id}
                   layout
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3, delay: index * 0.05 }}
-                  key={f.id}
                   className="mb-4 p-4 bg-white rounded-lg shadow-md border border-gray-200"
                 >
                   <div className="flex justify-between items-start">
                     <div>
                       <h3 className="text-lg font-semibold text-gray-800">
-                        {f.name}
+                        {f.facultyName}
                       </h3>
                       <p className="text-sm text-gray-600">ID: {f.facultyId}</p>
                     </div>
                     <div className="flex space-x-2">
                       <motion.button
                         className="text-blue-600 hover:text-blue-800 p-1"
-                        aria-label={`Edit ${f.name}`}
+                        aria-label={`Edit ${f.facultyName}`}
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
                       >
@@ -129,7 +128,7 @@ const FacultyList = () => {
                       <motion.button
                         onClick={() => handleDelete(f.id)}
                         className="text-red-600 hover:text-red-800 p-1"
-                        aria-label={`Delete ${f.name}`}
+                        aria-label={`Delete ${f.facultyName}`}
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
                       >
@@ -144,24 +143,24 @@ const FacultyList = () => {
                     </p>
                     <p>
                       <span className="font-medium">Department:</span>{" "}
-                      {f.department}
+                      {f.department.departmentName}
                     </p>
                     <p className="flex items-center">
-                      <FaEnvelope className="mr-2 text-gray-400" /> {f.email}
+                      <FaEnvelope className="mr-2 text-gray-400" /> {f.facultyEmail}
                     </p>
                     <p className="flex items-center">
-                      <FaPhone className="mr-2 text-gray-400" /> {f.phone}
+                      <FaPhone className="mr-2 text-gray-400" /> {f.facultyMobile}
                     </p>
                     <p>
                       <span className="font-medium">Status:</span>{" "}
                       <span
                         className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                          f.status === "active"
+                          f.isActive
                             ? "bg-green-100 text-green-800"
                             : "bg-red-100 text-red-800"
                         }`}
                       >
-                        {f.status.charAt(0).toUpperCase() + f.status.slice(1)}
+                        {f.isActive ? "Active" : "Inactive"}
                       </span>
                     </p>
                   </div>
@@ -179,7 +178,7 @@ const FacultyList = () => {
           transition={{ delay: 0.2 }}
         >
           <div className="overflow-x-auto scrollbar-hide">
-            <table className="min-w-full">
+            <table className="min-w-full text-sm">
               <thead className="bg-gray-100">
                 <tr>
                   <th className="px-4 py-3 sm:px-6 sm:py-4 text-left text-sm font-semibold text-gray-700">
@@ -205,9 +204,24 @@ const FacultyList = () => {
                   </th>
                 </tr>
               </thead>
-              <tbody>
-                <AnimatePresence>
-                  {faculty.map((f, index) => (
+              <tbody className="divide-y divide-gray-200">
+                {isLoading && (
+                  <tr>
+                    <td colSpan={7} className="text-center p-10">
+                      <FaSpinner className="animate-spin text-4xl text-blue-600 mx-auto" />
+                    </td>
+                  </tr>
+                )}
+                {error && (
+                  <tr>
+                    <td colSpan={7} className="text-center text-red-500 p-6 bg-red-50">
+                      Failed to load faculty data. Please try again.
+                    </td>
+                  </tr>
+                )}
+                {!isLoading && !error && faculties && (
+                  <AnimatePresence>
+                    {faculties.map((f : Faculty, index : number) => (
                     <motion.tr
                       layout
                       key={f.id}
@@ -218,7 +232,7 @@ const FacultyList = () => {
                       className="border-b border-gray-200 hover:bg-gray-50"
                     >
                       <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm text-gray-800">
-                        {f.name}
+                        {f.facultyName}
                       </td>
                       <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm text-gray-600">
                         {f.facultyId}
@@ -227,34 +241,34 @@ const FacultyList = () => {
                         {f.designation}
                       </td>
                       <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm text-gray-600">
-                        {f.department}
+                        {f.department.departmentName}
                       </td>
                       <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm text-gray-600">
                         <div className="flex flex-col">
                           <span className="flex items-center">
                             <FaEnvelope className="mr-2 text-gray-400" />{" "}
-                            {f.email}
+                            {f.facultyEmail}
                           </span>
                           <span className="flex items-center mt-1">
-                            <FaPhone className="mr-2 text-gray-400" /> {f.phone}
+                            <FaPhone className="mr-2 text-gray-400" /> {f.facultyMobile}
                           </span>
                         </div>
                       </td>
                       <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm">
                         <span
                           className={`px-2 inline-flex text-xs sm:text-sm font-semibold rounded-full ${
-                            f.status === "active"
+                            f.isActive
                               ? "bg-green-100 text-green-800"
                               : "bg-red-100 text-red-800"
                           }`}
                         >
-                          {f.status.charAt(0).toUpperCase() + f.status.slice(1)}
+                          {f.isActive ? "Active" : "Inactive"}
                         </span>
                       </td>
                       <td className="flex justify-center items-center px-4 py-3 sm:px-6 sm:py-4 space-x-2">
                         <motion.button
                           className="text-blue-600 hover:text-blue-800 p-1"
-                          aria-label={`Edit ${f.name}`}
+                          aria-label={`Edit ${f.facultyName}`}
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
                         >
@@ -263,7 +277,7 @@ const FacultyList = () => {
                         <motion.button
                           onClick={() => handleDelete(f.id)}
                           className="text-red-600 hover:text-red-800 p-1"
-                          aria-label={`Delete ${f.name}`}
+                          aria-label={`Delete ${f.facultyName}`}
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
                         >
@@ -271,14 +285,12 @@ const FacultyList = () => {
                         </motion.button>
                       </td>
                     </motion.tr>
-                  ))}
-                </AnimatePresence>
-                {faculty.length === 0 && (
+                    ))}
+                  </AnimatePresence>
+                )}
+                {!isLoading && !error && faculties?.length === 0 && (
                   <tr>
-                    <td
-                      colSpan={7}
-                      className="px-4 py-3 sm:px-6 sm:py-4 text-center text-gray-500 text-sm sm:text-base"
-                    >
+                    <td colSpan={7} className="px-4 py-3 sm:px-6 sm:py-4 text-center text-gray-500">
                       No faculty members found.
                     </td>
                   </tr>

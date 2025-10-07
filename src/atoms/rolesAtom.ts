@@ -1,4 +1,6 @@
 import { atom } from 'jotai';
+import { Role } from '.././types/Roles';
+import { Permission } from '.././types/Permissions';
 
 // --- API Data Structures ---
 // These interfaces match the JSON response from your backend
@@ -18,21 +20,7 @@ export interface ApiRole {
   permissions: ApiPermission[];
 }
 
-// --- Frontend Data Structures ---
-// These are the interfaces your components currently use
-export interface Permission {
-  [key: string]: boolean;
-}
 
-export interface Role {
-  id: string;
-  roleName: string;
-  description: string;
-  permissions: Permission;
-  userCount: number;
-  createdAt: string;
-  isDefault: boolean;
-}
 
 // Permission categories based on routes
 export const permissionCategories: { [key: string]: string[] } = {
