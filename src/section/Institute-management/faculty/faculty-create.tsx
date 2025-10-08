@@ -19,7 +19,7 @@ import { toast } from 'sonner';
 import RHFFormField from '../../../components/hook-form/RHFFormFiled';
 import api, { endpoints,fetcher, listFetcher } from '../../../utils/axios';
 import { Department } from '../../../types/department';
-import { Role } from '../../../types/Roles';
+import { IUserRolePermissionItem } from '../../../types/Roles';
 
 // ✅ Validation schema
 const facultySchema = z.object({
@@ -49,7 +49,7 @@ const FacultyCreate = () => {
     endpoints.department.getAll,
     fetcher
   );
-  const { data: roles } = useSWR<Role[]>(endpoints.role.getAll, listFetcher);
+  const { data: roles } = useSWR<IUserRolePermissionItem[]>(endpoints.role.getAll, listFetcher);
 
   const departmentOptions =
     departmentsData?.data?.map((dept : Department) => ({

@@ -1,8 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useAtom } from 'jotai';
-import useSWR from 'swr';
-import fetcher from '../../../utils/axios';
 import {
   FaSearch,
   FaFilter,
@@ -17,35 +14,93 @@ import {
   FaPlus,
   FaSort,
   FaSortUp,
-  FaSortDown
+  FaSortDown,
 } from 'react-icons/fa';
-import {
-  permissionCategories,
-  rolesAtom,
-  ApiRole,
-  transformApiRolesToFrontendRoles,
-} from '../../../atoms/rolesAtom';
-import { Permission } from '../../../types/Permissions';
-import { Role } from '../../../types/Roles';
-import api from '../../../utils/axios';
+import { useGetUserRolePermissions } from '../../../action/RollPermission';
+import { IUserRolePermissionItem } from '../../../types/Roles';
+import { usePermissions } from '../../../action/permission';
+
+interface Permission {
+  [key: string]: boolean;
+}
+
+interface Role {
+  id: string;
+  roleName: string;
+  description: string;
+  permissions: Permission;
+  createdAt: string;
+  isDefault: boolean;
+}
+
+// Transform API data to match the component's expected format
+const transformApiDataToRoles = (apiData: IUserRolePermissionItem[]): Role[] => {
+  return apiData.map(item => ({
+    id: item.id?.toString() || '',
+    roleName: item.roleName || '',
+    description: item.roleDescription || '',
+    permissions: item.permissions || {},
+    createdAt: item.createdAt ? new Date(item.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+    isDefault: item.isDefault || false,
+  }));
+};
+
+// Generate permission categories dynamically from the actual permissions data
+const generatePermissionCategories = (roles: Role[]) => {
+  const categories: { [key: string]: string[] } = {};
+
+  roles.forEach(role => {
+    Object.keys(role.permissions).forEach(permission => {
+      if (role.permissions[permission]) {
+        // Extract category from permission key (e.g., "DASHBOARD_VIEW" -> "Dashboard")
+        const category = permission.split('_')[0];
+        const formattedCategory = category.charAt(0).toUpperCase() + category.slice(1).toLowerCase();
+
+        if (!categories[formattedCategory]) {
+          categories[formattedCategory] = [];
+        }
+
+        if (!categories[formattedCategory].includes(permission)) {
+          categories[formattedCategory].push(permission);
+        }
+      }
+    });
+  });
+
+  return categories;
+};
 
 const RolePermissionList = () => {
-  const [roles, setRoles] = useAtom(rolesAtom);
+  const { userRolePermissions, isLoading, userRolePermissionsError } = useGetUserRolePermissions();
+  const { permissions, isLoading: isPermissionsLoading, error: permissionsError } = usePermissions();
+
+  // Debug permissions data
+  useMemo(() => {
+    console.log('Permissions from usePermissions:', permissions);
+  }, [permissions]);
+
+  // Transform API data when it's available
+  const apiRoles = useMemo(() => {
+    return transformApiDataToRoles(userRolePermissions);
+  }, [userRolePermissions]);
+
+  const [roles, setRoles] = useState<Role[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [expandedRole, setExpandedRole] = useState<string | null>(null);
   const [sortConfig, setSortConfig] = useState<{ key: keyof Role; direction: 'ascending' | 'descending' } | null>(null);
 
-  
-  const { data: apiResponse, error, isLoading } = useSWR<{ data: { data: ApiRole[] } }>('/roles', fetcher);
+  // Generate permission categories dynamically from actual data
+  const permissionCategories = useMemo(() => {
+    return generatePermissionCategories(apiRoles);
+  }, [apiRoles]);
 
-  // This effect syncs the fetched data from SWR to your Jotai atom
-  useEffect(() => {
-    if (apiResponse?.data?.data) {
-      const frontendRoles = transformApiRolesToFrontendRoles(apiResponse.data.data);
-      setRoles(frontendRoles);
+  // Update roles when API data loads
+  useMemo(() => {
+    if (apiRoles.length > 0) {
+      setRoles(apiRoles);
     }
-  }, [apiResponse, setRoles]);
+  }, [apiRoles]);
 
   // Handle sorting
   const handleSort = (key: keyof Role) => {
@@ -59,19 +114,12 @@ const RolePermissionList = () => {
   // Get sorted roles
   const getSortedRoles = () => {
     if (!sortConfig) return roles;
-    
+
     return [...roles].sort((a, b) => {
-      const aValue = a[sortConfig.key];
-      const bValue = b[sortConfig.key];
-
-      if (aValue === undefined || bValue === undefined) {
-        return 0;
-      }
-
-      if (aValue < bValue) {
+      if (a[sortConfig.key] < b[sortConfig.key]) {
         return sortConfig.direction === 'ascending' ? -1 : 1;
       }
-      if (aValue > bValue) {
+      if (a[sortConfig.key] > b[sortConfig.key]) {
         return sortConfig.direction === 'ascending' ? 1 : -1;
       }
       return 0;
@@ -80,12 +128,14 @@ const RolePermissionList = () => {
 
   // Filter roles based on search term and filters
   const filteredRoles = getSortedRoles().filter(role => {
-    const matchesSearch = role.roleName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         role.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || 
-                         (statusFilter === 'default' && role.isDefault) ||
-                         (statusFilter === 'custom' && !role.isDefault);
-    
+    const matchesSearch =
+      role.roleName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      role.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus =
+      statusFilter === 'all' ||
+      (statusFilter === 'default' && role.isDefault) ||
+      (statusFilter === 'custom' && !role.isDefault);
+
     return matchesSearch && matchesStatus;
   });
 
@@ -95,24 +145,11 @@ const RolePermissionList = () => {
   };
 
   // Delete a role
-  const deleteRole = async (id: string) => {
+  const deleteRole = (id: string) => {
     if (window.confirm('Are you sure you want to delete this role?')) {
-      try{
-
-      const res = await api.delete(`/roles/${id}`);
-      if (res.status === 200) {
-        setRoles(roles.filter(role => role.id !== id));
-      } else {
-        console.error("Failed to delete role:", res);
-        alert("Failed to delete role. Please try again.");
-      }
-    } catch (error) {
-      console.error("Error deleting role:", error);
-      alert("An error occurred while deleting the role. Please try again.")
-
-    }
-        setRoles(roles.filter(role => role.id !== id));
-
+      setRoles(roles.filter(role => role.id !== id));
+      // TODO: Call deleteUserRolePermission API
+      // deleteUserRolePermission(parseInt(id));
     }
   };
 
@@ -122,9 +159,8 @@ const RolePermissionList = () => {
       ...role,
       id: Date.now().toString(),
       roleName: `${role.roleName} (Copy)`,
-      userCount: 0,
       createdAt: new Date().toISOString().split('T')[0],
-      isDefault: false
+      isDefault: false,
     };
     setRoles([...roles, newRole]);
   };
@@ -135,13 +171,13 @@ const RolePermissionList = () => {
   };
 
   // Format permission name for display
-  const formatPermissionName = (permission: string) => {
-    return permission
+   const formatPermissionName = (permissionKey: string) => {
+    const perm = permissions.find(p => p.permissionKey === permissionKey);
+    return perm ? perm.permissionName : permissionKey
       .replace(/_/g, ' ')
       .toLowerCase()
-      .replace(/\b\w/g, (c) => c.toUpperCase());
+      .replace(/\b\w/g, c => c.toUpperCase());
   };
-
   // Render sort icon
   const renderSortIcon = (key: keyof Role) => {
     if (!sortConfig || sortConfig.key !== key) return <FaSort className="ml-1 opacity-50" />;
@@ -149,14 +185,26 @@ const RolePermissionList = () => {
     return <FaSortDown className="ml-1" />;
   };
 
-  if (isLoading) {
-    return <div className="flex justify-center items-center h-screen text-gray-500">Loading roles...</div>;
+  // Loading state
+  if (isLoading || isPermissionsLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-4 md:p-6 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading roles and permissions...</p>
+        </div>
+      </div>
+    );
   }
 
-  if (error) {
+  // Error state
+  if (userRolePermissionsError || permissionsError) {
     return (
-      <div className="flex justify-center items-center h-screen text-red-500">
-        Failed to load roles. Please try again later.
+      <div className="min-h-screen bg-gray-50 p-4 md:p-6 flex items-center justify-center">
+        <div className="text-center text-red-600">
+          <p>Error loading data. Please try again later.</p>
+          
+        </div>
       </div>
     );
   }
@@ -176,7 +224,7 @@ const RolePermissionList = () => {
         </div>
 
         {/* Filters and Search */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
@@ -191,7 +239,7 @@ const RolePermissionList = () => {
                 type="text"
                 placeholder="Search roles..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={e => setSearchTerm(e.target.value)}
                 className="pl-10 pr-4 py-2 border border-gray-300 rounded-md w-full focus:ring-2 focus:ring-indigo-500 focus:outline-none"
               />
             </div>
@@ -201,7 +249,7 @@ const RolePermissionList = () => {
                 <FaFilter className="text-gray-400 mr-2" />
                 <select
                   value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
+                  onChange={e => setStatusFilter(e.target.value)}
                   className="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                 >
                   <option value="all">All Roles</option>
@@ -219,11 +267,11 @@ const RolePermissionList = () => {
         </motion.div>
 
         {/* Stats Summary */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.1 }}
-          className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6"
+          className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6"
         >
           <div className="bg-white rounded-lg shadow-md p-4 flex items-center">
             <div className="rounded-full bg-indigo-100 p-3 mr-4">
@@ -234,7 +282,7 @@ const RolePermissionList = () => {
               <p className="text-xl md:text-2xl font-bold">{roles.length}</p>
             </div>
           </div>
-          
+
           <div className="bg-white rounded-lg shadow-md p-4 flex items-center">
             <div className="rounded-full bg-green-100 p-3 mr-4">
               <FaUsers className="text-green-600 text-xl" />
@@ -244,7 +292,7 @@ const RolePermissionList = () => {
               <p className="text-xl md:text-2xl font-bold">{roles.filter(r => r.isDefault).length}</p>
             </div>
           </div>
-          
+
           <div className="bg-white rounded-lg shadow-md p-4 flex items-center">
             <div className="rounded-full bg-purple-100 p-3 mr-4">
               <FaKey className="text-purple-600 text-xl" />
@@ -254,20 +302,10 @@ const RolePermissionList = () => {
               <p className="text-xl md:text-2xl font-bold">{roles.filter(r => !r.isDefault).length}</p>
             </div>
           </div>
-          
-          <div className="bg-white rounded-lg shadow-md p-4 flex items-center">
-            <div className="rounded-full bg-blue-100 p-3 mr-4">
-              <FaUsers className="text-blue-600 text-xl" />
-            </div>
-            <div>
-              <p className="text-gray-600 text-sm">Total Users</p>
-              <p className="text-xl md:text-2xl font-bold">{roles.reduce((acc, role) => acc + role.userCount, 0)}</p>
-            </div>
-          </div>
         </motion.div>
 
         {/* Roles List */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.2 }}
@@ -275,48 +313,36 @@ const RolePermissionList = () => {
         >
           {/* Table Header */}
           <div className="hidden md:grid md:grid-cols-12 gap-4 p-4 border-b border-gray-200 font-semibold text-gray-700 bg-gray-50">
-            <div 
-              className="col-span-4 flex items-center cursor-pointer"
+            <div
+              className="col-span-5 flex items-center cursor-pointer"
               onClick={() => handleSort('roleName')}
             >
               Role {renderSortIcon('roleName')}
             </div>
-            <div 
-              className="col-span-2 flex items-center cursor-pointer"
-              onClick={() => handleSort('userCount')}
-            >
-              Users {renderSortIcon('userCount')}
-            </div>
-            <div 
-              className="col-span-2 flex items-center cursor-pointer"
+            <div
+              className="col-span-3 flex items-center cursor-pointer"
               onClick={() => handleSort('createdAt')}
             >
               Created {renderSortIcon('createdAt')}
             </div>
-            <div 
-              className="col-span-2 flex items-center cursor-pointer"
-            >
-              Permissions
-            </div>
-            <div className="col-span-2 text-center">
-              Actions
-            </div>
+            <div className="col-span-2 flex items-center cursor-pointer">Permissions</div>
+            <div className="col-span-2 text-center">Actions</div>
           </div>
 
           {/* Roles Items */}
           {filteredRoles.length === 0 ? (
             <div className="p-8 text-center text-gray-500">
-              No roles found. Try adjusting your search or filters.
+              {roles.length === 0 ? 'No roles found in the system.' : 'No roles found. Try adjusting your search or filters.'}
             </div>
           ) : (
-            filteredRoles.map((role) => (
+            filteredRoles.map(role => (
               <div key={role.id} className="border-b border-gray-100 last:border-b-0">
                 {/* Role Summary */}
-                <div 
+                <div
                   className="grid grid-cols-1 md:grid-cols-12 gap-4 p-4 hover:bg-gray-50 transition-colors duration-200 cursor-pointer"
                   onClick={() => toggleRoleExpansion(role.id)}
                 >
-                  <div className="md:col-span-4">
+                  <div className="md:col-span-5">
                     <div className="flex items-start">
                       <div className="flex-shrink-0 h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center mr-3">
                         <FaUserShield className="text-indigo-600" />
@@ -334,37 +360,31 @@ const RolePermissionList = () => {
                       </div>
                     </div>
                   </div>
-                  
-                  <div className="md:col-span-2 flex items-center">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                      {role.userCount} users
-                    </span>
-                  </div>
-                  
-                  <div className="md:col-span-2 flex items-center text-sm text-gray-500">
+
+                  <div className="md:col-span-3 flex items-center text-sm text-gray-500">
                     {role.createdAt}
                   </div>
-                  
+
                   <div className="md:col-span-2 flex items-center">
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
                       {countPermissions(role.permissions)} permissions
                     </span>
                   </div>
-                  
+
                   <div className="md:col-span-2 flex items-center justify-center space-x-2">
                     <motion.button
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
                       className="p-2 text-blue-600 hover:bg-blue-100 rounded-full"
                       title="View Details"
-                      onClick={(e) => {
+                      onClick={e => {
                         e.stopPropagation();
                         toggleRoleExpansion(role.id);
                       }}
                     >
                       {expandedRole === role.id ? <FaChevronUp /> : <FaChevronDown />}
                     </motion.button>
-                    
+
                     <motion.button
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
@@ -373,11 +393,11 @@ const RolePermissionList = () => {
                     >
                       <FaEdit />
                     </motion.button>
-                    
+
                     <motion.button
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
-                      onClick={(e) => {
+                      onClick={e => {
                         e.stopPropagation();
                         duplicateRole(role);
                       }}
@@ -386,12 +406,12 @@ const RolePermissionList = () => {
                     >
                       <FaCopy />
                     </motion.button>
-                    
+
                     {!role.isDefault && (
                       <motion.button
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
-                        onClick={(e) => {
+                        onClick={e => {
                           e.stopPropagation();
                           deleteRole(role.id);
                         }}
@@ -418,29 +438,48 @@ const RolePermissionList = () => {
                         <FaKey className="mr-2 text-indigo-500" />
                         Permission Details
                       </h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {Object.entries(permissionCategories).map(([category, perms]) => {
-                          const categoryPermissions = perms.filter(perm => role.permissions[perm]);
-                          
-                          if (categoryPermissions.length === 0) return null;
-                          
-                          return (
-                            <div key={category} className="bg-white rounded-lg p-3 shadow-sm">
-                              <h4 className="font-medium text-gray-700 mb-2">
-                                {category.replace(/([A-Z])/g, ' $1').trim()}
-                              </h4>
-                              <ul className="space-y-1">
-                                {categoryPermissions.map(perm => (
-                                  <li key={perm} className="flex items-center text-sm text-gray-600">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 mr-2"></span>
-                                    {formatPermissionName(perm)}
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          );
-                        })}
-                      </div>
+                      {Object.keys(permissionCategories).length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {Object.entries(permissionCategories).map(([category, perms]) => {
+                            // Filter only permissions that this role has
+                            const categoryPermissions = perms
+                              .filter(permKey => role.permissions[permKey])
+                              .map(permKey => ({
+                                key: permKey,
+                                name: formatPermissionName(permKey),
+                              }));
+
+                            if (categoryPermissions.length === 0) return null;
+
+                            return (
+                              <div key={category} className="bg-white rounded-lg p-3 shadow-sm">
+                                <h4 className="font-medium text-gray-700 mb-2">{category}</h4>
+                                <ul className="space-y-1">
+                                  {categoryPermissions.length > 0 ? (
+                                    categoryPermissions.map((perm, idx) => (
+                                      <li
+                                        key={`${perm.key}-${idx}`}
+                                        className="flex items-center text-sm text-gray-600"
+                                      >
+                                        <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 mr-2"></span>
+                                        {perm.name}
+                                      </li>
+                                    ))
+                                  ) : (
+                                    <li className="text-sm text-gray-500">
+                                      No permissions in this category
+                                    </li>
+                                  )}
+                                </ul>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      ) : (
+                        <div className="text-center py-4 text-gray-500">
+                          No permission categories found
+                        </div>
+                      )}
                     </motion.div>
                   )}
                 </AnimatePresence>
