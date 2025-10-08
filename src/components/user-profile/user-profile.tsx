@@ -30,11 +30,10 @@ const UserProfile = ({ userProfile, isOnline }: UserProfileProps) => {
       toast.success("Logout Successful");
       navigate(endpoints.auth.logout);
     } catch (err) {
-      console.log(err);
+      toast.error('${err}');
     }
   }
 
-  // ✅ Close menu when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -45,7 +44,6 @@ const UserProfile = ({ userProfile, isOnline }: UserProfileProps) => {
       }
     }
 
-    // Attach listener only when dropdown is open (for performance)
     if (isProfileOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     } else {
