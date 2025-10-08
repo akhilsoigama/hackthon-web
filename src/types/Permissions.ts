@@ -1,3 +1,19 @@
+// types/permission.ts
 export interface Permission {
-  [key: string]: boolean;
+  id: number
+  permissionName: string
+  permissionKey: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface PermissionsResponse {
+  success: boolean
+  data: Permission[]
+}
+
+export interface ErrorResponse {
+  success: false
+  message: string
+  error: any
 }

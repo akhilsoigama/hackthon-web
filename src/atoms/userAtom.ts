@@ -2,7 +2,7 @@ import { atom, useAtom } from "jotai";
 import useSWR from "swr";
 import fetcher, { endpoints } from "../utils/axios";
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // ✅ for redirect
+import { useNavigate } from "react-router-dom"; 
 
 interface ApiResponse {
     success: boolean;

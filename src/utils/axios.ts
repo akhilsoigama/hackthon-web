@@ -9,7 +9,7 @@ const axiosInstance = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  withCredentials: true, 
+  withCredentials: true,
 });
 
 // Request interceptor to add Authorization token if present
@@ -63,6 +63,9 @@ export const endpoints = {
     me: "/profile",
     signIn: "/login",
     logout: "/login",
+  },
+  permission: {
+    getAll: "/permissions",
   },
   lecture: {
     getAll: "/lectures",

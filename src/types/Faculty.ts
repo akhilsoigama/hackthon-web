@@ -1,6 +1,6 @@
 import {Institute} from "./Institute";
 import {Department} from "./department";
-import {Role} from "./Roles";
+import {IUserRolePermissionItem} from "./Roles";
 
 
 interface Faculty {
@@ -19,7 +19,7 @@ interface Faculty {
   // Nested objects
   department: Department;
   institute: Institute;
-  role: Role;
+  role: IUserRolePermissionItem;
 }
 
 export default Faculty;
