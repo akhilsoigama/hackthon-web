@@ -130,4 +130,8 @@ export const endpoints = {
     update: (id: number) => `/roles/${id}`,
     delete: (id: number) => `/roles/${id}`,
   },
+  translate : {
+    translate : "/translate"
+  }
+
 };

@@ -3,7 +3,7 @@ import {Department} from "./department";
 import {IUserRolePermissionItem} from "./Roles";
 
 
-interface Faculty {
+export type IfacultyItem = {
   id: number;
   facultyName: string;
   facultyId: string;
@@ -22,4 +22,14 @@ interface Faculty {
   role: IUserRolePermissionItem;
 }
 
-export default Faculty;
+export type IcreateFaculty = {
+  facultyName: string;
+  facultyId: string;
+  designation: string;
+  facultyEmail: string;
+  facultyMobile: string;
+  departmentId: number;
+  instituteId: number;
+  roleId: number;
+}
+
