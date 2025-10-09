@@ -63,38 +63,86 @@ export function useGetLecture(lectureId: number) {
 }
 
 // ----------------------------------------------------------------------
+// Helper: Map frontend keys to backend validator format
+function mapLecturePayload(data: any, isUpdate = false) {
+  const mapped = {
+    title: data.title,
+    description: data.description,
+    subject: data.subject,
+    std: data.std,
+    duration: data.duration,
+  };
+
+  if (isUpdate) {
+    // Update validator uses camelCase keys
+    return {
+      ...mapped,
+      contentType: data.contentType,
+      contentUrl: data.contentUrl || undefined,
+      thumbnailPath: data.thumbnailUrl || undefined,
+      textContent: data.textContent,
+    };
+  }
+
+  // Create validator requires snake_case
+  return {
+    ...mapped,
+    content_type: data.contentType,
+    content_url: data.contentUrl || undefined,
+    thumbnail_url: data.thumbnailUrl || undefined,
+    duration_in_seconds: data.durationInSeconds || undefined,
+    text_content: data.textContent,
+    faculty_id: data.faculty_id ?? 1, 
+  };
+}
+
+// ----------------------------------------------------------------------
 // Create Lecture
 export async function createLecture(lectureData: ICreateLecture) {
   try {
-    const res = await axiosInstance.post(endpoints.lecture.create, lectureData);
+    const payload = mapLecturePayload(lectureData);
+
+    const res = await axiosInstance.post(endpoints.lecture.create, payload);
     toast.success('Lecture created successfully');
-    
+
     return res.data?.lecture || null;
   } catch (error: any) {
-    toast.error(`Failed to create lecture: ${error?.response?.data?.message || error.message}`);
+    toast.error(
+      `Failed to create lecture: ${error?.response?.data?.message || error.message}`
+    );
     return null;
   }
 }
 
-
+// ----------------------------------------------------------------------
+// Update Lecture
 export async function updateLecture(lectureId: number, lectureData: IUpdateLecture) {
   try {
-    const res = await axiosInstance.put(endpoints.material.update(lectureId), lectureData);
+    const payload = mapLecturePayload(lectureData, true);
+
+    const res = await axiosInstance.put(endpoints.material.update(lectureId), payload);
     toast.success('Lecture updated successfully');
+
     return res.data?.lecture || null;
   } catch (error: any) {
-    toast.error(`Failed to update lecture: ${error?.response?.data?.message || error.message}`);
+    toast.error(
+      `Failed to update lecture: ${error?.response?.data?.message || error.message}`
+    );
     return null;
   }
 }
 
+// ----------------------------------------------------------------------
+// Delete Lecture
 export async function deleteLecture(lectureId: number) {
   try {
     const res = await axiosInstance.delete(endpoints.material.delete(lectureId));
     toast.success('Lecture deleted successfully');
     return res;
   } catch (error: any) {
-    toast.error(`Failed to delete lecture: ${error?.response?.data?.message || error.message}`);
+    toast.error(
+      `Failed to delete lecture: ${error?.response?.data?.message || error.message}`
+    );
     throw error;
   }
 }

@@ -74,10 +74,7 @@ const RolePermissionList = () => {
   const { userRolePermissions, isLoading, userRolePermissionsError } = useGetUserRolePermissions();
   const { permissions, isLoading: isPermissionsLoading, error: permissionsError } = usePermissions();
 
-  // Debug permissions data
-  useMemo(() => {
-    console.log('Permissions from usePermissions:', permissions);
-  }, [permissions]);
+
 
   // Transform API data when it's available
   const apiRoles = useMemo(() => {

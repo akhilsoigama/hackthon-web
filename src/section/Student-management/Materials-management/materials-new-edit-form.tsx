@@ -14,24 +14,22 @@ type Props = {
 const MaterialNewEditForm: React.FC<Props> = ({ currentData }) => {
   const { methods, currentStep } = useLessonForm(currentData);
 
-  const onSubmit = async (data: any) => {
-    try {
-      if (currentData?.id) {
-        await updateLecture(currentData.id, {
-          ...data,
-          videoUrl: data.contentUrl 
-        });
-      } else {
-        await createLecture({
-          ...data,
-          facultyId: 1, 
-          videoUrl: data.contentUrl
-        });
-      }
-    } catch (error) {
-      toast.error(`${error}`);
+const onSubmit = async (data: any) => {
+  console.log("Submitting data", data);
+  try {
+    if (currentData?.id) {
+      console.log("Updating lecture...");
+      await updateLecture(currentData.id, { ...data, videoUrl: data.contentUrl });
+    } else {
+      console.log("Creating lecture...");
+      await createLecture({ ...data, facultyId: 1, videoUrl: data.contentUrl });
     }
-  };
+  } catch (error) {
+    console.error("Error in onSubmit:", error);
+    toast.error(`${error}`);
+  }
+};
+
 
   return (
     <FormProvider {...methods}>
