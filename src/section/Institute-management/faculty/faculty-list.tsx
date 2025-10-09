@@ -1,6 +1,4 @@
-import { useFaculty } from "../../../atoms/facultyAtom";
-import api, { endpoints } from "../../../utils/axios";
-import Faculty from "../../../types/Faculty";
+import { IfacultyItem } from "../../../types/Faculty";
 import {
   FaUser,
   FaPlus,
@@ -13,31 +11,32 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
-
+import {
+  useFaculties,
+  deleteFaculty,
+} from "../../../action/faculty";
 
 const FacultyList = () => {
+  
   const {
     faculties,
-    isLoading,
-    isError: error,
-    mutate,
-  } = useFaculty();
+    facultiesError: error,
+    facultiesLoading: isLoading,
+    facultiesMutate,
+  } = useFaculties();
 
   // Handle deletion
   const handleDelete = async (id: number) => {
-    if (!window.confirm("Are you sure you want to delete this faculty member?")) return;
+    if (!window.confirm('Are you sure you want to delete this faculty member?')) return;
+
     try {
-      // Make the API call to delete the item
-      await api.delete(endpoints.faculty.delete(id));
-      toast.success("Faculty member deleted successfully!");
-      // Perform an optimistic update
-      await mutate((currentData = []) => {
-        // Return the new list without the deleted item
-        return currentData.filter((f) => f.id !== id);
-      }, { revalidate: false });
+      const success = await deleteFaculty(id);
+      if (success) {
+        toast.success('Faculty deleted successfully');
+        facultiesMutate({ data: faculties.filter((f : IfacultyItem) => f.id !== id) }, false);
+      }
     } catch (err) {
       console.error("Failed to delete faculty:", err);
-      mutate(); // Revalidate to fetch the correct state from the server if the delete fails
     }
   };
 
@@ -85,7 +84,9 @@ const FacultyList = () => {
           transition={{ delay: 0.2 }}
         >
           {faculties && faculties.length === 0 ? (
-            <div className="text-center text-gray-500 p-6 bg-white rounded-lg shadow-md">No faculty members found.</div>
+            <div className="text-center text-gray-500 p-6 bg-white rounded-lg shadow-md">
+              No faculty members found.
+            </div>
           ) : null}
           {isLoading && (
             <div className="flex justify-center items-center p-10">
@@ -99,7 +100,7 @@ const FacultyList = () => {
           )}
           {!isLoading && !error && faculties && (
             <AnimatePresence>
-              {faculties.map((f : Faculty, index : number) => (
+              {faculties.map((f: IfacultyItem, index: number) => (
                 <motion.div
                   key={f.id}
                   layout
@@ -146,10 +147,12 @@ const FacultyList = () => {
                       {f.department.departmentName}
                     </p>
                     <p className="flex items-center">
-                      <FaEnvelope className="mr-2 text-gray-400" /> {f.facultyEmail}
+                      <FaEnvelope className="mr-2 text-gray-400" />{" "}
+                      {f.facultyEmail}
                     </p>
                     <p className="flex items-center">
-                      <FaPhone className="mr-2 text-gray-400" /> {f.facultyMobile}
+                      <FaPhone className="mr-2 text-gray-400" />{" "}
+                      {f.facultyMobile}
                     </p>
                     <p>
                       <span className="font-medium">Status:</span>{" "}
@@ -214,83 +217,90 @@ const FacultyList = () => {
                 )}
                 {error && (
                   <tr>
-                    <td colSpan={7} className="text-center text-red-500 p-6 bg-red-50">
+                    <td
+                      colSpan={7}
+                      className="text-center text-red-500 p-6 bg-red-50"
+                    >
                       Failed to load faculty data. Please try again.
                     </td>
                   </tr>
                 )}
                 {!isLoading && !error && faculties && (
                   <AnimatePresence>
-                    {faculties.map((f : Faculty, index : number) => (
-                    <motion.tr
-                      layout
-                      key={f.id}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0, x: -50 }}
-                      transition={{ duration: 0.3, delay: index * 0.05 }}
-                      className="border-b border-gray-200 hover:bg-gray-50"
-                    >
-                      <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm text-gray-800">
-                        {f.facultyName}
-                      </td>
-                      <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm text-gray-600">
-                        {f.facultyId}
-                      </td>
-                      <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm text-gray-600">
-                        {f.designation}
-                      </td>
-                      <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm text-gray-600">
-                        {f.department.departmentName}
-                      </td>
-                      <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm text-gray-600">
-                        <div className="flex flex-col">
-                          <span className="flex items-center">
-                            <FaEnvelope className="mr-2 text-gray-400" />{" "}
-                            {f.facultyEmail}
+                    {faculties.map((f: IfacultyItem, index: number) => (
+                      <motion.tr
+                        layout
+                        key={f.id}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0, x: -50 }}
+                        transition={{ duration: 0.3, delay: index * 0.05 }}
+                        className="border-b border-gray-200 hover:bg-gray-50"
+                      >
+                        <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm text-gray-800">
+                          {f.facultyName}
+                        </td>
+                        <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm text-gray-600">
+                          {f.facultyId}
+                        </td>
+                        <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm text-gray-600">
+                          {f.designation}
+                        </td>
+                        <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm text-gray-600">
+                          {f.department.departmentName}
+                        </td>
+                        <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm text-gray-600">
+                          <div className="flex flex-col">
+                            <span className="flex items-center">
+                              <FaEnvelope className="mr-2 text-gray-400" />{" "}
+                              {f.facultyEmail}
+                            </span>
+                            <span className="flex items-center mt-1">
+                              <FaPhone className="mr-2 text-gray-400" />{" "}
+                              {f.facultyMobile}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm">
+                          <span
+                            className={`px-2 inline-flex text-xs sm:text-sm font-semibold rounded-full ${
+                              f.isActive
+                                ? "bg-green-100 text-green-800"
+                                : "bg-red-100 text-red-800"
+                            }`}
+                          >
+                            {f.isActive ? "Active" : "Inactive"}
                           </span>
-                          <span className="flex items-center mt-1">
-                            <FaPhone className="mr-2 text-gray-400" /> {f.facultyMobile}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-4 py-3 sm:px-6 sm:py-4 text-sm">
-                        <span
-                          className={`px-2 inline-flex text-xs sm:text-sm font-semibold rounded-full ${
-                            f.isActive
-                              ? "bg-green-100 text-green-800"
-                              : "bg-red-100 text-red-800"
-                          }`}
-                        >
-                          {f.isActive ? "Active" : "Inactive"}
-                        </span>
-                      </td>
-                      <td className="flex justify-center items-center px-4 py-3 sm:px-6 sm:py-4 space-x-2">
-                        <motion.button
-                          className="text-blue-600 hover:text-blue-800 p-1"
-                          aria-label={`Edit ${f.facultyName}`}
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.9 }}
-                        >
-                          <FaEdit className="text-lg" />
-                        </motion.button>
-                        <motion.button
-                          onClick={() => handleDelete(f.id)}
-                          className="text-red-600 hover:text-red-800 p-1"
-                          aria-label={`Delete ${f.facultyName}`}
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.9 }}
-                        >
-                          <FaTrash className="text-lg" />
-                        </motion.button>
-                      </td>
-                    </motion.tr>
+                        </td>
+                        <td className="flex justify-center items-center px-4 py-3 sm:px-6 sm:py-4 space-x-2">
+                          <motion.button
+                            className="text-blue-600 hover:text-blue-800 p-1"
+                            aria-label={`Edit ${f.facultyName}`}
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                          >
+                            <FaEdit className="text-lg" />
+                          </motion.button>
+                          <motion.button
+                            onClick={() => handleDelete(f.id)}
+                            className="text-red-600 hover:text-red-800 p-1"
+                            aria-label={`Delete ${f.facultyName}`}
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                          >
+                            <FaTrash className="text-lg" />
+                          </motion.button>
+                        </td>
+                      </motion.tr>
                     ))}
                   </AnimatePresence>
                 )}
                 {!isLoading && !error && faculties?.length === 0 && (
                   <tr>
-                    <td colSpan={7} className="px-4 py-3 sm:px-6 sm:py-4 text-center text-gray-500">
+                    <td
+                      colSpan={7}
+                      className="px-4 py-3 sm:px-6 sm:py-4 text-center text-gray-500"
+                    >
                       No faculty members found.
                     </td>
                   </tr>

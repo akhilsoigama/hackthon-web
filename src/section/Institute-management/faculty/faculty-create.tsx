@@ -1,7 +1,6 @@
 import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import useSWR from 'swr';
-import { useFaculty } from '../../../atoms/facultyAtom';
 import { motion } from 'framer-motion';
 import * as z from 'zod';
 import {
@@ -17,9 +16,11 @@ import {
 import RHFDropDown from '../../../components/hook-form/RHFDropDown';
 import { toast } from 'sonner';
 import RHFFormField from '../../../components/hook-form/RHFFormFiled';
-import api, { endpoints,fetcher, listFetcher } from '../../../utils/axios';
+import { endpoints,fetcher, listFetcher } from '../../../utils/axios';
 import { Department } from '../../../types/department';
 import { IUserRolePermissionItem } from '../../../types/Roles';
+import { IcreateFaculty } from '../../../types/Faculty';
+import { createFaculty } from '../../../action/faculty';
 
 // ✅ Validation schema
 const facultySchema = z.object({
@@ -36,13 +37,13 @@ const facultySchema = z.object({
   facultyPassword: z.string().min(6, 'Password must be at least 6 characters'),
   designation: z.string().min(1, 'Designation is required'),
   departmentId: z.number('Department is required' ),
+  instituteId: z.number('Institute is required'),
   roleId: z.number('Role is required'),
 });
 
 type FacultyFormData = z.infer<typeof facultySchema>;
 
 const FacultyCreate = () => {
-  const { mutate: mutateFacultyList } = useFaculty();
 
   // ✅ Fetch departments and roles
   const { data : departmentsData } = useSWR<{ data: Department[] }>(
@@ -75,24 +76,31 @@ const FacultyCreate = () => {
       facultyPassword: '',
       departmentId: undefined as unknown as number,
       roleId: undefined as unknown as number,
+      instituteId: 1,
     },
   });
 
   const {
     handleSubmit,
     reset,
-    formState: { isSubmitting },
+    formState: { isSubmitting , errors },
   } = methods;
 
+  console.log(errors)
+
   // ✅ Submit handler
-  const onSubmit = async (data: FacultyFormData) => {
+  const onSubmit = async (data: IcreateFaculty) => {
     try {
       const payload = { ...data, instituteId: 1 };
-      await api.post(endpoints.faculty.create, payload);
-      toast.success('Faculty created successfully!');
-      await mutateFacultyList();
+      const result = await createFaculty(payload);
+
+      if (result) {
+        reset();
+        toast.success('Faculty created successfully');
+      }
     } catch (error) {
-      console.error('Error creating faculty:', error);
+      toast.error('error while creating faculty');
+      console.error('Error during faculty creation submission:', error);
     }
   };
 

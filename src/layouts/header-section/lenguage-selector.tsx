@@ -11,7 +11,7 @@ interface Language {
 
 const LanguageSelector = () => {
   const [showLanguagePanel, setShowLanguagePanel] = useState<boolean>(false);
-  const [currentLanguage, setCurrentLanguage] = useState<string>('en');
+  const [currentLanguage,setCurrentLanguage] =useState<string>('en');
   const languageRef = useRef<HTMLDivElement>(null);
 
   const languages: Language[] = [
@@ -40,21 +40,26 @@ const LanguageSelector = () => {
     closeLanguagePanel();
   };
 
+  const selectedLanguage = languages.find(lang => lang.code === currentLanguage);
+
   return (
     <motion.div
       className="relative"
       ref={languageRef}
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.3, delay: 0.1 }}
+      transition={{ duration: 0.3, delay: 0.2 }}
     >
       <motion.button
         onClick={toggleLanguagePanel}
-        className="p-1 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors shadow-sm border border-gray-300 flex items-center"
+        className="p-1.5 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors shadow-sm border border-gray-300 flex items-center gap-1.5"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
       >
         <FiGlobe className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-gray-600" />
+        {selectedLanguage && currentLanguage !== 'en' && (
+          <span className="text-xs sm:text-sm font-medium text-gray-700 pr-1">{selectedLanguage.nativeName}</span>
+        )}
       </motion.button>
       <AnimatePresence>
         {showLanguagePanel && (
@@ -74,6 +79,7 @@ const LanguageSelector = () => {
                   key={language.code}
                   className={`w-full text-left px-3 py-2 text-xs sm:text-sm hover:bg-gray-50 transition-colors flex items-center ${currentLanguage === language.code ? 'bg-blue-50 text-blue-600' : ''}`}
                   onClick={() => handleLanguageChange(language.code)}
+                  aria-current={currentLanguage === language.code ? 'true' : 'false'}
                 >
                   <span className="mr-2">{language.nativeName}</span>
                   <span className="text-[10px] sm:text-xs text-gray-500">({language.name})</span>

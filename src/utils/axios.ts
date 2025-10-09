@@ -54,77 +54,81 @@
     }
   };
 
-  // Remove baseUrl from here since axiosInstance already has baseURL
-  export const endpoints = {
-    auth: {
-      me: "/profile",
-      signIn: "/login",
-      logout: "/login",
-    },
-    permission: {
-      getAll: "/permissions",
-    },
-    lecture: {
-      getAll: "/lectures",
-      details: (id: number) => `/lectures/${id}`,
-      create: "/lectures",
-      update: (id: number) => `/lectures/${id}`,
-      delete: (id: number) => `/lectures/${id}`,
-    },
-    faculty: {
-      getAll: "/faculty",
-      details: (id: number) => `/faculty/${id}`,
-      create: "/faculty",
-      update: (id: number) => `/faculty/${id}`,
-      delete: (id: number) => `/faculty/${id}`,
-    },
-    material: {
-      getAll: "/materials",
-      details: (id: number) => `/materials/${id}`,
-      create: "/materials",
-      update: (id: number) => `/materials/${id}`,
-      delete: (id: number) => `/materials/${id}`,
-    },
-    student: {
-      getAll: "/students",
-      details: (id: number) => `/students/${id}`,
-      create: "/students",
-      update: (id: number) => `/students/${id}`,
-      delete: (id: number) => `/students/${id}`,
-    },
-    assignment: {
-      getAll: "/assignments",
-      details: (id: number) => `/assignments/${id}`,
-      create: "/assignments",
-      update: (id: number) => `/assignments/${id}`,
-      delete: (id: number) => `/assignments/${id}`,
-    },
-    quiz: {
-      getAll: "/quizzes",
-      details: (id: number) => `/quizzes/${id}`,
-      create: "/quizzes",
-      update: (id: number) => `/quizzes/${id}`,
-      delete: (id: number) => `/quizzes/${id}`,
-    },
-    department: {
-      getAll: "/departments",
-      details: (id: number) => `/departments/${id}`,
-      create: "/departments",
-      update: (id: number) => `/departments/${id}`,
-      delete: (id: number) => `/departments/${id}`,
-    },
-    institute: {
-      getAll: "/institutes",
-      details: (id: number) => `/institutes/${id}`,
-      create: "/institutes",
-      update: (id: number) => `/institutes/${id}`,
-      delete: (id: number) => `/institutes/${id}`,
-    },
-    role: {
-      getAll: "/roles",
-      details: (id: number) => `/roles/${id}`,
-      create: "/roles",
-      update: (id: number) => `/roles/${id}`,
-      delete: (id: number) => `/roles/${id}`,
-    },
-  };
+// Remove baseUrl from here since axiosInstance already has baseURL
+export const endpoints = {
+  auth: {
+    me: "/profile",
+    signIn: "/login",
+    logout: "/login",
+  },
+  permission: {
+    getAll: "/permissions",
+  },
+  lecture: {
+    getAll: "/lectures",
+    details: (id: number) => `/lectures/${id}`,
+    create: "/lectures",
+    update: (id: number) => `/lectures/${id}`,
+    delete: (id: number) => `/lectures/${id}`,
+  },
+  faculty: {
+    getAll: "/faculty",
+    details: (id: number) => `/faculty/${id}`,
+    create: "/faculty",
+    update: (id: number) => `/faculty/${id}`,
+    delete: (id: number) => `/faculty/${id}`,
+  },
+  material: {
+    getAll: "/materials",
+    details: (id: number) => `/materials/${id}`,
+    create: "/materials",
+    update: (id: number) => `/materials/${id}`,
+    delete: (id: number) => `/materials/${id}`,
+  },
+  student: {
+    getAll: "/students",
+    details: (id: number) => `/students/${id}`,
+    create: "/students",
+    update: (id: number) => `/students/${id}`,
+    delete: (id: number) => `/students/${id}`,
+  },
+  assignment: {
+    getAll: "/assignments",
+    details: (id: number) => `/assignments/${id}`,
+    create: "/assignments",
+    update: (id: number) => `/assignments/${id}`,
+    delete: (id: number) => `/assignments/${id}`,
+  },
+  quiz: {
+    getAll: "/quizzes",
+    details: (id: number) => `/quizzes/${id}`,
+    create: "/quizzes",
+    update: (id: number) => `/quizzes/${id}`,
+    delete: (id: number) => `/quizzes/${id}`,
+  },
+  department: {
+    getAll: "/departments",
+    details: (id: number) => `/departments/${id}`,
+    create: "/departments",
+    update: (id: number) => `/departments/${id}`,
+    delete: (id: number) => `/departments/${id}`,
+  },
+  institute: {
+    getAll: "/institutes",
+    details: (id: number) => `/institutes/${id}`,
+    create: "/institutes",
+    update: (id: number) => `/institutes/${id}`,
+    delete: (id: number) => `/institutes/${id}`,
+  },
+  role: {
+    getAll: "/roles",
+    details: (id: number) => `/roles/${id}`,
+    create: "/roles",
+    update: (id: number) => `/roles/${id}`,
+    delete: (id: number) => `/roles/${id}`,
+  },
+  translate : {
+    translate : "/translate"
+  }
+
+};
