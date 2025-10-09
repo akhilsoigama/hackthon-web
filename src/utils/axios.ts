@@ -1,61 +1,58 @@
-// src/api/axiosInstance.ts
-import axios, { AxiosRequestConfig } from "axios";
-import Cookies from "js-cookie";
-import { toast } from "sonner";
+  import axios, { AxiosRequestConfig } from "axios";
+  import Cookies from "js-cookie";
+  import { toast } from "sonner";
 
-// Create axios instance with base URL from Vite env
-const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_URL, // Make sure VITE_BACKEND_URL is set in .env
-  headers: {
-    "Content-Type": "application/json",
-  },
-  withCredentials: true,
-});
+  const axiosInstance = axios.create({
+    baseURL: import.meta.env.VITE_BACKEND_URL,
+    headers: {
+      "Content-Type": "application/json",
+    },
+     withCredentials: false, 
+  });
 
-// Request interceptor to add Authorization token if present
-axiosInstance.interceptors.request.use((config) => {
-  const token = Cookies.get("token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  } else {
-    delete config.headers.Authorization;
-  }
-  return config;
-});
+  axiosInstance.interceptors.request.use((config) => {
+    const token = Cookies.get("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    } else {
+      delete config.headers.Authorization;
+    }
+    return config;
+  });
 
-axiosInstance.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    const msg = error.response?.data?.message || "Something went wrong";
-    toast.error(msg);
-    return Promise.reject(msg);
-  }
-);
+  axiosInstance.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      const msg = error.response?.data?.message || "Something went wrong";
+      toast.error(msg);
+      return Promise.reject(msg);
+    }
+  );
 
-export default axiosInstance;
+  export default axiosInstance;
 
-// ------------------
-// Fetcher for SWR
-export const fetcher = async (args: string | [string, AxiosRequestConfig]) => {
-  try {
-    const [url, config] = Array.isArray(args) ? args : [args];
-    const res = await axiosInstance.get(url, config);
-    return res.data;
-  } catch (error) {
-    throw error;
-  }
-};
+  // ------------------
+  // Fetcher for SWR
+  export const fetcher = async (args: string | [string, AxiosRequestConfig]) => {
+    try {
+      const [url, config] = Array.isArray(args) ? args : [args];
+      const res = await axiosInstance.get(url, config);
+      return res.data;
+    } catch (error) {
+      throw error;
+    }
+  };
 
-// Fetcher for SWR that expects the data array to be in a `data` property
-export const listFetcher = async (args: string | [string, AxiosRequestConfig]) => {
-  try {
-    const [url, config] = Array.isArray(args) ? args : [args];
-    const res = await axiosInstance.get(url, config);
-    return res.data.data; // <-- Extracts the array from the nested 'data' property
-  } catch (error) {
-    throw error;
-  }
-};
+  // Fetcher for SWR that expects the data array to be in a `data` property
+  export const listFetcher = async (args: string | [string, AxiosRequestConfig]) => {
+    try {
+      const [url, config] = Array.isArray(args) ? args : [args];
+      const res = await axiosInstance.get(url, config);
+      return res.data.data; // <-- Extracts the array from the nested 'data' property
+    } catch (error) {
+      throw error;
+    }
+  };
 
 // Remove baseUrl from here since axiosInstance already has baseURL
 export const endpoints = {
