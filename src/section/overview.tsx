@@ -2,10 +2,12 @@ import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { FiAward, FiBarChart2, FiBook, FiCalendar, FiCheckCircle, FiClock, FiMessageSquare, FiTrendingUp } from 'react-icons/fi';
 import MultiLanguageTTS from '../components/common/TTS';
-
+import { useUser } from '../atoms/userAtom';
+  
 const Overview = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
-
+  const {user}=useUser();
+  const UserProfile = user?.data;
   const stats = [
     { title: 'Total Assignments', value: '12', description: 'Pending submissions', icon: <FiBook className="text-blue-500" />, color: 'bg-blue-100' },
     { title: 'Progress', value: '75%', description: 'Course completion', icon: <FiBarChart2 className="text-green-500" />, color: 'bg-green-100' },
@@ -59,7 +61,7 @@ const Overview = () => {
       >
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Good morning, Alex!</h1>
+            <h1 className="text-3xl font-bold text-gray-900">Welcome {UserProfile?.fullName}</h1>
             <p className="text-sm text-gray-500 mt-1">
               {formatDate(currentTime)} • {formatTime(currentTime)}
             </p>
